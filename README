@@ -1,0 +1,11 @@
+Aligned Hashing
+	An extremely efficient hashing scheme. Both Map and Set
+	versions are provided in alignhash.h. The properties of aligned
+	hashing includes:
+	1. CPU cache-conscious layout. A bitmap index is used to
+	support fast data location especially for sparse key
+	distributions.
+	2. Aligned data access. The bucket for a set/search operation
+	is located through logical AND not %. This implies an
+	significant improvement on searching.
+	3. Tier-probing, a technique based on double hashing.

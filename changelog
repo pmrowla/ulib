@@ -1,3 +1,6 @@
 Sept. 16th 2011
 	project is created.
-	
+
+Sept. 16th 2011
+	add aligned hashing, an extremely efficient hashing scheme
+	(hashmap & hashset)
