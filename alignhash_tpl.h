@@ -30,7 +30,6 @@
 #include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
-#include "bit.h"
 
 #ifdef AH_64BIT  /* specify if you are handling >4G keys */
 
@@ -45,6 +44,8 @@ typedef uint64_t ah_size_t;
 #define AH_CLEAR_BOTH(flag, i)   (  (flag)[(i) >> 5] &= ~(3ul << (((i) & 0x1fU) << 1)) )
 #define AH_SET_DEL(flag, i)      (  (flag)[(i) >> 5] |=  (1ul << (((i) & 0x1fU) << 1)) )
 
+#define AH_FLAGS_BYTE(nb)        ( (nb) < 32? 8: (nb) >> 2 )
+
 #else  /* by default, the 32-bit version is used */
 
 typedef uint32_t ah_iter_t;
@@ -58,6 +59,8 @@ typedef uint32_t ah_size_t;
 #define AH_CLEAR_BOTH(flag, i)   (  (flag)[(i) >> 4] &= ~(3ul << (((i) & 0xfU) << 1)) )
 #define AH_SET_DEL(flag, i)      (  (flag)[(i) >> 4] |=  (1ul << (((i) & 0xfU) << 1)) )
 
+#define AH_FLAGS_BYTE(nb)        ( (nb) < 16? 4: (nb) >> 2 )
+
 #endif
 
 /* return codes for alignhash_set() */
@@ -67,10 +70,6 @@ enum {
 	AH_INS_DEL = 2   /**< inserted element is placed at a deleted bucket */
 };
 
-/* round flags up to ah_size_t */
-#define AH_NFLAGS(nb)            DIV_ROUND_UP(nb * 2, BITS_PER_BYTE * sizeof(ah_size_t))
-#define AH_FLAGS_BYTE(nb)        ( AH_NFLAGS(nb) * sizeof(ah_size_t)                   )
-
 /* Two probing methods are available, tier probing and linear
  * probing. In general, tier probing has more stable lookup
  * performance than linear probing, due to the enhanced collision
@@ -79,10 +78,10 @@ enum {
  * enable tier probing, otherwise linear probing is used by default. */
 #ifdef AH_TIER_PROBING
 /* tier probing step */
-#define AH_PROBE_STEP(h, r, m)   ( ((h) >> (r) | 1) & (m)                              )
+#define AH_PROBE_STEP(h)         ( ((h) ^ (h) >> 13) | 1 )
 #else
 /* normal linear probing */
-#define AH_PROBE_STEP(h, r, m)   ( 1                                                   )
+#define AH_PROBE_STEP(h)         ( 1 )
 #endif
 
 #define AH_SWAP(a, b)							\
@@ -93,8 +92,6 @@ enum {
 #define DECLARE_ALIGNHASH(_name, _key_t, _val_t, _ismap, _hashfn, _hasheq) \
 	typedef struct {						\
 		ah_size_t nbucket;					\
-		ah_size_t mask;     /* bit mask of nbucket */		\
-		uint32_t  order;    /* ln(nbucket/2)/ln2 */		\
 		ah_size_t size;     /* number of elements */		\
 		ah_size_t nused;    /* number of bucket used */		\
 		ah_size_t sup;      /* upper bound */			\
@@ -131,18 +128,16 @@ enum {
 	alignhash_get_##_name(const alignhash_##_name##_t *h, _key_t key) \
 	{								\
 		if (h->nbucket) {					\
-			register ah_size_t i;				\
-			ah_size_t k, step, last;			\
+			register ah_size_t i, step;			\
+			ah_size_t mask = h->nbucket - 1;		\
+			ah_size_t k, last;				\
 			k = _hashfn(key);				\
-			i = k & h->mask;				\
-			step = AH_PROBE_STEP(k, h->order, h->mask);	\
+			i = k & mask;					\
+			step = AH_PROBE_STEP(k);			\
 			last = i;					\
 			while (!AH_ISEMPTY(h->flags, i) &&		\
 			       (AH_ISDEL(h->flags, i) || !_hasheq(h->keys[i], key))) { \
-				if (i + step >= h->nbucket)		\
-					i = i + step - h->nbucket;	\
-				else					\
-					i += step;			\
+				i = (i + step) & mask;			\
 				if (i == last)				\
 					return h->nbucket;		\
 			}						\
@@ -152,9 +147,7 @@ enum {
 	}								\
                                                                         \
 	static inline int						\
-	alignhash_resize_##_name(alignhash_##_name##_t *h,		\
-				 ah_size_t new_nbucket,			\
-				 uint32_t  new_order)			\
+	alignhash_resize_##_name(alignhash_##_name##_t *h, ah_size_t new_nbucket) \
 	{								\
 		ah_size_t *new_flags = 0;				\
 		_key_t    *new_keys  = 0;				\
@@ -194,16 +187,13 @@ enum {
 					val = h->vals[j];		\
 				AH_SET_DEL(h->flags, j);		\
 				for (;;) {				\
-					ah_size_t i, k, step;		\
+					register ah_size_t i, step;	\
+					ah_size_t k;			\
 					k = _hashfn(key);		\
 					i = k & new_mask;		\
-					step = AH_PROBE_STEP(k, new_order, new_mask); \
-					while (!AH_ISEMPTY(new_flags, i)) { \
-						if (i + step >= new_nbucket) \
-							i = i + step - new_nbucket; \
-						else			\
-							i += step;	\
-					}				\
+					step = AH_PROBE_STEP(k);	\
+					while (!AH_ISEMPTY(new_flags, i)) \
+						i = (i + step) & new_mask; \
 					AH_CLEAR_EMPTY(new_flags, i);	\
 					if (i < h->nbucket && AH_ISEITHER(h->flags, i) == 0) { \
 						AH_SWAP(h->keys[i], key); \
@@ -234,8 +224,6 @@ enum {
 		free(h->flags);						\
 		h->flags = new_flags;					\
 		h->nbucket = new_nbucket;				\
-		h->order = new_order;					\
-		h->mask = new_mask;					\
 		h->nused = h->size;					\
 		h->sup = (ah_size_t)(h->nbucket * AH_LOAD_FACTOR + 0.5); \
 		return 0;						\
@@ -244,34 +232,33 @@ enum {
 	static inline ah_iter_t						\
 	alignhash_set_##_name(alignhash_##_name##_t *h, _key_t key, int *ret) \
 	{								\
-		register ah_size_t i;					\
-		ah_size_t x, k, step, site, last;			\
+		register ah_size_t i, step;				\
+		register ah_size_t mask;				\
+		ah_size_t x, k, site, last;				\
 		if (h->nused >= h->sup) {				\
 			if (h->nbucket) {				\
-				if (alignhash_resize_##_name(h, h->nbucket * 2, h->order + 1)) \
+				if (alignhash_resize_##_name(h, h->nbucket * 2)) \
 					return h->nbucket;		\
 			} else {					\
-				if (alignhash_resize_##_name(h, 2, 0))	\
+				if (alignhash_resize_##_name(h, 2))	\
 					return h->nbucket;		\
 			}						\
 		}							\
 		site = h->nbucket;					\
+		mask = h->nbucket - 1;					\
 		x = site;						\
 		k = _hashfn(key);					\
-		i = k & h->mask;					\
+		i = k & mask;						\
 		if (AH_ISEMPTY(h->flags, i))				\
 			x = i;						\
 		else {							\
-			step = AH_PROBE_STEP(k, h->order, h->mask);	\
+			step = AH_PROBE_STEP(k);			\
 			last = i;					\
 			while (!AH_ISEMPTY(h->flags, i) &&		\
 			       (AH_ISDEL(h->flags, i) || !_hasheq(h->keys[i], key))) { \
 				if (AH_ISDEL(h->flags, i))		\
 					site = i;			\
-				if (i + step >= h->nbucket)		\
-					i = i + step - h->nbucket;	\
-				else					\
-					i += step;			\
+				i = (i + step) & mask;			\
 				if (i == last) {			\
 					x = site;			\
 					break;				\

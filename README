@@ -9,6 +9,3 @@ Aligned Hashing
 	is located through logical AND not %. This implies an
 	significant improvement on searching.
 	3. Tier-probing, a technique based on double hashing.
-
-TODO:
-	add more features
