@@ -233,8 +233,7 @@ enum {
 	alignhash_set_##_name(alignhash_##_name##_t *h, _key_t key, int *ret) \
 	{								\
 		register ah_size_t i, step;				\
-		register ah_size_t mask;				\
-		ah_size_t x, k, site, last;				\
+		ah_size_t x, k, mask, site, last;			\
 		if (h->nused >= h->sup) {				\
 			if (h->nbucket) {				\
 				if (alignhash_resize_##_name(h, h->nbucket * 2)) \

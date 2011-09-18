@@ -52,7 +52,7 @@
 
 // NOTE: enable features here, such as 64-bit and tier probing.
 //#define AH_64BIT
-#define AH_TIER_PROBING
+//#define AH_TIER_PROBING
 #include "alignhash_tpl.h"
 
 struct align_hash_exception : public std::exception
