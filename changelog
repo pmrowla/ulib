@@ -1,15 +1,18 @@
-Sept. 16th 2011
-	project is created.
+Sept. 18th 2011
+	add aligned hashing benchmark program
 
-Sept. 16th 2011
-	add aligned hashing, an extremely efficient hashing scheme
-	(hashmap & hashset)
+Sept. 18th 2011
+	1. add makefile and build directories.
+	2. add tree component.
 
 Sept. 17-18th 2011
 	1. remove attributes mask, order from aligned hashing.
 	2. use another double hashing hash functon.
 	3. use linear probing by default for better locality.
 
-Sept. 18 2011
-	1. add makefile and build directories.
-	2. add tree component.
+Sept. 16th 2011
+	add aligned hashing, an extremely efficient hashing scheme
+	(hashmap & hashset)
+
+Sept. 16th 2011
+	project is created.

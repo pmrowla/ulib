@@ -1,8 +1,9 @@
-TARGET		= alignhash.test
+TARGET		= alignhash.test alignhash_bench.test
 
 INCPATH		= ../include
 LIBPATH		= ../lib
 
+CXX		?= g++
 CXXFLAGS	?= -I$(INCPATH) -g3 -O3 -W -Wall 
 LDFLAGS		?= -L$(LIBPATH) -lulib -lrt -lm
 
