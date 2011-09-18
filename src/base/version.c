@@ -23,20 +23,20 @@
    SOFTWARE.
 */
 
-#ifndef __ULIB_BIT_H
-#define __ULIB_BIT_H
+#include <stdio.h>
+#include "version.h"
 
-#include <stdint.h>
+const char *ulib_version()
+{
+	static char version[256] = { 0 };
 
-#define BITS_PER_BYTE       8
-#define BITS_PER_LONG       ((int)((sizeof(long) * BITS_PER_BYTE)))
+	snprintf(
+		version, sizeof(version),
+		"ULIB %d.%d\n"
+		"Copyright (C) 2009-2011 Zilong Tan\n",
+		ULIB_VERSION_MAJOR,
+		ULIB_VERSION_MINOR
+		);
 
-#define DIV_ROUND_UP(n,d)   (((n) + (d) - 1) / (d))
-#define BITS_TO_LONGS(nr)   DIV_ROUND_UP(nr, BITS_PER_BYTE * sizeof(long))
-#define BIT_WORD(nr)        ((nr) / BITS_PER_LONG)
-#define BIT_MASK(nr)        (1UL << ((nr) % BITS_PER_LONG))
-#define ALIGN_MASK(x, mask) (((x) + (mask)) & ~(mask))
-#define ALIGN(x, a)         ALIGN_MASK(x, (typeof(x))(a) - 1)
-#define ROR64(x, r)         ((x) >> (r) | (x) << (64 - (r)))
-
-#endif  /* __ULIB_BIT_H */
+	return version;
+}

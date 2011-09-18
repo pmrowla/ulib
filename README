@@ -1,11 +1,46 @@
-Aligned Hashing
-	An extremely efficient hashing scheme. Both Map and Set
-	versions are provided in alignhash.h. The properties of aligned
-	hashing includes:
-	1. CPU cache-conscious layout. A bitmap index is used to
-	support fast data location especially for sparse key
-	distributions.
-	2. Aligned data access. The bucket for a set/search operation
-	is located through logical AND not %. This implies an
-	significant improvement on searching.
-	3. Tier-probing, a technique based on double hashing.
+===========================================================================
+	Introducting ULIB
+===========================================================================
+
+1. What is ULIB?
+   ULIB is a collection of efficient and flexible implementations of
+   common data structures and algorithms. The essential part of ULIB
+   is written in C, that is, the 'core'. Other parts of the library act
+   as extensions to the 'core'.
+
+2. What it is good for?
+   There are mainly two advantages of ULIB over many other libraries,
+   performance and interface. ULIB is well implemented and has better
+   or similar performance as compared to state-of-the-art
+   libraries. In addition, the APIs of ULIB is carefully designed and
+   largely follow the kernel coding style paradigm - simple and flexible.
+
+===========================================================================
+	Layout of the Source Tree
+===========================================================================
+   As usual, the output is divided into includes and libraries, which
+   are respectively resides into include/ and lib/
+   directories. According  to their functionalities, the source is
+   structured in layers, where layers with higher levels use make
+   use of the lower level layers. Each layer writes its output
+   independently into include/ and lib/, when all sources are
+   compiled, the libraries of all layers are merged into a single
+   library. 
+
+===========================================================================
+	Core Components
+===========================================================================
+
+1. Aligned Hashing
+   Aligned hashing is an extremely efficient hashing scheme. Both Map and
+   Set are provided in alignhash.h. The properties of aligned
+   hashing are:
+   1) CPU cache-conscious layout. A bitmap index is used to support fast
+      data location especially for sparse key distributions.
+   2) Aligned data access. The bucket for a set/search operation is
+      located through logical AND not %. This implies a significant
+      improvement on searching.
+   3) Tier-probing, a technique based on double hashing.
+
+2. Trees
+   Various trees, including binary search tree, splay tree and AVL tree.

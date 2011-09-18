@@ -1,9 +1,13 @@
-TARGET=   alignhash.test
+TARGET		= alignhash.test
 
-CXXFLAGS= -I../ -O3 -W -Wall 
+INCPATH		= ../include
+LIBPATH		= ../lib
+
+CXXFLAGS	?= -I$(INCPATH) -g3 -O3 -W -Wall 
+LDFLAGS		?= -L$(LIBPATH) -lulib -lrt -lm
 
 %.test: test_%.cpp
-	$(CXX) $(CXXFLAGS) $< -o $@
+	$(CXX) $(CXXFLAGS) $< -o $@ $(LDFLAGS)
 
 .PHONY: all clean
 
