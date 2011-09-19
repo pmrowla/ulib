@@ -1,9 +1,10 @@
 Sept. 19th 2011
 	1. add file binary search module and string utilities.
 	2. add kernel list.
+	3. add list merge-sort algorithm.
 
 Sept. 18th 2011
-	add aligned hashing benchmark program
+	add aligned hashing benchmark program.
 
 Sept. 18th 2011
 	1. add makefile and build directories.
@@ -16,7 +17,7 @@ Sept. 17-18th 2011
 
 Sept. 16th 2011
 	add aligned hashing, an extremely efficient hashing scheme
-	(hashmap & hashset)
+	(hashmap & hashset).
 
 Sept. 16th 2011
 	project is created.

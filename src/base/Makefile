@@ -11,7 +11,7 @@ CFLAGS		?= -g3 -O3 -Wall -W -Werror -pipe -c -fno-strict-aliasing
 DS_OBJS		= tree.o treeutils.o
 SEARCH_OBJS	= fbsearch.o
 CRYPT_OBJS	=
-SORT_OBJS	=
+SORT_OBJS	= listsort.o
 MISC_OBJS	= strutils.o
 COMMON_OBJS	= version.o
 
