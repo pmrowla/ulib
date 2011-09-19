@@ -9,10 +9,10 @@ CC		?= gcc
 CFLAGS		?= -g3 -O3 -Wall -W -Werror -pipe -c -fno-strict-aliasing
 
 DS_OBJS		= tree.o treeutils.o
-SEARCH_OBJS	= 
+SEARCH_OBJS	= fbsearch.o
 CRYPT_OBJS	=
 SORT_OBJS	=
-MISC_OBJS	=
+MISC_OBJS	= strutils.o
 COMMON_OBJS	= version.o
 
 OBJS		= $(DS_OBJS) $(SEARCH_OBJS) $(CRYPT_OBJS) \

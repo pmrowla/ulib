@@ -43,4 +43,14 @@
    3) Tier-probing, a technique based on double hashing.
 
 2. Trees
-   Various trees, including binary search tree, splay tree and AVL tree.
+   Various trees, including binary search tree, splay tree, red-black
+   tree and AVL tree.
+
+3. Search Algorithms
+   1) File binary search algorithm, which performs a binary search on
+   a line-sorted file for lines that meet the conditions given by the
+   user-defined function.
+
+4. Utilities.
+   1) String utilities, splitting, parsing etc.
+   2) A high resolution timer.

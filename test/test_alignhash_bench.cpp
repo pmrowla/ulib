@@ -15,7 +15,7 @@ volatile long counter = 0;
 
 DECLARE_ALIGNHASH(myhash, uint32_t, uint32_t, 1, alignhash_hashfn, alignhash_equalfn)
 
-static void sig_alarm_handler(int signum)
+static void sig_alarm_handler(int)
 {
 	printf("%ld per sec\n", counter);
 	counter = 0;
