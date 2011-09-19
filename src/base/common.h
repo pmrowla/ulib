@@ -161,4 +161,6 @@
 			const typeof( ((type *)0)->member ) *__mptr = (ptr); \
 			(type *)( (char *)__mptr - __builtin_offsetof(type,member) );})
 
+#define generic_compare(x, y) (((x) > (y)) - ((x) < (y)))
+
 #endif  /* __ULIB_COMMON_H */

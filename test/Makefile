@@ -1,4 +1,4 @@
-TARGET		= alignhash.test alignhash_bench.test
+TARGET		= alignhash.test alignhash_bench.test fbsearch.test version.test tree.test
 
 INCPATH		= ../include
 LIBPATH		= ../lib

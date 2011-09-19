@@ -33,7 +33,7 @@ const char *ulib_version()
 	snprintf(
 		version, sizeof(version),
 		"ULIB %d.%d\n"
-		"Copyright (C) 2009-2011 Zilong Tan\n",
+		"Copyright (C) 2009-2011 Zilong Tan (tzlloch@gmail.com)\n",
 		ULIB_VERSION_MAJOR,
 		ULIB_VERSION_MINOR
 		);
