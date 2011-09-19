@@ -1,5 +1,6 @@
 Sept. 19th 2011
-	add file binary search module and string utilities.
+	1. add file binary search module and string utilities.
+	2. add kernel list.
 
 Sept. 18th 2011
 	add aligned hashing benchmark program

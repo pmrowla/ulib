@@ -1,6 +1,6 @@
 //
 // This file demonstrates the use of trees declared in tree.h. The
-// following example take binary search tree (struct tree_root) as an
+// following example takes binary search tree (struct tree_root) as an
 // exmaple. The use of splay tree and AVL tree are similar.
 //
 
@@ -67,7 +67,7 @@ int main()
 	nnode = 0;
 	struct tree_node *tmp;
 	tree_for_each_entry_safe(node, tmp, root, link) {
-		// NOTE: first delete this node before free it
+		// NOTE: first delete this node before freeing it
 		tree_del(&node->link, &root);
 		delete node;
 		++nnode;
