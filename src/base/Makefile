@@ -10,7 +10,7 @@ CFLAGS		?= -g3 -O3 -Wall -W -Werror -pipe -c -fno-strict-aliasing
 
 DS_OBJS		= tree.o treeutils.o bitmap.o
 SEARCH_OBJS	= fbsearch.o
-CRYPT_OBJS	= aes.o
+CRYPT_OBJS	= aes.o sha1sum.o md5sum.o sha256sum.o rc4.o
 SORT_OBJS	= listsort.o
 MISC_OBJS	= strutils.o gcd.o hash.o hexdump.o
 COMMON_OBJS	= version.o
