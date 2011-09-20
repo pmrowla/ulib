@@ -1,5 +1,6 @@
 TARGET		= alignhash.test alignhash_bench.test fbsearch.test version.test tree.test \
 		list.test listsort.test gcd.test aes.test bitmap.test part.test heapsort.test \
+		comb.test console.test bfilter.test
 
 INCPATH		= ../include
 LIBPATH		= ../lib

@@ -31,40 +31,47 @@
 	Core Components
 ===========================================================================
 
-1. Aligned Hashing
-   Aligned hashing is an extremely efficient hashing scheme. Both Map and
-   Set are provided in alignhash.h. The properties of aligned
-   hashing are:
-   1) CPU cache-conscious layout. A bitmap index is used to support fast
-      data location especially for sparse key distributions.
-   2) Aligned data access. The bucket for a set/search operation is
-      located through logical AND not %. This implies a significant
-      improvement on searching.
-   3) Tier-probing, a technique based on double hashing.
-
-2. Data Structures
+1. Data Structures
    1) Ported linux kernel list, a simple doubly linked list implementation.
    2) Various trees, including binary search tree, splay tree, red-black
       tree and AVL tree.
    3) Bitmap.
+   4) Bloom filter.
+   5) Aligned Hashing
+      Aligned hashing is an extremely efficient hashing scheme. Both Map and
+      Set are provided in alignhash.h. The properties of aligned
+      hashing are:
+      1) CPU cache-conscious layout. A bitmap index is used to support fast
+      	 data location especially for sparse key distributions.
+      2) Aligned data access. The bucket for a set/search operation is
+      	 located through logical AND not %. This implies a significant
+      	 improvement on searching.
+      3) Tier-probing, a technique based on double hashing.
 
-3. Search Algorithms
+2. Search Algorithms
    1) File binary search algorithm, which performs a binary search on
    a line-sorted file for lines that meet the conditions given by the
    user-defined function.
-   2) Median algorithm.
+   2) Partition algorithm.
 
-4. Sorting Algorithms
+3. Sorting Algorithms
    1) List merge-sort algorthm.
+   2) Heapsort.
 
-5. Cryptographic Algorithms
+4. Cryptographic Algorithms
    1) AES (Advanced Encryption Standard)
+   2) MD5
+   3) SHA1, SHA256
+   4) RC4
 
-6. Math tools.
+5. Math tools.
    1) GCD algorithm.
+   2) Bit hacks.
+   3) Combinatorics algorithm.
 
-7. Utilities.
+6. Utilities.
    1) String utilities, splitting, parsing etc.
    2) A high resolution timer.
    3) A collection of hash functions.
    4) A hexdump utility.
+   5) A user-defined console.
