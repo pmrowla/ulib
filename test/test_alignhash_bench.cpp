@@ -69,7 +69,7 @@ void constant_insert(long ins, long get)
 int main(int argc, char *argv[])
 {
 	long ins = 10000000;
-	long get = 1000000000;
+	long get = 100000000;
 
 	if (argc > 1)
 		ins = atol(argv[1]);
@@ -82,5 +82,7 @@ int main(int argc, char *argv[])
 
 	constant_insert(ins, get);
 
+	printf("passed\n");
+	
 	return 0;
 }

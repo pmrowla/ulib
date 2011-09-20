@@ -41,5 +41,7 @@ int main()
 
 	assert(nnode == 100);
 
+	printf("passed\n");
+	
 	return 0;
 }

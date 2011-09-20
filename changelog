@@ -1,3 +1,8 @@
+Sept. 20th 2011
+	1. add bitmap, hash functions, aes.
+	2. add several utitiles.
+	3. add median algorithm.
+	
 Sept. 19th 2011
 	1. add file binary search module and string utilities.
 	2. add kernel list.

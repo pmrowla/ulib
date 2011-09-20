@@ -46,15 +46,25 @@
    1) Ported linux kernel list, a simple doubly linked list implementation.
    2) Various trees, including binary search tree, splay tree, red-black
       tree and AVL tree.
+   3) Bitmap.
 
 3. Search Algorithms
    1) File binary search algorithm, which performs a binary search on
    a line-sorted file for lines that meet the conditions given by the
    user-defined function.
+   2) Median algorithm.
 
 4. Sorting Algorithms
    1) List merge-sort algorthm.
 
-5. Utilities.
+5. Cryptographic Algorithms
+   1) AES (Advanced Encryption Standard)
+
+6. Math tools.
+   1) GCD algorithm.
+
+7. Utilities.
    1) String utilities, splitting, parsing etc.
    2) A high resolution timer.
+   3) A collection of hash functions.
+   4) A hexdump utility.
