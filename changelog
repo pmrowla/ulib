@@ -1,3 +1,6 @@
+Sept. 22th 2011
+	modify alignhash.h, returns iterator for insert()
+
 Sept. 20th 2011
 	1. add combinatorics algorithm.
 	2. add console utility.

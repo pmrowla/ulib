@@ -250,35 +250,33 @@ public:
 	contain(const _Key &key) const
 	{ return alignhash_get(inclass, _hashing, key) != alignhash_end(_hashing); }
 
-	reference
+	iterator
 	insert(const _Key &key, const _Val &val, bool displace = false)
 	{
 		int ret = AH_INS_ERR;
 		hashing_iterator itr = alignhash_set(inclass, _hashing, key, &ret);
 		if (itr == alignhash_end(_hashing))
 			throw _Except();
-		_Val &ref = alignhash_value(_hashing, itr);
 		if (ret != AH_INS_ERR || displace)
-			ref = val;
-		return ref;
+			alignhash_value(_hashing, itr) = val;
+		return iterator(_hashing, itr);
 	}
 
-	reference
+	iterator
 	find_or_insert(const _Key &key, const _Val &val)
 	{
 		int ret = AH_INS_ERR;
 		hashing_iterator itr = alignhash_set(inclass, _hashing, key, &ret);
 		if (itr == alignhash_end(_hashing))
 			throw _Except();
-		_Val &ref = alignhash_value(_hashing, itr);
 		if (ret != AH_INS_ERR)
-			ref = val;
-		return ref;
+			alignhash_value(_hashing, itr) = val;
+		return iterator(_hashing, itr);
 	}
 
 	reference
 	operator[](const _Key &key)
-	{ return find_or_insert(key, _Val()); }
+	{ return *find_or_insert(key, _Val()); }
 
 	iterator
 	find(const _Key &key)
@@ -475,12 +473,14 @@ public:
 	contain(const _Key &key) const
 	{ return alignhash_get(inclass, _hashing, key) != alignhash_end(_hashing); }
 
-	void insert(const _Key &key)
+	iterator
+	insert(const _Key &key)
 	{
 		int ret;
 		hashing_iterator itr = alignhash_set(inclass, _hashing, key, &ret);
 		if (itr == alignhash_end(_hashing))
 			throw _Except();
+		return iterator(_hashing, itr);
 	}
 
 	bool
