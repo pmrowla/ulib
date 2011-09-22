@@ -203,6 +203,7 @@ public:
 			throw _Except();
 	}
 
+	virtual
 	~align_hash_map()
 	{ alignhash_destroy(inclass, _hashing); }
 
@@ -426,6 +427,7 @@ public:
 			throw _Except();
 	}
 
+	virtual
 	~align_hash_set()
 	{ alignhash_destroy(inclass, _hashing); }
 
