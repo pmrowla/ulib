@@ -26,7 +26,7 @@
 #ifndef __ULIB_PART_TPL_H
 #define __ULIB_PART_TPL_H
 
-#include "internal.h"
+#include "common.h"
 
 /**
  * part - partitions any array into parts s.t.
@@ -47,18 +47,18 @@
 			m = p + (q - p) / 2;			\
 			e = *m;					\
 			if (lt(m, p))				\
-				SWAP(*m, *p);			\
+				swap(*m, *p);			\
 			if (lt(q, m)) {				\
-				SWAP(*q, *m);			\
+				swap(*q, *m);			\
 				if (lt(m, p))			\
-					SWAP(*m, *p);		\
+					swap(*m, *p);		\
 			}					\
 			for (;;) {				\
 				do ++p; while (lt(p, &e));	\
 				do --q; while (lt(&e, q));	\
 				if (p >= q)			\
 					break;			\
-				SWAP(*p, *q);			\
+				swap(*p, *q);			\
 			}					\
 			if (p > median)				\
 				t = p - 1;			\

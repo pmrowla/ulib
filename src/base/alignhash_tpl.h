@@ -30,6 +30,7 @@
 #include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
+#include "common.h"
 
 #ifdef AH_64BIT  /* specify if you are handling >4G keys */
 
@@ -83,9 +84,6 @@ enum {
 /* normal linear probing */
 #define AH_PROBE_STEP(h)         ( 1 )
 #endif
-
-#define AH_SWAP(a, b)							\
-	do { typeof(a) __tmp = (a); (a) = (b); (b) = __tmp; } while (0)
 
 #define AH_LOAD_FACTOR           0.77
 
@@ -196,9 +194,9 @@ enum {
 						i = (i + step) & new_mask; \
 					AH_CLEAR_EMPTY(new_flags, i);	\
 					if (i < h->nbucket && AH_ISEITHER(h->flags, i) == 0) { \
-						AH_SWAP(h->keys[i], key); \
+						swap(h->keys[i], key); \
 						if (_ismap)		\
-							AH_SWAP(h->vals[i], val); \
+							swap(h->vals[i], val); \
 						AH_SET_DEL(h->flags, i); \
 					} else {			\
 						h->keys[i] = key;	\

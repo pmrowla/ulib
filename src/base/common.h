@@ -29,6 +29,9 @@
 #ifndef __ULIB_COMMON_H
 #define __ULIB_COMMON_H
 
+#include <stddef.h>
+#include <stdint.h>
+
 /*
  * min()/max()/clamp() macros that also do
  * strict type-checking.. See the
@@ -162,5 +165,34 @@
 			(type *)( (char *)__mptr - __builtin_offsetof(type,member) );})
 
 #define generic_compare(x, y) (((x) > (y)) - ((x) < (y)))
+
+static inline void memswp(unsigned long *x, unsigned long *y, size_t size)
+{
+	unsigned long *p = x + size/sizeof(*x);;
+	unsigned char *h, *v;
+
+	while (x != p) {
+		swap(*x, *y);
+		x++;
+		y++;
+	}
+
+	h = (unsigned char *)x;
+	v = (unsigned char *)y;
+
+#if defined __x86_64__
+	switch (size & 7) {
+	case 7: swap(h[6], v[6]);
+	case 6: swap(h[5], v[5]);
+	case 5: swap(h[4], v[4]);
+	case 4: swap(h[3], v[3]);
+#else
+	switch (size & 3) {
+#endif
+	case 3: swap(h[2], v[2]);
+	case 2: swap(h[1], v[1]);
+	case 1: swap(h[0], v[0]);
+	}
+}
 
 #endif  /* __ULIB_COMMON_H */

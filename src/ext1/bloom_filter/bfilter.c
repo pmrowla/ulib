@@ -42,10 +42,8 @@ __init_seeds(uint64_t *seeds, int nseed)
 	int i;
 
 	RAND_NR_INIT(x, y, z, seed);
-	for (i = 0; i < nseed; i++) {
-		RAND_NR_NEXT(seed, x, y, z);
-		seeds[i] = seed;
-	}
+	for (i = 0; i < nseed; i++)
+		seeds[i] = RAND_NR_NEXT(x, y, z);
 }
 
 int bfilter_create(struct bloom_filter *bf, unsigned long nbits, unsigned long nelem)

@@ -27,7 +27,7 @@
 #define __ULIB_RAND_TPL_H
 
 #include <stdlib.h>
-#include "internal.h"
+#include "common.h"
 #include "bit.h"
 
 #define RAND_XORSHIFT(x, a, b, c) do {		\
@@ -54,13 +54,11 @@
 #define RAND_NR_MWC64(x)					\
 	((x) = 4294957665U * ((x) & 0xffffffff) + ((x) >> 32))
 
-#define RAND_NR_COMBINE(r, u, v, w) do {	\
-		(r) = (u);			\
-		RAND_XORSHIFT64(r);		\
-		(r) = ((r) + (v)) ^ (w);	\
-	} while (0)
+#define RAND_NR_COMBINE(u, v, w) ({		\
+			typeof(u) _r = (u);	\
+			RAND_XORSHIFT64(_r);	\
+			(_r + (v)) ^ (w); })
 
-/* mix u,v,w into r */
 #define RAND_NR_MIX(u, v, w) do {		\
 		RAND_NR_LC64(u);		\
 		RAND_NR_XS64(v);		\
@@ -77,10 +75,9 @@
 		RAND_NR_MIX(u, v, w);			\
 	} while (0)
 
-#define RAND_NR_NEXT(r, u, v, w) do {		\
-		RAND_NR_MIX(u, v, w);		\
-		RAND_NR_COMBINE(r, u, v, w);	\
-	} while (0)
+#define RAND_NR_NEXT(u, v, w) ({			\
+			RAND_NR_MIX(u, v, w);		\
+			RAND_NR_COMBINE(u, v, w); })
 
 #define RAND_NR_DOUBLE(x)			\
 	(5.42101086242752217E-20 * (x))
@@ -93,30 +90,28 @@
 			double _z = 1., _x = drand48();			\
 			while (_x < _z) _z -= _z * _i / (_pop--);	\
 			if (_k != (_n) - _pop - 1)			\
-				SWAP((_buf)[_k], (_buf)[(_n) - _pop - 1]); \
+				swap((_buf)[_k], (_buf)[(_n) - _pop - 1]); \
 			++_k;						\
 		}							\
 	} while (0)
 
-#define RAND_INT_MIX64(h) do {			\
-		(h) += ~((h) << 32);		\
-		(h) ^= ((h) >> 22);		\
-		(h) += ~((h) << 13);		\
-		(h) ^= ((h) >> 8);		\
-		(h) += ((h) << 3);		\
-		(h) ^= ((h) >> 15);		\
-		(h) += ~((h) << 27);		\
-		(h) ^= ((h) >> 31);		\
-	} while (0)
+#define RAND_INT_MIX64(h) ({			\
+			(h) += ~((h) << 32);	\
+			(h) ^= ((h) >> 22);	\
+			(h) += ~((h) << 13);	\
+			(h) ^= ((h) >> 8);	\
+			(h) += ((h) << 3);	\
+			(h) ^= ((h) >> 15);	\
+			(h) += ~((h) << 27);	\
+			(h) ^= ((h) >> 31); })
 
-#define RAND_INT2_MIX64(h) do {			\
-		(h)  = (~(h)) + ((h) << 21);	\
-		(h) ^= ROR64(h, 24);		\
-		(h) *= 265UL;			\
-		(h) ^= ROR64(h, 14);		\
-		(h) *= 21UL;			\
-		(h) ^= ROR64(h, 28);		\
-		(h) *= 2147483649UL;		\
-	} while (0)
+#define RAND_INT2_MIX64(h) ({				\
+			(h)  = (~(h)) + ((h) << 21);	\
+			(h) ^= ROR64(h, 24);		\
+			(h) *= 265UL;			\
+			(h) ^= ROR64(h, 14);		\
+			(h) *= 21UL;			\
+			(h) ^= ROR64(h, 28);		\
+			(h) *= 2147483649UL; })
 
 #endif
