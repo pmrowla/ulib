@@ -23,11 +23,10 @@
    SOFTWARE.
 */
 
-#include <ctype.h>
-
 #define _GNU_SOURCE  /* strndup for earlier glibc */
-#include <string.h>
 
+#include <ctype.h>
+#include <string.h>
 #include <stdlib.h>
 
 static const char *skip_arg(const char *cp)
