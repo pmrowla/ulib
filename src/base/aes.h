@@ -68,6 +68,7 @@ typedef struct aes_key_st AES_KEY;
 extern "C" {
 #endif
 
+	/* bits can be 128, 192 or 256 */
 	int  AES_set_encrypt_key(const unsigned char *userKey, const int bits,
 				AES_KEY *key);
 	int  AES_set_decrypt_key(const unsigned char *userKey, const int bits,

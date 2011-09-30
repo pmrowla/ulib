@@ -26,46 +26,40 @@
 #include "common.h"
 #include "rc4.h"
 
-void rc4_init(const unsigned char *key_data_ptr, int key_data_len, rc4_key_t * key)
+void rc4_set_key(const unsigned char *buf, size_t len, rc4_key_t * key)
 {
-	unsigned char index1;
-	unsigned char index2;
-	unsigned char *state;
-	short counter;
+	unsigned char j = 0;
+	unsigned char *state = key->state;
+	int i;
 
-	state = &key->state[0];
-	for (counter = 0; counter < 256; counter++)
-		state[counter] = counter;
+	for (i = 0;  i < 256; ++i)
+		state[i] = i;
+
 	key->x = 0;
 	key->y = 0;
-	index1 = 0;
-	index2 = 0;
-	for (counter = 0; counter < 256; counter++) {
-		index2 = (key_data_ptr[index1] + state[counter] + index2) % 256;
-		swap(state[counter], state[index2]);
-		index1 = (index1 + 1) % key_data_len;
+
+	for (i = 0; i < 256; ++i) {
+		j = j + state[i] + buf[i % len];
+		swap(state[i], state[j]);
 	}
 }
 
-void rc4_crypt(unsigned char *buffer_ptr, int buffer_len, rc4_key_t * key)
+void rc4_crypt(unsigned char *buf, size_t len, rc4_key_t * key)
 {
 	unsigned char x;
 	unsigned char y;
-	unsigned char *state;
-	unsigned char xorIndex;
-	short counter;
+	unsigned char *state = key->state;
+	unsigned int  i;
 
 	x = key->x;
 	y = key->y;
 
-	state = &key->state[0];
-	for (counter = 0; counter < buffer_len; counter++) {
-		x = (x + 1) % 256;
-		y = (state[x] + y) % 256;
+	for (i = 0; i < len; i++) {
+		y = y + state[++x];
 		swap(state[x], state[y]);
-		xorIndex = (state[x] + state[y]) % 256;
-		buffer_ptr[counter] ^= state[xorIndex];
+		buf[i] ^= state[(state[x] + state[y]) & 0xff];
 	}
+
 	key->x = x;
 	key->y = y;
 }

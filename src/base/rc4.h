@@ -26,6 +26,8 @@
 #ifndef __ULIB_RC4_H
 #define __ULIB_RC4_H
 
+#include <stddef.h>
+
 typedef struct rc4_key_t {
 	unsigned char state[256];
 	unsigned char x;
@@ -36,10 +38,10 @@ typedef struct rc4_key_t {
 extern "C" {
 #endif
 
-	void rc4_init(const unsigned char *key_data_ptr, int key_data_len,
-		      rc4_key_t * key);
+	void rc4_set_key(const unsigned char *key_data, size_t key_data_len,
+			 rc4_key_t * key);
 
-	void rc4_crypt(unsigned char *buffer_ptr, int buffer_len,
+	void rc4_crypt(unsigned char *buffer, size_t buffer_len,
 		       rc4_key_t * key);
 
 #ifdef __cplusplus
