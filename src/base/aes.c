@@ -899,7 +899,6 @@ int AES_set_decrypt_key(const unsigned char *userKey, const int bits,
 	return 0;
 }
 
-#ifndef AES_ASM
 /*
  * Encrypt a single block
  * in and out can overlap
@@ -1280,53 +1279,58 @@ void AES_decrypt(const unsigned char *in, unsigned char *out,
 	PUTU32(out + 12, s3);
 }
 
-#endif /* AES_ASM */
+#define AES_BLOCK_OP64(dst, src, op) do {			\
+		uint64_t *_dst = (uint64_t *)(dst);		\
+		uint64_t *_src = (uint64_t *)(src);		\
+		*_dst++ op *_src++;				\
+		*_dst   op *_src;				\
+	} while (0)
 
-void AES_cbc_encrypt(const unsigned char *in, unsigned char *out,
-		     const unsigned long length, const AES_KEY *key,
-		     unsigned char *ivec, const int enc) 
+#define AES_BLOCK_OP32(dst, src, op) do {			\
+		uint32_t *_dst = (uint32_t *)(dst);		\
+		uint32_t *_src = (uint32_t *)(src);		\
+		*_dst++ op *_src++;				\
+		*_dst++ op *_src++;				\
+		*_dst++ op *_src++;				\
+		*_dst   op *_src;				\
+	} while (0)
+
+#if defined __x86_64__
+#define AES_BLOCK_OP(dst, src, op) AES_BLOCK_OP64(dst, src, op)
+#else
+#define AES_BLOCK_OP(dst, src, op) AES_BLOCK_OP32(dst, src, op)
+#endif
+
+void AES_cbc_encrypt(const unsigned char *in, unsigned char *out, unsigned char *ivec,
+		     unsigned long nblock, const AES_KEY *key)
 {
+	const unsigned char *vec = ivec;
 
-	unsigned long n;
-	unsigned long len = length;
-	unsigned char tmp[AES_BLOCK_SIZE];
-
-	if (enc) {
-		while (len >= AES_BLOCK_SIZE) {
-			for(n=0; n < AES_BLOCK_SIZE; ++n)
-				tmp[n] = in[n] ^ ivec[n];
-			AES_encrypt(tmp, out, key);
-			memcpy(ivec, out, AES_BLOCK_SIZE);
-			len -= AES_BLOCK_SIZE;
-			in += AES_BLOCK_SIZE;
-			out += AES_BLOCK_SIZE;
-		}
-		if (len) {
-			for(n=0; n < len; ++n)
-				tmp[n] = in[n] ^ ivec[n];
-			for(n=len; n < AES_BLOCK_SIZE; ++n)
-				tmp[n] = ivec[n];
-			AES_encrypt(tmp, tmp, key);
-			memcpy(out, tmp, AES_BLOCK_SIZE);
-			memcpy(ivec, tmp, AES_BLOCK_SIZE);
-		}			
-	} else {
-		while (len >= AES_BLOCK_SIZE) {
-			memcpy(tmp, in, AES_BLOCK_SIZE);
-			AES_decrypt(in, out, key);
-			for(n=0; n < AES_BLOCK_SIZE; ++n)
-				out[n] ^= ivec[n];
-			memcpy(ivec, tmp, AES_BLOCK_SIZE);
-			len -= AES_BLOCK_SIZE;
-			in += AES_BLOCK_SIZE;
-			out += AES_BLOCK_SIZE;
-		}
-		if (len) {
-			memcpy(tmp, in, AES_BLOCK_SIZE);
-			AES_decrypt(tmp, tmp, key);
-			for(n=0; n < len; ++n)
-				out[n] = tmp[n] ^ ivec[n];
-			memcpy(ivec, tmp, AES_BLOCK_SIZE);
-		}			
+	while (nblock--) {
+		AES_BLOCK_OP(out, in,   =);
+		AES_BLOCK_OP(out, vec, ^=);
+		AES_encrypt(out, out, key);
+		vec  = out;
+		in  += AES_BLOCK_SIZE;
+		out += AES_BLOCK_SIZE;
 	}
+
+	memcpy(ivec, vec, AES_BLOCK_SIZE);
+}
+
+void AES_cbc_decrypt(const unsigned char *in, unsigned char *out, unsigned char *ivec,
+		     unsigned long nblock, const AES_KEY *key)
+{
+	const unsigned char *vec = ivec;
+
+	while (nblock--) {
+		AES_BLOCK_OP(out, in,   =);
+		AES_decrypt(out, out, key);
+		AES_BLOCK_OP(out, vec, ^=);
+		vec  = in;
+		in  += AES_BLOCK_SIZE;
+		out += AES_BLOCK_SIZE;
+	}
+
+	memcpy(ivec, vec, AES_BLOCK_SIZE);
 }

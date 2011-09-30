@@ -79,9 +79,12 @@ extern "C" {
 	void AES_decrypt(const unsigned char *in, unsigned char *out,
 			 const AES_KEY *key);
 
-	void AES_cbc_encrypt(const unsigned char *in, unsigned char *out,
-			     const unsigned long length, const AES_KEY *key,
-			     unsigned char *ivec, const int enc);
+	void AES_cbc_encrypt(const unsigned char *in, unsigned char *out, unsigned char *ivec,
+			     unsigned long nblock, const AES_KEY *key);
+
+	void AES_cbc_decrypt(const unsigned char *in, unsigned char *out, unsigned char *ivec,
+			     unsigned long nblock, const AES_KEY *key);
+
 
 #ifdef __cplusplus
 }
