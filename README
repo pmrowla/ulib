@@ -1,77 +1,60 @@
 ===========================================================================
-	Introducting ULIB
+	Introducing ULIB
 ===========================================================================
 
 1. What is ULIB?
-   ULIB is a collection of efficient and flexible implementations of
-   common data structures and algorithms. The essential part of ULIB
-   is written in C, that is, the 'core'. Other parts of the library act
-   as extensions to the 'core'.
-
-2. What it is good for?
-   There are mainly two advantages of ULIB over many other libraries,
-   performance and interface. ULIB is well implemented and has better
-   or similar performance as compared to state-of-the-art
-   libraries. In addition, the APIs of ULIB is carefully designed and
-   largely follow the kernel coding style paradigm - simple and flexible.
+   ULIB is a collection of efficient implementations of fundamental data
+   structures and algorithms. The goal of ULIB is to provide an OS
+   independent library for common programming purpose. On this point,
+   ULIB is like what STL to C++. Whereas ULIB also supports several
+   properties over many other libraries like STL. Performance is a
+   notable advantage, ULIB is highly optimized so that it has better or
+   similar performance than stat-of-the-art implementations. In addition,
+   the APIs of ULIB are carefully designed to follow the Linux kernel
+   paradigm, simple and flexible. Moreover, it is featured by some
+   creative utilities, e.g., user-defined shell, parallel file processing
+   primitives.
 
 ===========================================================================
-	Layout of the Source Tree
+	Organization of the Source Tree
 ===========================================================================
-   As usual, the output is divided into includes and libraries, which
-   are respectively resides into include/ and lib/
-   directories. According  to their functionalities, the source is
-   structured in layers, where layers with higher levels use make
-   use of the lower level layers. Each layer writes its output
-   independently into include/ and lib/, when all sources are
-   compiled, the libraries of all layers are merged into a single
-   library. 
+
+   As usual, the output is divided into include/ and lib/, which
+   respectively resides into include/ and lib/ directories. According
+   to their level of functionality, the source is structured into
+   different layers, where higher level layers provide interfaces that
+   are ease-to-use, and lower level layers do the operation closely
+   related to the machine. Each layer shall output its own headers and
+   libraries independently into include/ and lib/. After all layers
+   are compiled, output libraries are merged. 
 
 ===========================================================================
 	Core Components
 ===========================================================================
 
-1. Data Structures
-   1) Ported linux kernel list, a simple doubly linked list implementation.
-   2) Various trees, including binary search tree, splay tree, red-black
-      tree and AVL tree.
-   3) Bitmap.
-   4) Bloom filter.
-   5) Aligned Hashing
-      Aligned hashing is an extremely efficient hashing scheme. Both Map and
-      Set are provided in alignhash.h. The properties of aligned
-      hashing are:
-      1) CPU cache-conscious layout. A bitmap index is used to support fast
-      	 data location especially for sparse key distributions.
-      2) Aligned data access. The bucket for a set/search operation is
-      	 located through logical AND not %. This implies a significant
-      	 improvement on searching.
-      3) Tier-probing, a technique based on double hashing.
-
-2. Search Algorithms
-   1) File binary search algorithm, which performs a binary search on
-   a line-sorted file for lines that meet the conditions given by the
-   user-defined function.
-   2) Partition algorithm.
-
-3. Sorting Algorithms
-   1) List merge-sort algorthm.
-   2) Heapsort.
-
-4. Cryptographic Algorithms
-   1) AES (Advanced Encryption Standard)
-   2) MD5
-   3) SHA1, SHA256
-   4) RC4
-
-5. Math tools.
-   1) GCD algorithm.
-   2) Bit hacks.
-   3) Combinatorics algorithm.
-
-6. Utilities.
-   1) String utilities, splitting, parsing etc.
-   2) A high resolution timer.
-   3) A collection of hash functions.
-   4) A hexdump utility.
-   5) A user-defined console.
+    1. A simple doubly linked list, which also can be used as queue and
+       stack.
+    2. An extremely efficient hashing scheme - alignhash, both hash_map
+       and hash_set are provided. This is an open addressing hashing with
+       many optimizations such as double hashing, cache alignment etc.
+    3. Various trees, including binary search tree, splay tree, red-black
+       tree, AVL tree.
+    4. A list sorting algorithm, faster than the qsort() in libc.
+    5. A binary search algorithm for text files. Work with line-sorted
+       text files.
+    6. A heap and the corresponding sorting algorithm, faster than the
+       STL version.
+    7. A partition algorithm, which partitions an array into three parts
+       |<=K| K |>= K|, O(1) complexity.
+    8. A collection of fast hash functions for various data types.
+    9. Primitives for random number generation. Useful for designing
+       numerical algorithms.
+    10. A collection of bit operation hacks. Useful for numerical
+    	algorithms and cryptography.
+    11. A full featured bitmap and a bloom filter based on it.
+    12. Several cryptographic algorithms, Advanced Encryption
+    	Standard(AES), RC4, SHA-x, MD5 etc.
+    13. A collection of string utilities, including primitives for
+    	parallel file process.
+    14. Various utilities, including high resolution timer, user-defined
+    	shell, combination enumerator. 
