@@ -6,11 +6,11 @@ INCPATH		= ../include
 LIBPATH		= ../lib
 
 CXX		?= g++
-CXXFLAGS	?= -I$(INCPATH) -g3 -O3 -W -Wall 
-LDFLAGS		?= -L$(LIBPATH) -lulib -lrt -lm
+CXXFLAGS	?= -g3 -O3 -W -Wall
+LDFLAGS		?= -lulib -lrt -lm
 
 %.test: test_%.cpp
-	$(CXX) $(CXXFLAGS) $< -o $@ $(LDFLAGS)
+	$(CXX) -I $(INCPATH) $(CXXFLAGS) $< -o $@ -L $(LIBPATH) $(LDFLAGS)
 
 .PHONY: all clean
 

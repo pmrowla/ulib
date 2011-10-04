@@ -1,9 +1,3 @@
-#
-# Generic ULIB makefile
-# Author: Zeno Tan <tzlloch@gmail.com>
-# DATE: 2010/8/25
-#
-
 # root of ulib directory
 ROOT	= ../../..
 
@@ -16,8 +10,8 @@ LIBPATH	= $(ROOT)/lib
 # output library
 TARGET	= $(LIBPATH)/libshell.a
 
-CC	= gcc
-CFLAGS	= -I $(INCPATH) -g3 -O3 -Wall -W -Werror -pipe -c -fno-strict-aliasing
+CC	?= gcc
+CFLAGS	?= -g3 -O3 -Wall -W -Werror -pipe -c -fno-strict-aliasing
 
 #
 # define object files below
@@ -25,7 +19,7 @@ CFLAGS	= -I $(INCPATH) -g3 -O3 -Wall -W -Werror -pipe -c -fno-strict-aliasing
 OBJS	= console.o argv_split.o
 
 .c.o:
-	$(CC) $(CFLAGS) $< -o $@
+	$(CC) -I $(INCPATH) $(CFLAGS) $< -o $@
 
 #
 # build targets

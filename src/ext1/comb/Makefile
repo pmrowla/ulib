@@ -1,9 +1,3 @@
-#
-# Generic ULIB makefile
-# Author: Zeno Tan <tzlloch@gmail.com>
-# DATE: 2010/8/25
-#
-
 # root of ulib directory
 ROOT	= ../../..
 
@@ -16,8 +10,8 @@ LIBPATH	= $(ROOT)/lib
 # output library
 TARGET	= $(LIBPATH)/libcomb.a
 
-CC	= gcc
-CFLAGS	= -I $(INCPATH) -g3 -O3 -Wall -W -Werror -pipe -c
+CC	?= gcc
+CFLAGS	?= -g3 -O3 -Wall -W -Werror -pipe -c
 
 #
 # define object files below
@@ -25,7 +19,7 @@ CFLAGS	= -I $(INCPATH) -g3 -O3 -Wall -W -Werror -pipe -c
 OBJS	= comb.o
 
 .c.o:
-	$(CC) $(CFLAGS) $< -o $@
+	$(CC) -I $(INCPATH) $(CFLAGS) $< -o $@
 
 #
 # build targets
