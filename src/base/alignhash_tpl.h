@@ -78,14 +78,14 @@ enum {
  * for relatively random keys. You can specify AH_TIER_PROBING to
  * enable tier probing, otherwise linear probing is used by default. */
 #ifdef AH_TIER_PROBING
-/* tier probing step */
+/* tier probing step, eligible for memory-efficient cases */
 #define AH_PROBE_STEP(h)         ( ((h) ^ (h) >> 13) | 1 )
+#define AH_LOAD_FACTOR           0.80
 #else
-/* normal linear probing */
+/* linear probing, for fast lookups */
 #define AH_PROBE_STEP(h)         ( 1 )
+#define AH_LOAD_FACTOR           0.50
 #endif
-
-#define AH_LOAD_FACTOR           0.77
 
 #define DECLARE_ALIGNHASH(_name, _key_t, _val_t, _ismap, _hashfn, _hasheq) \
 	typedef struct {						\

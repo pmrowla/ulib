@@ -4,16 +4,18 @@
 #include <stdlib.h>
 #include <signal.h>
 #include <unistd.h>
-
-#define AH_64BIT
 #include <ulib/alignhash_tpl.h>
+#include <ulib/rand_tpl.h>
+
+uint64_t u, v, w;
+#define myrand()  RAND_NR_NEXT(u, v, w)
 
 const char *usage = 
 	"%s [ins] [get]\n";
 
 volatile long counter = 0;
 
-DECLARE_ALIGNHASH(myhash, uint32_t, uint32_t, 1, alignhash_hashfn, alignhash_equalfn)
+DECLARE_ALIGNHASH(myhash, uint64_t, uint64_t, 1, alignhash_hashfn, alignhash_equalfn)
 
 static void sig_alarm_handler(int)
 {
@@ -48,7 +50,7 @@ void constant_insert(long ins, long get)
 	}
 
 	for (t = 0; t < ins; t++) {
-		ah_iter_t itr = alignhash_set(myhash, my, lrand48(), &ret);
+		ah_iter_t itr = alignhash_set(myhash, my, myrand(), &ret);
 		if (alignhash_end(my) != itr)
 			alignhash_value(my, itr) = t;
 		counter++;
@@ -57,7 +59,7 @@ void constant_insert(long ins, long get)
 	printf("insertion done\n");
 
 	for (t = 0; t < get; t++) {
-		alignhash_get(myhash, my, lrand48());
+		alignhash_get(myhash, my, myrand());
 		counter++;
 	}
 
@@ -70,13 +72,14 @@ int main(int argc, char *argv[])
 {
 	long ins = 10000000;
 	long get = 100000000;
+	uint64_t seed = time(NULL);
 
 	if (argc > 1)
 		ins = atol(argv[1]);
 	if (argc > 2)
 		get = atol(argv[2]);
 
-	srand48((int)time(NULL));
+	RAND_NR_INIT(u, v, w, seed);
 
 	register_sig_handler();
 
