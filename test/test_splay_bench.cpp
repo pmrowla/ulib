@@ -4,7 +4,8 @@
 #include <stdlib.h>
 #include <signal.h>
 #include <unistd.h>
-#include <ulib/alignhash_tpl.h>
+#include <ulib/tree.h>
+#include <ulib/common.h>
 #include <ulib/rand_tpl.h>
 
 uint64_t u, v, w;
@@ -15,7 +16,26 @@ const char *usage =
 
 volatile long counter = 0;
 
-DECLARE_ALIGNHASH(myhash, uint64_t, uint64_t, 1, alignhash_hashfn, alignhash_equalfn)
+struct tree_node {
+	struct tree_root link;
+	uint64_t value;
+
+	tree_node(uint64_t val = 0)
+	: value(val) { }
+
+	bool
+	operator<(const tree_node &other) const
+	{ return value < other.value; }
+
+	bool
+	operator>(const tree_node &other) const
+	{ return value > other.value; }
+};
+
+int tree_node_cmp(const void *a, const void *b)
+{
+	return generic_compare(*(tree_node *)a, *(tree_node *)b);
+}
 
 static void sig_alarm_handler(int)
 {
@@ -40,38 +60,35 @@ void register_sig_handler()
 void constant_insert(long ins, long get)
 {
 	long t;
-	int ret;
-
-	alignhash_t(myhash) *my = alignhash_init(myhash);
-
-	if (my == NULL) {
-		fprintf(stderr, "alloc failed\n");
-		return;
-	}
+	tree_node *tree, *tmp;
+	tree_root *root = NULL;
 
 	for (t = 0; t < ins; t++) {
-		ah_iter_t itr = alignhash_set(myhash, my, myrand(), &ret);
-		if (alignhash_end(my) != itr)
-			alignhash_value(my, itr) = t;
+		tree = new tree_node(myrand());
+		splay_map(&tree->link, tree_node_cmp, &root);
 		counter++;
 	}
 
 	printf("insertion done\n");
 
 	for (t = 0; t < get; t++) {
-		alignhash_get(myhash, my, myrand());
+		tree_node n(myrand());
+		splay_search(&n.link, tree_node_cmp, &root);
 		counter++;
 	}
 
-	alignhash_destroy(myhash, my);
+	tree_for_each_entry_safe(tree, tmp, root, link) {
+		tree_del(&tree->link, &root);
+		delete tree;
+	}
     
 	printf("all done\n");
 }
 
 int main(int argc, char *argv[])
 {
-	long ins = 5000000;
-	long get = 50000000;
+	long ins = 2000000;
+	long get = 2000000;
 	uint64_t seed = time(NULL);
 
 	if (argc > 1)

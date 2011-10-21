@@ -3,58 +3,42 @@
 ===========================================================================
 
 1. What is ULIB?
-   ULIB is a collection of efficient implementations of fundamental data
-   structures and algorithms. The goal of ULIB is to provide an OS
-   independent library for common programming purpose. On this point,
-   ULIB is like what STL to C++. Whereas ULIB also supports several
-   properties over many other libraries like STL. Performance is a
-   notable advantage, ULIB is highly optimized so that it has better or
-   similar performance than stat-of-the-art implementations. In addition,
-   the APIs of ULIB are carefully designed to follow the Linux kernel
-   paradigm, simple and flexible. Moreover, it is featured by some
-   creative utilities, e.g., user-defined shell, parallel file processing
-   primitives.
-
-===========================================================================
-	Organization of the Source Tree
-===========================================================================
-
-   As usual, the output is divided into include/ and lib/, which
-   respectively resides into include/ and lib/ directories. According
-   to their level of functionality, the source is structured into
-   different layers, where higher level layers provide interfaces that
-   are ease-to-use, and lower level layers do the operation closely
-   related to the machine. Each layer shall output its own headers and
-   libraries independently into include/ and lib/. After all layers
-   are compiled, output libraries are merged. 
+   Basically, ulib is a collection of common data structures and
+   algorithms. It is featured in several aspects. Most importantly,
+   ulib is quite efficient. In particular, the implementations have
+   better or similar performance than state-of-the-art libraries.
+   Secondly, the interface of ulib is designed to be flexible. The
+   design follows the linux kernel style: minimized interface with
+   maximum control.
 
 ===========================================================================
 	Core Components
 ===========================================================================
 
-    1. A simple doubly linked list, which also can be used as queue and
+    1. A simple doubly linked list, this can also be used as queue and
        stack.
-    2. An extremely efficient hashing scheme - alignhash, both hash_map
-       and hash_set are provided. This is an open addressing hashing with
-       many optimizations such as double hashing, cache alignment etc.
-    3. Various trees, including binary search tree, splay tree, red-black
-       tree, AVL tree.
-    4. A list sorting algorithm, faster than the qsort() in libc.
-    5. A binary search algorithm for text files. Work with line-sorted
-       text files.
-    6. A heap and the corresponding sorting algorithm, faster than the
-       STL version.
-    7. A partition algorithm, which partitions an array into three parts
-       |<=K| K |>= K|, O(1) complexity.
+    2. An extremely efficient hashing scheme - alignhash, both
+       hash_map and hash_set are provided. Both C and C++ versions are
+       provided.
+    3. Various trees, such as binary search tree, splay tree,
+       red-black tree and AVL tree.
+    4. A list sorting algorithm, this is faster than the qsort() in
+       libc.
+    5. A binary search algorithm for text files. It works with
+       line-sorted text files.
+    6. A heap and the corresponding sorting algorithm, this is faster
+       than the STL version.
+    7. A partition algorithm, this partitions an array into three
+       parts |<=K| K |>= K|, O(1) complexity.
     8. A collection of fast hash functions for various data types.
-    9. Primitives for random number generation. Useful for designing
-       numerical algorithms.
-    10. A collection of bit operation hacks. Useful for numerical
-    	algorithms and cryptography.
-    11. A full featured bitmap and a bloom filter based on it.
-    12. Several cryptographic algorithms, Advanced Encryption
+    9. Primitives for random number generation. Especially useful for
+       designing numerical algorithms.
+    10. A collection of bit operation hacks. Especially useful for
+       numerical algorithms and cryptography.
+    11. A full featured bitmap and its derivate bloom filter.
+    12. Several cryptographic algorithms, namely Advanced Encryption
     	Standard(AES), RC4, SHA-x, MD5 etc.
     13. A collection of string utilities, including primitives for
     	parallel file process.
-    14. Various utilities, including high resolution timer, user-defined
-    	shell, combination enumerator. 
+    14. Various utilities, including high resolution timer,
+    	user-defined shell, combination enumerator.

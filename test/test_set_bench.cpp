@@ -4,7 +4,8 @@
 #include <stdlib.h>
 #include <signal.h>
 #include <unistd.h>
-#include <ulib/alignhash_tpl.h>
+#include <set>
+#include <ulib/common.h>
 #include <ulib/rand_tpl.h>
 
 uint64_t u, v, w;
@@ -15,7 +16,23 @@ const char *usage =
 
 volatile long counter = 0;
 
-DECLARE_ALIGNHASH(myhash, uint64_t, uint64_t, 1, alignhash_hashfn, alignhash_equalfn)
+struct elem {
+	uint64_t value;
+
+	elem(uint64_t val = 0)
+	: value(val) { }
+
+	bool
+	operator<(const elem &other) const
+	{ return value < other.value; }
+
+	bool
+	operator>(const elem &other) const
+	{ return value > other.value; }
+
+	bool operator==(const elem &other) const
+	{ return value == other.value; }
+};
 
 static void sig_alarm_handler(int)
 {
@@ -40,38 +57,27 @@ void register_sig_handler()
 void constant_insert(long ins, long get)
 {
 	long t;
-	int ret;
-
-	alignhash_t(myhash) *my = alignhash_init(myhash);
-
-	if (my == NULL) {
-		fprintf(stderr, "alloc failed\n");
-		return;
-	}
+	std::set<elem> set;
 
 	for (t = 0; t < ins; t++) {
-		ah_iter_t itr = alignhash_set(myhash, my, myrand(), &ret);
-		if (alignhash_end(my) != itr)
-			alignhash_value(my, itr) = t;
+		set.insert(elem(myrand()));
 		counter++;
 	}
 
 	printf("insertion done\n");
 
 	for (t = 0; t < get; t++) {
-		alignhash_get(myhash, my, myrand());
+		set.find(elem(myrand()));
 		counter++;
 	}
 
-	alignhash_destroy(myhash, my);
-    
 	printf("all done\n");
 }
 
 int main(int argc, char *argv[])
 {
 	long ins = 5000000;
-	long get = 50000000;
+	long get = 10000000;
 	uint64_t seed = time(NULL);
 
 	if (argc > 1)

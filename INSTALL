@@ -1,1 +1,7 @@
-Use command 'make clean && make' to generate ulib_dist.tar.gz tarball.
+Supported Platforms: 
+	  The recommended target OS is Linux 64-bit, actually ulib
+	  also works for other unix-like OSs.
+
+How to build?
+    Use command 'make clean && make' to generate ulib_dist.tar.gz
+    tarball. This tarball contains all headers and libraries of ulib.
