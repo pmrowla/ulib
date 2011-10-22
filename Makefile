@@ -4,7 +4,7 @@ $(TARGET):
 	make -C src/
 	make -C lib/
 	make -C test/
-	tar czf $(TARGET) include/ lib/libulib.a test/
+	tar cpzf $(TARGET) --exclude=.svn include/ lib/libulib.a test/
 
 .PHONY: clean remove_bak debug release
 
@@ -14,7 +14,7 @@ release:
 	make -C src/
 	make -C lib/ release
 	make -C test/
-	tar czf $(TARGET) include/ lib/libulib.a test/
+	tar cpzf $(TARGET) --exclude=.svn include/ lib/libulib.a test/
 
 clean:
 	rm -rf $(TARGET)
