@@ -70,7 +70,7 @@ void constant_insert(long ins, long get)
 
 int main(int argc, char *argv[])
 {
-	long ins = 5000000;
+	long ins = 1000000;
 	long get = 50000000;
 	uint64_t seed = time(NULL);
 

@@ -9,9 +9,10 @@ LIBPATH		= ../lib
 CXX		?= g++
 CXXFLAGS	?= -g3 -O3 -W -Wall
 LDFLAGS		?= -lulib -lrt -lm
+DEBUG		?=
 
 %.test: test_%.cpp
-	$(CXX) -I $(INCPATH) $(CXXFLAGS) $< -o $@ -L $(LIBPATH) $(LDFLAGS)
+	$(CXX) -I $(INCPATH) $(CXXFLAGS) $(DEBUG) $< -o $@ -L $(LIBPATH) $(LDFLAGS)
 
 .PHONY: all clean
 

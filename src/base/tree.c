@@ -25,9 +25,10 @@
 
 #include "tree.h"
 
-struct tree_root *tree_search(struct tree_root *entry,
-			      int (*compare) (const void *, const void *),
-			      struct tree_root *root)
+struct tree_root *
+tree_search(struct tree_root *entry,
+	    int (*compare) (const void *, const void *),
+	    struct tree_root *root)
 {
 	int retval;
 
@@ -43,7 +44,8 @@ struct tree_root *tree_search(struct tree_root *entry,
 	return root;
 }
 
-struct tree_root *tree_min(struct tree_root *root)
+struct tree_root *
+tree_min(struct tree_root *root)
 {
 	if (root != NIL) {
 		while (root->left != NIL)
@@ -52,7 +54,8 @@ struct tree_root *tree_min(struct tree_root *root)
 	return root;
 }
 
-struct tree_root *tree_max(struct tree_root *root)
+struct tree_root *
+tree_max(struct tree_root *root)
 {
 	if (root != NIL) {
 		while (root->right != NIL)
@@ -61,7 +64,8 @@ struct tree_root *tree_max(struct tree_root *root)
 	return root;
 }
 
-struct tree_root *tree_successor(struct tree_root *root)
+struct tree_root *
+tree_successor(struct tree_root *root)
 {
 	struct tree_root *p = NIL;
 
@@ -78,7 +82,8 @@ struct tree_root *tree_successor(struct tree_root *root)
 	return p;
 }
 
-struct tree_root *tree_predecessor(struct tree_root *root)
+struct tree_root *
+tree_predecessor(struct tree_root *root)
 {
 	struct tree_root *p = NIL;
 
@@ -100,8 +105,9 @@ struct tree_root *tree_predecessor(struct tree_root *root)
  *
  * This is only for internal tree manipulation.
  */
-static inline void __rotate_left(struct tree_root *entry,
-				 struct tree_root **root)
+static inline void
+__rotate_left(struct tree_root *entry,
+	      struct tree_root **root)
 {
 	struct tree_root *n;
 
@@ -129,8 +135,9 @@ static inline void __rotate_left(struct tree_root *entry,
  *
  * This is only for internal tree manipulation.
  */
-static inline void __rotate_right(struct tree_root *entry,
-				  struct tree_root **root)
+static inline void
+__rotate_right(struct tree_root *entry,
+	       struct tree_root **root)
 {
 	struct tree_root *n;
 
@@ -153,9 +160,10 @@ static inline void __rotate_right(struct tree_root *entry,
 	entry->parent = n;
 }
 
-void tree_add(struct tree_root *new,
-	      int (*compare) (const void *, const void *),
-	      struct tree_root **root)
+void
+tree_add(struct tree_root *new,
+	 int (*compare) (const void *, const void *),
+	 struct tree_root **root)
 {
 	int retval = 0;
 	struct tree_root *r = *root;
@@ -185,9 +193,10 @@ void tree_add(struct tree_root *new,
 		n->right = new;
 }
 
-struct tree_root *tree_map(struct tree_root *new,
-			   int (*compare) (const void *, const void *),
-			   struct tree_root **root)
+struct tree_root *
+tree_map(struct tree_root *new,
+	 int (*compare) (const void *, const void *),
+	 struct tree_root **root)
 {
 	int retval = 0;
 	struct tree_root *r = *root;
@@ -220,7 +229,8 @@ struct tree_root *tree_map(struct tree_root *new,
 	return new;
 }
 
-void tree_del(struct tree_root *entry, struct tree_root **root)
+void
+tree_del(struct tree_root *entry, struct tree_root **root)
 {
 	struct tree_root *r;
 	struct tree_root *n;
@@ -401,9 +411,10 @@ void tree_del(struct tree_root *entry, struct tree_root **root)
 		(head)->right = (node)->left;			\
 	} while (0)
 
-struct tree_root *splay_search(struct tree_root *entry,
-			       int (*compare) (const void *, const void *),
-			       struct tree_root **root)
+struct tree_root *
+splay_search(struct tree_root *entry,
+	     int (*compare) (const void *, const void *),
+	     struct tree_root **root)
 {
 	int cmp;
 	TREE_ROOT(node);  /* node for assembly use */
@@ -445,9 +456,10 @@ struct tree_root *splay_search(struct tree_root *entry,
 	return head;
 }
 
-struct tree_root *splay_map(struct tree_root *new,
-			    int (*compare) (const void *, const void *),
-			    struct tree_root **root)
+struct tree_root *
+splay_map(struct tree_root *new,
+	  int (*compare) (const void *, const void *),
+	  struct tree_root **root)
 {
 	int cmp;
 	TREE_ROOT(node);  /* node for assembly use */
@@ -635,7 +647,8 @@ splay_map_nparent(struct tree_root *new,
  *
  * This is only for internal AVL tree manipulation after adding new entry
  */
-static inline void __avl_balance(struct avl_root *new, struct avl_root **root)
+static inline void
+__avl_balance(struct avl_root *new, struct avl_root **root)
 {
 	int balance = 0;
 	struct avl_root *n;
@@ -711,9 +724,10 @@ static inline void __avl_balance(struct avl_root *new, struct avl_root **root)
 	}
 }
 
-void avl_add(struct avl_root *new,
-	     int (*compare) (const void *, const void *),
-	     struct avl_root **root)
+void
+avl_add(struct avl_root *new,
+	int (*compare) (const void *, const void *),
+	struct avl_root **root)
 {
 	new->balance = 0;
 
@@ -724,9 +738,10 @@ void avl_add(struct avl_root *new,
 	__avl_balance(new, root);
 }
 
-struct avl_root *avl_map(struct avl_root *new,
-			 int (*compare) (const void *, const void *),
-			 struct avl_root **root)
+struct avl_root *
+avl_map(struct avl_root *new,
+	int (*compare) (const void *, const void *),
+	struct avl_root **root)
 {
 	struct avl_root *n;
 
@@ -746,7 +761,8 @@ struct avl_root *avl_map(struct avl_root *new,
 	return new;
 }
 
-void avl_del(struct avl_root *entry, struct avl_root **root)
+void
+avl_del(struct avl_root *entry, struct avl_root **root)
 {
 	int dir = 0;
 	int dir_next = 0;

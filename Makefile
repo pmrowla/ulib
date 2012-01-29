@@ -11,9 +11,9 @@ $(TARGET):
 debug: $(TARGET)
 
 release:
-	make -C src/
+	make DEBUG=-DUNDEBUG -C src/
 	make -C lib/ release
-	make -C test/
+	make DEBUG=-DUNDEBUG -C test/
 	tar cpzf $(TARGET) --exclude=.svn include/ lib/libulib.a test/
 
 clean:

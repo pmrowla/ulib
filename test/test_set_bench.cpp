@@ -76,8 +76,8 @@ void constant_insert(long ins, long get)
 
 int main(int argc, char *argv[])
 {
-	long ins = 5000000;
-	long get = 10000000;
+	long ins = 2000000;
+	long get = 5000000;
 	uint64_t seed = time(NULL);
 
 	if (argc > 1)

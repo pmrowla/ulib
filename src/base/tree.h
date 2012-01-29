@@ -26,7 +26,7 @@
 #ifndef __ULIB_TREE_H
 #define __ULIB_TREE_H
 
-/* to avoid conflict with C++ new operator */
+/* to avoid conflicts with C++ new operator */
 #define new _new_
 
 struct tree_root {
@@ -34,23 +34,15 @@ struct tree_root {
 	struct tree_root *parent;
 };
 
-/*
- * avl_root is derived from tree_root
- */
+/* avl_root is derived from tree_root */
 struct avl_root {
 	struct avl_root *left, *right;
 	struct avl_root *parent;
-	int balance:3;		/* balance factor */
+	int balance:3;
 };
 
 #define NIL (void *)0
 
-/*
- * Macros for internal use.
- * You don't need to initialize tree entry,
- * entries are initialized automatically
- * when adding or mapping them.
- */
 #define TREE_ROOT_INIT { NIL, NIL, NIL }
 
 #define TREE_ROOT(name)				\
@@ -67,175 +59,179 @@ struct avl_root {
 	struct avl_root name = AVL_ROOT_INIT;
 
 #define INIT_AVL_ROOT(ptr) do {					\
-		INIT_TREE_ROOT(ptr); (ptr)->balance = 0;	\
+		INIT_TREE_ROOT(ptr);				\
+		(ptr)->balance = 0;				\
 	} while (0)
 
-/*
- * Simplified tree empty tests
- */
+/* emptiness tests */
 #define TREE_EMPTY(ptr)   ((ptr) == NIL)
-
 #define SPLAY_EMPTY(ptr)  TREE_EMPTY(ptr)
-
 #define AVL_EMPTY(ptr)    TREE_EMPTY(ptr)
-
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
 /**
- * tree_search - searches tree for entry
- * @entry:	entry to search
- * @compare:	function that compares two entries(see note)
- * @root:	tree root entry pointer
- * Note:	compare function should be wrote as to compare the member
- *		of struct tree_root is embedded in, which is the identifier
- *		in that case, tree_entry should be used to obtain such member
- *		in compare function and then make comparison between them.
+ * tree_search - searches for an entry
+ * @entry: entry equals to the desired entry
+ * @compare: comparing function, returns < 0, 0, > 0 respectively
+ *           for less than, equal to and greater than
+ * @root: root entry pointer
  */
-	struct tree_root *tree_search(struct tree_root *entry,
-				      int (*compare) (const void *, const void *),
-				      struct tree_root *root);
+	struct tree_root *
+	tree_search(struct tree_root *entry,
+		    int (*compare) (const void *, const void *),
+		    struct tree_root *root);
 
 /**
  * tree_min - returns the minimum entry
- * @root:	tree root entry pointer
+ * @root: root entry pointer
  */
-	struct tree_root *tree_min(struct tree_root *root);
+	struct tree_root *
+	tree_min(struct tree_root *root);
 
 /**
  * tree_max - returns the maximum entry
- * @root:	tree root entry pointer
+ * @root: root entry pointer
  */
-	struct tree_root *tree_max(struct tree_root *root);
+	struct tree_root *
+	tree_max(struct tree_root *root);
 
 /**
- * tree_successor - returns the successor entry
- * @root:	tree root entry pointer
+ * tree_successor - returns the successor of entry
+ * @root: root entry pointer
  */
-	struct tree_root *tree_successor(struct tree_root *root);
+	struct tree_root *
+	tree_successor(struct tree_root *root);
 
 /**
- * tree_predecessor - returns the predecessor entry
- * @root:	tree root entry pointer
+ * tree_predecessor - returns the predecessor of entry
+ * @root: root entry pointer
  */
-	struct tree_root *tree_predecessor(struct tree_root *root);
+	struct tree_root *
+	tree_predecessor(struct tree_root *root);
 
 /**
  * tree_add - adds a new entry
- * @new:	new entry to be added
- * @root:	tree root entry pointer address
+ * @new: new entry
+ * @root: address of the root entry pointer
  */
-	void tree_add(struct tree_root *new,
-		      int (*compare) (const void *, const void *),
-		      struct tree_root **root);
+	void
+	tree_add(struct tree_root *new,
+		 int (*compare) (const void *, const void *),
+		 struct tree_root **root);
 
 /**
- * tree_map - adds a new entry and returns the pointer to the entry
- * if a duplicate entry found in the tree, returns a pointer to the
- * duplicate without inserting the new entry.
- * @new:	new entry to be added
- * @compare:	function that compares two entries
- * @root:	tree root entry pointer address
+ * tree_map - adds an unique entry
+ * @new: new entry
+ * @compare: comparing function, returns < 0, 0, > 0 respectively for
+ *           less than, equal to and greater than.
+ * @root: address of the root entry pointer
+ * Note: returns either the new entry if it doesn't exist or an
+ *       existing entry, where the new entry will be untouched.
  */
-	struct tree_root *tree_map(struct tree_root *new,
-				   int (*compare) (const void *, const void *),
-				   struct tree_root **root);
+	struct tree_root *
+	tree_map(struct tree_root *new,
+		 int (*compare) (const void *, const void *),
+		 struct tree_root **root);
 
 /**
  * tree_del - deletes an entry
- * @entry:	entry to be deleted
- * @root:	tree root entry pointer address
+ * @entry: entry to be deleted
+ * @root: address of the root entry pointer
  */
-	void tree_del(struct tree_root *entry, struct tree_root **root);
+	void
+	tree_del(struct tree_root *entry, struct tree_root **root);
 
 /**
- * splay_map - adds a new entry and returns the pointer to the entry
- * if a duplicate entry found in the tree, returns a pointer to the
- * duplicate without inserting the new entry.
- * @new:	new entry to be added
- * @compare:	function that compares two entries
- * @root:	tree root entry pointer address
+ * splay_map - adds an unique entry
+ * @new: new entry
+ * @compare: comparing function, returns < 0, 0, > 0 respectively for
+ *           less than, equal to and greater than.
+ * @root: address of the root entry pointer
+ * Note: returns either the new entry if it doesn't exist or an
+ *       existing entry, where the new entry will be untouched.
  */
-	struct tree_root *splay_map(struct tree_root *new,
-				    int (*compare) (const void *, const void *),
-				    struct tree_root **root);
+	struct tree_root *
+	splay_map(struct tree_root *new,
+		  int (*compare) (const void *, const void *),
+		  struct tree_root **root);
 
 /**
- * splay_map_nparent - adds a new entry and returns the pointer to the entry
- * if a duplicate entry found in the tree, returns a pointer to the
- * duplicate without inserting the new entry.
- * @new:	new entry to be added
- * @compare:	function that compares two entries
- * @root:	tree root entry pointer address
+ * splay_map_nparent - no-parent node version of splay_map()
+ * @new: new entry
+ * @compare: comparing function, returns < 0, 0, > 0 respectively for
+ *           less than, equal to and greater than.
+ * @root: address of the root entry pointer
+ * Note: similar to the splay_map(), but doesn't manipulate parent
+ *       node pointer. In other words, this version is faster but
+ *       might break the consistency with tree routines.
  */
-	struct tree_root *splay_map_nparent(struct tree_root *new,
-					    int (*compare) (const void *, const void *),
-					    struct tree_root **root);
+	struct tree_root *
+	splay_map_nparent(struct tree_root *new,
+			  int (*compare) (const void *, const void *),
+			  struct tree_root **root);
 
 /**
- * splay_search - splays tree for entry, returns NIL if entry not found, a pointer
- * to the found entry otherwise
- * @entry:	entry to search
- * @compare:	function that compares two entries(see note)
- * @root:	tree root entry pointer
- * Note:	compare function should be wrote as to compare the member
- *		of struct tree_root is embedded in, which is the identifier
- *		in that case, tree_entry should be used to obtain such member
- *		in compare function and then make comparison between them.
+ * splay_search - splays the tree
+ * @entry: entry equals to the desired entry
+ * @compare: comparing function, returns < 0, 0, > 0 respectively for
+ *           less than, equal to and greater than.
+ * @root: root entry pointer
+ * Note: returns desired entry if it exists, NIL otherwise.
  */
-	struct tree_root *splay_search(struct tree_root *entry,
-				       int (*compare) (const void *, const void *),
-				       struct tree_root **root);
+	struct tree_root *
+	splay_search(struct tree_root *entry,
+		     int (*compare) (const void *, const void *),
+		     struct tree_root **root);
 
 /**
- * splay_search_nparent - splays tree for entry, returns NIL if entry not found, a pointer
- * to the found entry otherwise
- * @entry:	entry to search
- * @compare:	function that compares two entries(see note)
- * @root:	tree root entry pointer
- * Note:	compare function should be wrote as to compare the member
- *		of struct tree_root is embedded in, which is the identifier
- *		in that case, tree_entry should be used to obtain such member
- *		in compare function and then make comparison between them.
+ * splay_search_nparent - no-parent version of splay_search()
+ * @entry: entry equals to the desired entry
+ * @compare: comparing function, returns < 0, 0, > 0 respectively for
+ *           less than, equal to and greater than.
+ * @root: address of the root entry pointer
+ * Note: similar to the splay_search(), but doesn't manipulate parent
+ *       node pointer. In other words, this version is faster but
+ *       might break the consistency with tree routines.
  */
-	struct tree_root *splay_search_nparent(struct tree_root *entry,
-					       int (*compare) (const void *, const void *),
-					       struct tree_root **root);
+	struct tree_root *
+	splay_search_nparent(struct tree_root *entry,
+			     int (*compare) (const void *, const void *),
+			     struct tree_root **root);
 
 /**
  * avl_add - adds a new entry
- * @new:	new entry to be added
- * @compare:	function that compares two entries
- * @root:	tree root entry pointer address
- * Note:	this function mantains the tree balance
+ * @new: new entry
+ * @compare: comparing function, returns < 0, 0, > 0 respectively for
+ *           less than, equal to and greater than.
+ * @root: address of the root entry pointer
  */
-	void avl_add(struct avl_root *new,
-		     int (*compare) (const void *, const void *),
-		     struct avl_root **root);
+	void
+	avl_add(struct avl_root *new,
+		int (*compare) (const void *, const void *),
+		struct avl_root **root);
 
 /**
- * avl_map - adds a new entry and returns the pointer to the entry
- * if a duplicate entry found in the tree, returns a pointer to the
- * duplicate without inserting the new entry.
- * @new:	new entry to be added
- * @compare:	function that compares two entries
- * @root:	tree root entry pointer address
- * Note:	this function mantains the tree balance
+ * avl_map - adds an unique entry
+ * @new:    new entry to be added
+ * @compare: comparing function, returns < 0, 0, > 0 respectively for
+ *           less than, equal to and greater than.
+ * @root: address of the root entry pointer
  */
-	struct avl_root *avl_map(struct avl_root *new,
-				 int (*compare) (const void *, const void *),
-				 struct avl_root **root);
+	struct avl_root *
+	avl_map(struct avl_root *new,
+		int (*compare) (const void *, const void *),
+		struct avl_root **root);
 
 /**
  * avl_del - deletes an entry
- * @entry:	the entry to be deleted
- * @compare:	function that compares two entries
- * @root:	tree root entry pointer address
- * Note:	this function matains the tree balance
+ * @entry: entry equals to the desired entry
+ * @root: address of the root entry pointer
  */
-	void avl_del(struct avl_root *entry, struct avl_root **root);
+	void
+	avl_del(struct avl_root *entry, struct avl_root **root);
 
 #ifdef __cplusplus
 }
@@ -243,95 +239,96 @@ extern "C" {
 
 /**
  * tree_entry - get the struct for this entry
- * @ptr:	the &struct tree_root pointer.
- * @type:	the type of the struct this is embedded in.
- * @member:	the name of the tree_struct within the struct.
+ * @ptr:    the &struct tree_root pointer.
+ * @type:   the type of the struct this is embedded in.
+ * @member: the name of the tree_struct within the struct.
  */
 #define tree_entry(ptr, type, member)					\
 	((type *)((char *)(ptr)-(unsigned long)(&((type *)0)->member)))
 
 /**
  * avl_entry - get the struct for this entry
- * @ptr:	the &struct avl_root pointer.
- * @type:	the type of the struct this is embedded in.
- * @member:	the name of the avl_struct within the struct.
+ * @ptr:    the &struct avl_root pointer.
+ * @type:   the type of the struct this is embedded in.
+ * @member: the name of the avl_struct within the struct.
  */
 #define avl_entry(ptr, type, member) tree_entry(ptr, type, member)
 
 /**
- * tree_for_each	-	iterate over a tree in ascending order
- * @pos:	the &struct tree_root to use as a loop counter.
- * @root:	the root for your tree.
+ * tree_for_each - iterates a tree in ascending order
+ * @pos:  the &struct tree_root to use as iterator
+ * @root: root entry pointer
  */
 #define tree_for_each(pos, root)		\
 	for (pos = tree_min(root); pos != NIL;	\
 	     pos = tree_successor(pos))
 /**
- * tree_for_each_prev	-	iterate over a tree in descending order
- * @pos:	the &struct tree_root to use as a loop counter.
- * @root:	the root for your tree.
+ * tree_for_each_prev - iterates a tree in descending order
+ * @pos:  the &struct tree_root to use as iterator
+ * @root: root entry pointer
  */
 #define tree_for_each_prev(pos, root)		\
 	for (pos = tree_max(root); pos != NIL;	\
 	     pos = tree_predecessor(pos))
 
 /**
- * tree_for_each_safe	-	iterate over a tree safe against removal of tree entry
- * @pos:	the &struct tree_root to use as a loop counter.
- * @n:		another &struct tree_root to use as temporary storage
- * @root:	the head for your tree.
+ * tree_for_each_safe - iterates a tree safely against removal
+ * @pos:  the &struct tree_root to use as iterator
+ * @n:    another &struct tree_root to use as temporary storage
+ * @root: root entry pointer
  */
 #define tree_for_each_safe(pos, n, root)			\
-	for (pos = tree_min(root),				\
-		     n = tree_successor(pos); pos != NIL;	\
+	for (pos = tree_min(root), n = tree_successor(pos);	\
+	     pos != NIL;					\
 	     pos = n, n = n != NIL? tree_successor(n): NIL)
 
 /**
- * tree_for_each_entry	-	iterate over tree of given type
- * @pos:	the type * to use as a loop counter.
- * @root:	the root for your tree.
- * @member:	the name of the tree_struct within the struct.
+ * tree_for_each_entry - iterates a tree
+ * @pos:    the type * to use as iterator.
+ * @root:   root entry pointer.
+ * @member: the name of the tree_struct within the struct.
  */
 #define tree_for_each_entry(pos, root, member)				\
-	for (pos = tree_entry(tree_min(root), typeof(*pos), member);	\
+	for (pos = tree_entry(tree_min(root), typeof(*pos), member);    \
 	     &pos->member != NIL;					\
 	     pos = tree_entry(tree_successor(&pos->member), typeof(*pos), member))
 
 /**
- * tree_for_each_entry_safe - iterate over a tree of given type safe against removal of tree entry
- * @pos:	the type * to use as a loop counter.
- * @n:		another type * to use as temporary storage
- * @root:	the root for your tree.
- * @member:	the name of the tree_struct within the struct.
+ * tree_for_each_entry_safe - iterates a tree safely against removal
+ * @pos:    the type * to use as iterator.
+ * @n:      another type * to use as temporary storage.
+ * @root:   root entry pointer.
+ * @member: the name of the tree_struct within the struct.
  */
 #define tree_for_each_entry_safe(pos, n, root, member)			\
-	for (pos = tree_entry(tree_min(root), typeof(*pos), member),	\
+	for (pos = tree_entry(tree_min(root), typeof(*pos), member),    \
 	     n = tree_entry(tree_successor(&pos->member), typeof(*pos), member); \
 	     &pos->member != NIL; pos = n,				\
 	     n = tree_entry(&n->member != NIL? tree_successor(&n->member): NIL, typeof(*n), member))
 
 /**
- * avl_for_each	-	iterate over an AVL tree in ascending order
- * @pos:	the &struct avl_root to use as a loop counter.
- * @root:	the root for your AVL tree.
+ * avl_for_each - iterates an AVL tree in ascending order
+ * @pos:  the &struct avl_root to use as iterator.
+ * @root: avl root entry pointer.
  */
 #define avl_for_each(pos, root)						\
 	for (pos = (struct avl_root *)tree_min((struct tree_root *)root); pos != NIL; \
 	     pos = (struct avl_root *)tree_successor((struct tree_root *)pos))
+
 /**
- * avl_for_each_prev	-	iterate over an AVL tree in descending order
- * @pos:	the &struct avl_root to use as a loop counter.
- * @root:	the root for your AVL tree.
+ * avl_for_each_prev - iterates an AVL tree in descending order
+ * @pos:  the &struct avl_root to use as iterator.
+ * @root: avl root entry pointer.
  */
 #define avl_for_each_prev(pos, root)					\
 	for (pos = (struct avl_root *)tree_max((struct tree_root *)root); pos != NIL; \
 	     pos = (struct avl_root *)tree_predecessor((struct tree_root *)pos))
 
 /**
- * avl_for_each_safe	-	iterate over an AVL tree safe against removal of tree entry
- * @pos:	the &struct avl_root to use as a loop counter.
- * @n:		another &struct avl_root to use as temporary storage
- * @root:	the root for your AVL tree.
+ * avl_for_each_safe - iterates an AVL tree safely against removal
+ * @pos:  the &struct avl_root to use as iterator.
+ * @n:    another &struct avl_root to use as temporary storage.
+ * @root: avl root entry pointer.
  */
 #define avl_for_each_safe(pos, n, root)					\
 	for (pos = (struct avl_root *)tree_min((struct tree_root *)root), \
@@ -340,22 +337,22 @@ extern "C" {
 	     n = n != NIL? (struct avl_root *)tree_successor((struct tree_root *)n): NIL)
 
 /**
- * avl_for_each_entry	-	iterate over tree of given type
- * @pos:	the type * to use as a loop counter.
- * @root:	the root for your AVL tree.
- * @member:	the name of the tree_struct within the struct.
+ * avl_for_each_entry - iterates an AVL tree
+ * @pos:    the type * to use as iterator.
+ * @root:   avl root entry pointer.
+ * @member: the name of the tree_struct within the struct.
  */
 #define avl_for_each_entry(pos, root, member)				\
 	for (pos = tree_entry(tree_min((struct tree_root *)root), typeof(*pos), member); \
-	     &pos->member != NIL; 					\
+	     &pos->member != NIL;					\
 	     pos = tree_entry(tree_successor((struct tree_root *)&pos->member), typeof(*pos), member))
 
 /**
- * avl_for_each_entry_safe - iterate over an AVL tree of given type safe against removal of tree entry
- * @pos:	the type * to use as a loop counter.
- * @n:		another type * to use as temporary storage
- * @root:	the root for your tree.
- * @member:	the name of the tree_struct within the struct.
+ * avl_for_each_entry_safe - iterates an AVL tree of safely against removal
+ * @pos:    the type * to use as iterator.
+ * @n:      another type * to use as temporary storage.
+ * @root:   avl root entry pointer.
+ * @member: the name of the tree_struct within the struct.
  */
 #define avl_for_each_entry_safe(pos, n, root, member)			\
 	for (pos = tree_entry(tree_min((struct tree_root *)root), typeof(*pos), member), \
@@ -364,7 +361,7 @@ extern "C" {
 	     pos = n,							\
 	     n = tree_entry(&n->member != NIL? tree_successor((struct tree_root *)&n->member): NIL, typeof(*n), member))
 
-/* to avoid conflict with C++ new operator */
+/* to avoid conflicts with C++ new operator */
 #undef new
 
 #endif  /* __ULIB_TREE_H */

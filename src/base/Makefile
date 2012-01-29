@@ -7,6 +7,7 @@ TARGET		= $(LIBPATH)/libubase.a
 
 CC		?= gcc
 CFLAGS		?= -g3 -O3 -Wall -W -Werror -pipe -c -fno-strict-aliasing
+DEBUG		?=
 
 DS_OBJS		= tree.o treeutils.o bitmap.o
 SEARCH_OBJS	= fbsearch.o
@@ -19,7 +20,7 @@ OBJS		= $(DS_OBJS) $(SEARCH_OBJS) $(CRYPT_OBJS) \
 		  $(SORT_OBJS) $(MISC_OBJS) $(COMMON_OBJS)
 
 .c.o:
-	$(CC) $(CFLAGS) $< -o $@
+	$(CC) $(CFLAGS) $(DEBUG) $< -o $@
 
 .PHONY: all clean $(INCPATH)
 
