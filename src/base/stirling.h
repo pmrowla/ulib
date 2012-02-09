@@ -72,10 +72,10 @@ st_comb_ln(unsigned int n, unsigned int r)
 static inline double
 st_comb(unsigned int n, unsigned int r)
 {
-	if ((n == 0 && r == 0) || n == r)
-		return 1;
-	if (r > n || r == 0)
+	if (r > n)
 		return 0;
+	if (n == 0 || r == 0 || n == r)
+		return 1;
 	/* doesn't calculate directly since it may lead to overflows */
 	return exp(st_comb_ln(n, r));
 }

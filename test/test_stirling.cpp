@@ -26,7 +26,7 @@ int main()
 
 	assert(FLOAT_EQUAL(1, st_comb(0, 0)));
 	assert(FLOAT_EQUAL(1, st_comb(1, 1)));
-	assert(FLOAT_EQUAL(0, st_comb(1, 0)));
+	assert(FLOAT_EQUAL(1, st_comb(1, 0)));
 	assert(FLOAT_EQUAL(0, st_comb(1, 2)));
 	assert(FLOAT_EQUAL(35, st_comb(7, 3)));
 	assert(FLOAT_EQUAL(6, st_comb(4, 2)));
