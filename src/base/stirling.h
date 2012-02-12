@@ -59,7 +59,7 @@ st_perm(unsigned int n)
 static inline double
 st_comb_ln(unsigned int n, unsigned int r)
 {
-	if (r == n)
+	if (r == n || r == 0)
 		return 0;
 	return (n - r) * log((double)n / (n - r)) + r * log((double)n / r) - 
 		0.5 * log(2 * PI * r * (n - r) / n) +
