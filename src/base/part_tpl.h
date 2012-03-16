@@ -45,7 +45,6 @@
 			p = s;					\
 			q = t;					\
 			m = p + (q - p) / 2;			\
-			e = *m;					\
 			if (lt(m, p))				\
 				swap(*m, *p);			\
 			if (lt(q, m)) {				\
@@ -53,6 +52,7 @@
 				if (lt(m, p))			\
 					swap(*m, *p);		\
 			}					\
+			e = *m;					\
 			for (;;) {				\
 				do ++p; while (lt(p, &e));	\
 				do --q; while (lt(&e, q));	\

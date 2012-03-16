@@ -1,5 +1,7 @@
+#include <time.h>
 #include <stdio.h>
 #include <assert.h>
+#include <algorithm>
 #include <ulib/part_tpl.h>
 
 #define LESSTHAN(x, y) (*(x) < *(y))
@@ -8,16 +10,28 @@ DECLARE_PART(test, int, LESSTHAN);
 
 int main()
 {
-	int data[] = { 4, -1, 3, 100, 9 };
+	srand((int)time(0));
 
-	// call part() to partition the array into two parts, with the
-	// first 'num' elements be the num smallest, and the num-th
-	// element be the largest of the first 'num' elements.
-	part_test(data, data + 2, data + sizeof(data)/sizeof(data[0]));
+	for (int j = 0; j < 1000; ++j) {
+		int ne = rand() % 67321 + 1;
+		int k = rand() % ne;
+		int m;
+		int *data = new int [ne];
+		
+		printf("number of testing numbers: %d\n", ne);
+		printf("median: %d\n", k);
+		
+		for (int i = 0; i < ne; ++i)
+			data[i] = rand();
+		
+		part_test(data, data + k, data + ne);
+		m  = data[k];
 
-	assert(data[0] < data[2]);
-	assert(data[1] < data[2]);
-	assert(data[2] == 4);
+		// verification
+		std::sort(data, data + ne);
+		assert(m  == data[k]);
+		delete [] data;
+	}
 
 	printf("passed\n");
 
