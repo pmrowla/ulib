@@ -11,7 +11,7 @@ LIBPATH	= $(ROOT)/lib
 TARGET	= $(LIBPATH)/libcomb.a
 
 CC	?= gcc
-CFLAGS	?= -g3 -O3 -Wall -W -Werror -pipe -c
+CFLAGS	?= -g3 -O2 -Wall -W -Werror -pipe -c
 
 #
 # define object files below

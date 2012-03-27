@@ -11,7 +11,7 @@ LIBPATH	= $(ROOT)/lib
 TARGET	= $(LIBPATH)/libshell.a
 
 CC	?= gcc
-CFLAGS	?= -g3 -O3 -Wall -W -Werror -pipe -c -fno-strict-aliasing
+CFLAGS	?= -g3 -O2 -Wall -W -Werror -pipe -c -fno-strict-aliasing
 
 #
 # define object files below
