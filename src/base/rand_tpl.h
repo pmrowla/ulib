@@ -114,4 +114,14 @@
 			(h) ^= ROR64(h, 28);		\
 			(h) *= 2147483649UL; })
 
+#define RAND_INT3_MIX64(h) ({					\
+			(h) *= 0xc6a4a7935bd1e995ULL;		\
+			(h) ^= (h) >> 47;			\
+			(h) *= 0xc6a4a7935bd1e995ULL; })
+
+#define RAND_INT3_MIX64_INV(h) ({				\
+			(h) *= 6879827495036328381ULL;		\
+			(h) ^= (h) >> 47;			\
+			(h) *= 6879827495036328381ULL; })
+
 #endif
