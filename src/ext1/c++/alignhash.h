@@ -139,10 +139,10 @@ public:
 		typedef ah_iter_t size_type;
 		typedef const _Val& reference;
 		typedef const _Val* pointer;
-		typedef alignhash_t(inclass) * hashing;
+		typedef const alignhash_t(inclass) * hashing;
 		typedef ah_iter_t hashing_iterator;
 
-		const hashing    _hashing;
+		hashing          _hashing;
 		hashing_iterator _cur;
 
 		const_iterator(const hashing h, hashing_iterator itr)
@@ -367,10 +367,10 @@ public:
 	struct const_iterator
 	{
 		typedef ah_iter_t size_type;
-		typedef alignhash_t(inclass) * hashing;
+		typedef const alignhash_t(inclass) * hashing;
 		typedef ah_iter_t hashing_iterator;
 
-		const hashing    _hashing;
+		hashing          _hashing;
 		hashing_iterator _cur;
 
 		const_iterator(const hashing h, hashing_iterator itr)
