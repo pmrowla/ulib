@@ -24,24 +24,23 @@
 */
 
 /*
- * NOTE: This file contains adapter classes for aligned hashing, where
- * the original C version is defined in alignhash_tpl.h. One should
- * always use the C version whenever possible, for better
- * compatibility and performance gurarantees. The following lists some
- * of the gotchas one need to know before using these classes:
+ * NOTE: This file contains proxy classes for aligned hashing, where
+ * the original C version is defined in alignhash_tpl.h. However the C
+ * version is always preferred for compatibility consideration and
+ * performance gurarantee. These proxy classes have the following
+ * limitations:
  * 
  *    1. Key and Value types for the template arguments are used
- *    ignoring their constructors and destructors. This may cause
- *    memory leaks without sufficient attention. However one can still
- *    use classes as Keys or Values providing that the destructions,
- *    not considering the construction, since constructions are done
- *    before insertions, are handled outside the classes manually.
+ *    ignorant of their constructors and destructors. This may cause
+ *    memory leaks without sufficient attention. In this respect, one
+ *    can either use pointer Key/Value types or handle the
+ *    initialization and destruction of Key/Value manually.
  *
- *    2. Operator [] should be used with caution when performance
- *    counts. This is because current implementation of operator[] is
- *    identical to the insertion, which is much slower than find() in
- *    retrieving value. Hence, if you are using operator[] as an
- *    alternative to retrieve the value of a key, try find() instead.
+ *    2. The [] operator should be used with caution when performance
+ *    counts. Because current implementation of [] operator is based
+ *    on the insertion routine, which is much slower than find(). As a
+ *    result, find() is a better choice whenever you are looking for
+ *    items.
  */
 
 #ifndef _ALIGN_HASH_H
