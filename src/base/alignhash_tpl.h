@@ -71,15 +71,17 @@ enum {
 	AH_INS_DEL = 2   /**< inserted element is placed at a deleted bucket */
 };
 
-/* Two probing methods are available, tier probing and linear
- * probing. In general, tier probing has more stable lookup
- * performance than linear probing, due to the enhanced collision
- * resolution mechanism. However, linear probing yieds faster lookups
- * for relatively random keys. You can specify AH_TIER_PROBING to
- * enable tier probing, otherwise linear probing is used by default. */
+/* Two probing methods are available, tier probing and linear probing.
+ * Tier probing, to some extent, balances the lookup cost both in the
+ * best and worst cases. This is preferable when keys are not randomly
+ * distributed thus resulting in many collisions. By contrast, linear
+ * probing precedes tier probing especially when there are a lot of
+ * <key,value> pairs stored in hash table due to better locality is
+ * achieved. Please specify AH_TIER_PROBING to enable tier probing,
+ * otherwise linear probing is used by default. */
 #ifdef AH_TIER_PROBING
-/* tier probing step, eligible for memory-efficient cases */
-#define AH_PROBE_STEP(h)         ( ((h) ^ (h) >> 13) | 1 )
+/* tier probing step, preferable for memory-efficient situations */
+#define AH_PROBE_STEP(h)         ( (((h) ^ (h) >> 13) & 15) | 1 )
 #define AH_LOAD_FACTOR           0.80
 #else
 /* linear probing, for fast lookups */
