@@ -81,7 +81,7 @@ enum {
  * otherwise linear probing is used by default. */
 #ifdef AH_TIER_PROBING
 /* tier probing step, preferable for memory-efficient situations */
-#define AH_PROBE_STEP(h)         ( (((h) ^ (h) >> 13) & 15) | 1 )
+#define AH_PROBE_STEP(h)         ( ((h) * 0xc6a4a7935bd1e995ULL >> 47) | 1 )
 #define AH_LOAD_FACTOR           0.80
 #else
 /* linear probing, for fast lookups */
