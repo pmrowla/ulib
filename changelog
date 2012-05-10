@@ -1,3 +1,6 @@
+May. 10th 2012
+	Improve align_hash_map performance for small maps.
+
 Apr. 23th 2012
 	release 1.1 stable
 
