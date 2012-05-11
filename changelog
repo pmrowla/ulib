@@ -1,3 +1,6 @@
+May. 11th 2012
+	add hash performance tool.
+
 May. 10th 2012
 	Improve align_hash_map performance for small maps.
 
