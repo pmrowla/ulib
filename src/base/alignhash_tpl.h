@@ -100,12 +100,14 @@ enum {
 		_val_t    *vals;					\
 	} alignhash_##_name##_t;					\
                                                                         \
-	static inline alignhash_##_name##_t *alignhash_init_##_name() {	\
+	static inline alignhash_##_name##_t *				\
+	alignhash_init_##_name() {					\
 		return (alignhash_##_name##_t*)				\
 			calloc(1, sizeof(alignhash_##_name##_t));	\
 	}								\
                                                                         \
-	static inline void alignhash_destroy_##_name(alignhash_##_name##_t *h) \
+	static inline void						\
+	alignhash_destroy_##_name(alignhash_##_name##_t *h)		\
 	{								\
 		if (h) {						\
 			free(h->flags);					\
@@ -115,7 +117,8 @@ enum {
 		}							\
 	}								\
                                                                         \
-	static inline void alignhash_clear_##_name(alignhash_##_name##_t *h) \
+	static inline void						\
+	alignhash_clear_##_name(alignhash_##_name##_t *h)		\
 	{								\
 		if (h && h->flags) {					\
 			memset(h->flags, 0xaa, AH_FLAGS_BYTE(h->nbucket)); \
@@ -196,7 +199,7 @@ enum {
 						i = (i + step) & new_mask; \
 					AH_CLEAR_EMPTY(new_flags, i);	\
 					if (i < h->nbucket && AH_ISEITHER(h->flags, i) == 0) { \
-						swap(h->keys[i], key); \
+						swap(h->keys[i], key);	\
 						if (_ismap)		\
 							swap(h->vals[i], val); \
 						AH_SET_DEL(h->flags, i); \

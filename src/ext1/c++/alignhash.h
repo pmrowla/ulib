@@ -29,7 +29,7 @@
  * version is always preferred for compatibility consideration and
  * performance gurarantee. These proxy classes have the following
  * limitations:
- * 
+ *
  *    1. Key and Value types for the template arguments are used
  *    ignorant of their constructors and destructors. This may cause
  *    memory leaks without sufficient attention. In this respect, one
@@ -50,7 +50,9 @@
 #include <string>
 
 // NOTE: enable features here, such as 64-bit and tier probing.
-//#define AH_64BIT
+#if __WORDSIZE == 64
+#define AH_64BIT
+#endif
 //#define AH_TIER_PROBING
 #include "alignhash_tpl.h"
 
@@ -202,6 +204,28 @@ public:
 			throw _Except();
 	}
 
+	align_hash_map(const align_hash_map &other)
+	{
+		_hashing = alignhash_init(inclass);
+		if (_hashing == 0)
+			throw _Except();
+		for (align_hash_map::const_iterator it = other.begin();
+		     it != other.end(); ++it)
+			insert(it.key(), it.value());
+	}
+
+	align_hash_map &
+	operator= (const align_hash_map &other)
+	{
+		if (&other != this) {
+			clear();
+			for (align_hash_map::const_iterator it = other.begin();
+			     it != other.end(); ++it)
+				insert(it.key(), it.value());
+		}
+		return *this;
+	}
+
 	virtual
 	~align_hash_map()
 	{ alignhash_destroy(inclass, _hashing); }
@@ -251,13 +275,13 @@ public:
 	{ return alignhash_get(inclass, _hashing, key) != alignhash_end(_hashing); }
 
 	iterator
-	insert(const _Key &key, const _Val &val, bool displace = false)
+	insert(const _Key &key, const _Val &val, bool replace = false)
 	{
 		int ret = AH_INS_ERR;
 		hashing_iterator itr = alignhash_set(inclass, _hashing, key, &ret);
 		if (itr == alignhash_end(_hashing))
 			throw _Except();
-		if (ret != AH_INS_ERR || displace)
+		if (ret != AH_INS_ERR || replace)
 			alignhash_value(_hashing, itr) = val;
 		return iterator(_hashing, itr);
 	}
@@ -424,6 +448,28 @@ public:
 		_hashing = alignhash_init(inclass);
 		if (_hashing == 0)
 			throw _Except();
+	}
+
+	align_hash_set(const align_hash_set &other)
+	{
+		_hashing = alignhash_init(inclass);
+		if (_hashing == 0)
+			throw _Except();
+		for (align_hash_set::const_iterator it = other.begin();
+		     it != other.end(); ++it)
+			insert(it.key());
+	}
+
+	align_hash_set &
+	operator= (const align_hash_set &other)
+	{
+		if (&other != this) {
+			clear();
+			for (align_hash_set::const_iterator it = other.begin();
+			     it != other.end(); ++it)
+				insert(it.key());
+		}
+		return *this;
 	}
 
 	virtual
