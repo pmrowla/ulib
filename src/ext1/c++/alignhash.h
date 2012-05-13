@@ -209,8 +209,7 @@ public:
 		_hashing = alignhash_init(inclass);
 		if (_hashing == 0)
 			throw _Except();
-		for (align_hash_map::const_iterator it = other.begin();
-		     it != other.end(); ++it)
+		for (const_iterator it = other.begin(); it != other.end(); ++it)
 			insert(it.key(), it.value());
 	}
 
@@ -219,8 +218,7 @@ public:
 	{
 		if (&other != this) {
 			clear();
-			for (align_hash_map::const_iterator it = other.begin();
-			     it != other.end(); ++it)
+			for (const_iterator it = other.begin(); it != other.end(); ++it)
 				insert(it.key(), it.value());
 		}
 		return *this;
@@ -455,8 +453,7 @@ public:
 		_hashing = alignhash_init(inclass);
 		if (_hashing == 0)
 			throw _Except();
-		for (align_hash_set::const_iterator it = other.begin();
-		     it != other.end(); ++it)
+		for (const_iterator it = other.begin(); it != other.end(); ++it)
 			insert(it.key());
 	}
 
@@ -465,8 +462,7 @@ public:
 	{
 		if (&other != this) {
 			clear();
-			for (align_hash_set::const_iterator it = other.begin();
-			     it != other.end(); ++it)
+			for (const_iterator it = other.begin(); it != other.end(); ++it)
 				insert(it.key());
 		}
 		return *this;

@@ -1,23 +1,16 @@
-TARGET	= ulib_dist.tar.gz
-
-$(TARGET):
+all:
 	make -C src/
 	make -C lib/
 	make -C test/
-	tar cpzf $(TARGET) --exclude=.svn include/ lib/libulib.a test/
 
-.PHONY: clean remove_bak debug release
-
-debug: $(TARGET)
+.PHONY: all clean remove_bak release
 
 release:
 	make DEBUG=-DUNDEBUG -C src/
 	make -C lib/ release
 	make DEBUG=-DUNDEBUG -C test/
-	tar cpzf $(TARGET) --exclude=.svn include/ lib/libulib.a test/
 
 clean:
-	rm -rf $(TARGET)
 	make -C src/ clean
 	make -C test/ clean
 	make -C lib/ clean

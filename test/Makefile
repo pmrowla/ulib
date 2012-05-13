@@ -7,7 +7,7 @@ INCPATH		= ../include
 LIBPATH		= ../lib
 
 CXX		?= g++
-CXXFLAGS	?= -g3 -O2 -W -Wall
+CXXFLAGS	?= -g3 -O2 -W -Wall -Werror
 LDFLAGS		?= -lulib -lrt -lm
 DEBUG		?=
 
