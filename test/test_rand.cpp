@@ -23,7 +23,7 @@ int main()
 		RAND_INT3_MIX64(h);
 		uint64_t t = h;
 		RAND_INT3_MIX64_INV(t);
-		printf ("mix3: s = %016lx, t = %016lx\n", s, t);
+		printf ("mix3: s = %016zux, t = %016zux\n", s, t);
 		assert(s == t);
 	}
 
