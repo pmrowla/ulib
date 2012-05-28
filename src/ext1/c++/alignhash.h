@@ -527,7 +527,7 @@ public:
 	}
 
 	bool
-	operator[](const _Key &key)
+	operator[](const _Key &key) const
 	{ return contain(key); }
 
 	iterator

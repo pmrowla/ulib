@@ -1,3 +1,2 @@
-Type 'make clean && make' to generate ulib_dist.tar.gz tarball, which
-includes all headers and libraries. Also, one can directly use headers
-and libraries reside in include/ and lib/ after a clean make.
+1. make clean
+2. make
