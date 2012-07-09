@@ -1,6 +1,6 @@
 /* The MIT License
 
-   Copyright (C) 2011 Zilong Tan (tzlloch@gmail.com)
+   Copyright (C) 2011 Zilong Tan (labytan@gmail.com)
 
    Permission is hereby granted, free of charge, to any person obtaining
    a copy of this software and associated documentation files (the

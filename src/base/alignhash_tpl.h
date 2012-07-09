@@ -1,6 +1,6 @@
 /* The MIT License
 
-   Copyright (C) 2011 Zilong Tan (tzlloch@gmail.com)
+   Copyright (C) 2011 Zilong Tan (labytan@gmail.com)
    Copyright (c) 2008, 2009, 2011 by Attractive Chaos <attractor@live.co.uk>
 
    Permission is hereby granted, free of charge, to any person obtaining
