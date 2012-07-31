@@ -74,14 +74,17 @@ extern "C" {
 	int  AES_set_decrypt_key(const unsigned char *userKey, const int bits,
 				AES_KEY *key);
 
+	/* in/out can be the same for ECB encryption/decryption */
 	void AES_encrypt(const unsigned char *in, unsigned char *out,
 			 const AES_KEY *key);
 	void AES_decrypt(const unsigned char *in, unsigned char *out,
 			 const AES_KEY *key);
 
+	/* in/out can be the same */
 	void AES_cbc_encrypt(const unsigned char *in, unsigned char *out, unsigned char *ivec,
 			     unsigned long nblock, const AES_KEY *key);
 
+	/* in/out MUST be DIFFERENT */
 	void AES_cbc_decrypt(const unsigned char *in, unsigned char *out, unsigned char *ivec,
 			     unsigned long nblock, const AES_KEY *key);
 
