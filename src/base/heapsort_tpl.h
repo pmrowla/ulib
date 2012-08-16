@@ -1,6 +1,6 @@
 /* The MIT License
 
-   Copyright (C) 2011 Zilong Tan (labytan@gmail.com)
+   Copyright (C) 2011 Zilong Tan (eric.zltan@gmail.com)
 
    Permission is hereby granted, free of charge, to any person obtaining
    a copy of this software and associated documentation files (the
@@ -28,8 +28,8 @@
 
 #include "heap_tpl.h"
 
-#define DECLARE_HEAPSORT(name, type, lt)		\
-	DECLARE_HEAP(name, type, lt)			\
+#define DEFINE_HEAPSORT(name, type, lt)		\
+	DEFINE_HEAP(name, type, lt)			\
 							\
 	static inline void				\
 	heapsort_##name(type *base, type *last)		\

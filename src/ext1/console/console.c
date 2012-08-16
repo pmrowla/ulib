@@ -1,6 +1,6 @@
 /* The MIT License
 
-   Copyright (C) 2011 Zilong Tan (labytan@gmail.com)
+   Copyright (C) 2011 Zilong Tan (eric.zltan@gmail.com)
 
    Permission is hereby granted, free of charge, to any person obtaining
    a copy of this software and associated documentation files (the
@@ -39,7 +39,7 @@
 
 typedef int (*console_fcn_t) (int argc, const char *argv[]);
 
-DECLARE_ALIGNHASH(cmdoht, const char *, console_fcn_t, 1, STRHASH, STRCMP);
+DEFINE_ALIGNHASH(cmdoht, const char *, console_fcn_t, 1, STRHASH, STRCMP);
 
 typedef struct {
 	alignhash_t(cmdoht) * idx;

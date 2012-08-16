@@ -1,6 +1,6 @@
 /* The MIT License
 
-   Copyright (C) 2011 Zilong Tan (labytan@gmail.com)
+   Copyright (C) 2011 Zilong Tan (eric.zltan@gmail.com)
    Copyright (c) 2008, 2009, 2011 by Attractive Chaos <attractor@live.co.uk>
 
    Permission is hereby granted, free of charge, to any person obtaining
@@ -89,7 +89,7 @@ enum {
 #define AH_LOAD_FACTOR           0.50
 #endif
 
-#define DECLARE_ALIGNHASH(_name, _key_t, _val_t, _ismap, _hashfn, _hasheq) \
+#define DEFINE_ALIGNHASH(_name, _key_t, _val_t, _ismap, _hashfn, _hasheq) \
 	typedef struct {						\
 		ah_size_t nbucket;					\
 		ah_size_t size;     /* number of elements */		\

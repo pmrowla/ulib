@@ -1,6 +1,6 @@
 /* The MIT License
 
-   Copyright (C) 2011 Zilong Tan (labytan@gmail.com)
+   Copyright (C) 2011 Zilong Tan (eric.zltan@gmail.com)
 
    Permission is hereby granted, free of charge, to any person obtaining
    a copy of this software and associated documentation files (the
@@ -103,7 +103,7 @@
  */
 
 /*
- * The DECLARE_BITMAP(name,bits) macro, in linux/types.h, can be used
+ * The DEFINE_BITMAP(name,bits) macro, in linux/types.h, can be used
  * to declare an array named 'name' of just enough unsigned longs to
  * contain all bit positions from 0 to 'bits' - 1.
  */
@@ -175,7 +175,7 @@ extern "C" {
 }
 #endif
 
-#define DECLARE_BITMAP(name,bits)		\
+#define DEFINE_BITMAP(name,bits)		\
 	unsigned long name[BITS_TO_LONGS(bits)]
 
 #define BITMAP_LAST_WORD_MASK(nbits)				\

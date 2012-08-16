@@ -6,7 +6,7 @@
 
 #define LESSTHAN(x, y) (*(x) < *(y))
 
-DECLARE_PART(test, int, LESSTHAN);
+DEFINE_PART(test, int, LESSTHAN);
 
 int main()
 {

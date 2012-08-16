@@ -1,6 +1,6 @@
 /* The MIT License
 
-   Copyright (C) 2011 Zilong Tan (labytan@gmail.com)
+   Copyright (C) 2011 Zilong Tan (eric.zltan@gmail.com)
 
    Permission is hereby granted, free of charge, to any person obtaining
    a copy of this software and associated documentation files (the
@@ -33,7 +33,7 @@ const char *ulib_version()
 	snprintf(
 		version, sizeof(version),
 		"ULIB %d.%d\n"
-		"Copyright (C) 2009-2011 Zilong Tan (labytan@gmail.com)\n",
+		"Copyright (C) 2009-2011 Zilong Tan (eric.zltan@gmail.com)\n",
 		ULIB_VERSION_MAJOR,
 		ULIB_VERSION_MINOR
 		);

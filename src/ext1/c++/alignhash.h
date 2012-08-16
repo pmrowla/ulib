@@ -1,6 +1,6 @@
 /* The MIT License
 
-   Copyright (C) 2011 Zilong Tan (labytan@gmail.com)
+   Copyright (C) 2011 Zilong Tan (eric.zltan@gmail.com)
 
    Permission is hereby granted, free of charge, to any person obtaining
    a copy of this software and associated documentation files (the
@@ -24,24 +24,33 @@
 */
 
 /*
- * NOTE: This file contains proxy classes for aligned hashing, where
- * the original C version is defined in alignhash_tpl.h. However the C
- * version is always preferred for compatibility consideration and
- * performance gurarantee. These proxy classes have the following
- * limitations:
- *
- *    1. Key and Value types for the template arguments are used
- *    ignorant of their constructors and destructors. This may cause
- *    memory leaks without sufficient attention. In this respect, one
- *    can either use pointer Key/Value types or handle the
- *    initialization and destruction of Key/Value manually.
- *
- *    2. The [] operator should be used with caution when performance
- *    counts. Because current implementation of [] operator is based
- *    on the insertion routine, which is much slower than find(). As a
- *    result, find() is a better choice whenever you are looking for
- *    items.
- */
+  This file implements proxy classes for aligned hashing based on the
+  original C version, which can be found in alignhash_tpl.h. The
+  following are a few points needs to be noted.
+
+  First, three operators should be supported for the key class of
+  aligned hash_map/set, namely '==', '<' and unsigned long(usu. a hash
+  function). In contrast to STL, which supports optionally providing
+  classes for these operations as hash_map/set template arguments,
+  aligned hashing requires the key class intrinsically includes
+  implementations of the operations, and there is no optional template
+  arguments avaible for them. Otherwise, one must write a wrapper
+  class as the key that bundle the three operations in one class.
+
+  Second, key and value of align_hash_map/set iterator are accessed
+  using key() and value() member functions instead of 'first' and
+  'second' structure members. This is because aligned hashing stores key
+  and value separately to achieve better cache utilization. The data
+  structure for the element isn't std::pair and thereby doesn't have
+  'first' and 'second' members.
+
+  Lastly, a few flags are provided in aligned hashing for performance
+  optimization. For example, align_hash_map/set will use 64-bit
+  addressing if AH_64BIT is set. Enabling the flag could improve the
+  performance of aligned hashing on 64-bit OSes. Furthermore, enabling
+  AH_TIER_PROBING will tell aligned hashing to use double hashing
+  probing, which is preferable for small hash_maps/sets.
+*/
 
 #ifndef _ALIGN_HASH_H
 #define _ALIGN_HASH_H
@@ -56,6 +65,8 @@
 //#define AH_TIER_PROBING
 #include "alignhash_tpl.h"
 
+namespace ulib {
+
 struct align_hash_exception : public std::exception
 {
 	virtual
@@ -66,7 +77,7 @@ template<class _Key, class _Val, class _Except = align_hash_exception>
 class align_hash_map
 {
 public:
-	DECLARE_ALIGNHASH(inclass, _Key, _Val, 1, alignhash_hashfn, alignhash_equalfn);
+	DEFINE_ALIGNHASH(inclass, _Key, _Val, 1, alignhash_hashfn, alignhash_equalfn);
 
 	typedef ah_iter_t   size_type;
 	typedef _Val *      pointer;
@@ -326,7 +337,7 @@ template<class _Key, class _Except = align_hash_exception>
 class align_hash_set
 {
 public:
-	DECLARE_ALIGNHASH(inclass, _Key, int, 0, alignhash_hashfn, alignhash_equalfn);
+	DEFINE_ALIGNHASH(inclass, _Key, int, 0, alignhash_hashfn, alignhash_equalfn);
 
 	typedef ah_iter_t size_type;
 	typedef ah_iter_t hashing_iterator;
@@ -551,5 +562,7 @@ public:
 private:
 	hashing _hashing;
 };
+
+}  // namespace ulib
 
 #endif  /* _ALIGN_HASH_H */

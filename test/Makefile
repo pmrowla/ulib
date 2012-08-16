@@ -2,13 +2,13 @@ TARGET		= alignhash.test alignhash_bench.test fbsearch.test version.test tree.te
 		list.test listsort.test gcd.test aes.test bitmap.test part.test heapsort.test \
 		comb.test console.test bfilter.test rand.test rc4.test sha256sum.test \
 		avl_bench.test splay_bench.test set_bench.test bfilter_bench.test stirling.test \
-		zipf_rng.test
+		zipf_rng.test thread.test periodic.test
 
 INCPATH		= ../include
 LIBPATH		= ../lib
 
 CXX		?= g++
-CXXFLAGS	?= -g3 -O2 -W -Wall -Werror
+CXXFLAGS	?= -g3 -O2 -W -Wall
 LDFLAGS		?= -lulib -lrt -lm
 DEBUG		?=
 

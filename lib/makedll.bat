@@ -1,6 +1,6 @@
 rem =======================================================
 rem     Make DLL from Static Library for WIN32
-rem Copyright (C) 2010-2011 Zilong Tan <labytan@gmail.com>
+rem Copyright (C) 2010-2011 Zilong Tan <eric.zltan@gmail.com>
 rem =======================================================
 
 @echo off

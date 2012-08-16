@@ -5,6 +5,8 @@
 #include <ulib/alignhash.h>
 #include <ulib/rand_tpl.h>
 
+using namespace ulib;
+
 struct str {
 	const char *c_str;
 	

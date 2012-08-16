@@ -1,6 +1,6 @@
 /* The MIT License
 
-   Copyright (C) 2011 Zilong Tan (labytan@gmail.com)
+   Copyright (C) 2011 Zilong Tan (eric.zltan@gmail.com)
 
    Permission is hereby granted, free of charge, to any person obtaining
    a copy of this software and associated documentation files (the
@@ -32,7 +32,7 @@
  * part - partitions any array into parts s.t.
  * array[<median] <= array[median] <= array[>median]
  */
-#define DECLARE_PART(name, type, lt)				\
+#define DEFINE_PART(name, type, lt)				\
 	static inline void					\
 	part_##name(type *base, type *median, type *last)	\
 	{							\

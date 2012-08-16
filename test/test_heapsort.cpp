@@ -4,7 +4,7 @@
 
 #define LESSTHAN(x, y) ((x) < (y))
 
-DECLARE_HEAPSORT(test, int, LESSTHAN);
+DEFINE_HEAPSORT(test, int, LESSTHAN);
 
 int main()
 {

@@ -4,7 +4,7 @@
 
 int main()
 {
-	DECLARE_BITMAP(bm, 1000);
+	DEFINE_BITMAP(bm, 1000);
 
 	bitmap_zero(bm, 1000);
 	bitmap_set(bm, 3, 2);

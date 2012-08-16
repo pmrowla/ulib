@@ -15,7 +15,7 @@ const char *usage =
 
 volatile long counter = 0;
 
-DECLARE_ALIGNHASH(myhash, uint64_t, uint64_t, 1, alignhash_hashfn, alignhash_equalfn)
+DEFINE_ALIGNHASH(myhash, uint64_t, uint64_t, 1, alignhash_hashfn, alignhash_equalfn)
 
 static void sig_alarm_handler(int)
 {

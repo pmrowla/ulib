@@ -1,6 +1,6 @@
 /* The MIT License
 
-   Copyright (C) 2011 Zilong Tan (labytan@gmail.com)
+   Copyright (C) 2011 Zilong Tan (eric.zltan@gmail.com)
 
    Permission is hereby granted, free of charge, to any person obtaining
    a copy of this software and associated documentation files (the
@@ -30,7 +30,7 @@
 #define HEAP_RIGHT(i)  ((i) * 2 + 2)
 #define HEAP_PARENT(i) (((i) - 1) / 2)
 
-#define DECLARE_HEAP(name, type, lt)					\
+#define DEFINE_HEAP(name, type, lt)					\
 	static inline void						\
 	heap_push_##name(type *base, size_t hole, size_t top, type val)	\
 	{								\
