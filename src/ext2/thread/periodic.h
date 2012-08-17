@@ -38,13 +38,12 @@ namespace ulib {
  * @ts: start timestamp
  * @us: microseconds
  */
-static inline timespec us_from(struct timespec ts, long us)
+static inline timespec us_from(struct timespec ts, uint64_t us)
 {
-	ts.tv_nsec += us * 1000;
-	if (ts.tv_nsec >= 1000000000) {
-		ts.tv_sec += ts.tv_nsec / 1000000000;
-		ts.tv_nsec = ts.tv_nsec % 1000000000;
-	}
+	uint64_t ns = ts.tv_nsec + us * 1000;
+
+	ts.tv_sec += ns / 1000000000u;
+	ts.tv_nsec = ns % 1000000000u;
 	return ts;
 }
 
@@ -53,7 +52,7 @@ static inline timespec us_from(struct timespec ts, long us)
  * @ts: start timestamp
  * @us: microseconds
  */
-static inline timespec us_from_now(long us)
+static inline timespec us_from_now(uint64_t us)
 {
 	struct timespec ts;
 	clock_gettime(CLOCK_REALTIME, &ts);
@@ -65,7 +64,7 @@ static inline timespec us_from_now(long us)
  * @ts: start timestamp
  * @us: microseconds
  */
-static inline timespec sec_from_now(long sec)
+static inline timespec sec_from_now(uint64_t sec)
 {
 	return us_from_now(sec * 1000000);
 }
@@ -122,7 +121,7 @@ private:
 	task_less(const task_t &a, const task_t &b);
 
 	taskid_t
-	schedule_task(const task_t & task);
+	schedule_task(const task_t &task);
 
 	// the timer thread will run this method.
 	void run();
