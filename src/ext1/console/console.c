@@ -34,7 +34,13 @@
 #define DEF_PROMPT  "> "
 #define READ_BUFLEN 1024
 
-#define STRHASH(s)   hash_djb2((const unsigned char *)(s))
+static uint32_t
+__hash_fast32_str(const char *s)
+{
+	return hash_fast64(s, strlen(s), 0);
+}
+
+#define STRHASH(s)   __hash_fast32_str(s)
 #define STRCMP(x, y) (strcmp(x, y) == 0)
 
 typedef int (*console_fcn_t) (int argc, const char *argv[]);

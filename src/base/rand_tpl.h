@@ -95,6 +95,9 @@
 		}							\
 	} while (0)
 
+/* RAND_INT_MIX64 and RAND_INT2_MIX64 are two popular integer hash
+   functions. The first one is by Jenkins and the second one is by
+   Thomas Wang. */
 #define RAND_INT_MIX64(h) ({			\
 			(h) += ~((h) << 32);	\
 			(h) ^= ((h) >> 22);	\
@@ -114,14 +117,21 @@
 			(h) ^= ROR64(h, 28);		\
 			(h) *= 2147483649UL; })
 
+/* The following hash functions are my work, they are simple and
+   possibly more random than above ones, depending on the
+   circumstances. RAND_INT3_MIX64 is meant to be a quick integer
+   hash function, thus it should work well on any integer. */
 #define RAND_INT3_MIX64(h) ({					\
-			(h) *= 0xc6a4a7935bd1e995ULL;		\
-			(h) ^= (h) >> 47;			\
-			(h) *= 0xc6a4a7935bd1e995ULL; })
+			(h) ^= (h) >> 23;			\
+			(h) *= 0x2127599bf4325c37ULL;		\
+			(h) ^= (h) >> 47; })
 
-#define RAND_INT3_MIX64_INV(h) ({				\
-			(h) *= 6879827495036328381ULL;		\
-			(h) ^= (h) >> 47;			\
-			(h) *= 6879827495036328381ULL; })
+/* RAND_INT4_MIX64 produces more robust output than INT3, but is
+   slightly slower. */
+#define RAND_INT4_MIX64(h) ({					\
+			(h) ^= (h) << 1;			\
+			(h) *= 0x81dc9a30947bf4c7ULL;		\
+			(h) ^= (h) >> 48;			\
+			(h) ^= (h) >> 22; })
 
 #endif

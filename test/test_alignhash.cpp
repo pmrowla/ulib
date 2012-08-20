@@ -14,7 +14,7 @@ struct str {
 	: c_str(s) { }
 
 	operator size_t() const
-	{ return hash_djb2((const unsigned char *)c_str); }
+	{ return hash_fast64((const unsigned char *)c_str, strlen(c_str), 0); }
 
 	bool operator==(const str &other) const
 	{ return strcmp(c_str, other.c_str) == 0; }
