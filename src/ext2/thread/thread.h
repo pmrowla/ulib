@@ -87,7 +87,7 @@ public:
 	// destructor function and call join there.
 	virtual
 	~thread()
-	{ join(); }
+	{ stop_and_join(); }
 
 	// optionally performs initialization for thread
 	virtual int
