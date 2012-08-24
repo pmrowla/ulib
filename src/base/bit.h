@@ -50,6 +50,19 @@
 #define XOR_MIN(x,y)        ((y) ^ (((x) ^ (y)) & -((x) < (y))))
 #define XOR_MAX(x,y)        ((x) ^ (((x) ^ (y)) & -((x) < (y))))
 
+#define BIN_TO_GRAYCODE(b)  ((b) ^ ((b) >> 1))
+#define GRAYCODE_TO_BIN32(g)  ({		\
+			(g) ^= (g) >> 1;	\
+			(g) ^= (g) >> 2;	\
+			(g) ^= (g) >> 4;	\
+			(g) ^= (g) >> 8;	\
+			(g) ^= (g) >> 16;	\
+		})
+#define GRAYCODE_TO_BIN64(g)  ({		\
+			GRAYCODE_TO_BIN32(g);	\
+			(g) ^= (g) >> 32;	\
+		})
+
 /* conditionally set or clear bits, where w is the word to modify, 
  * m is the bit mask and f is the condition flag */
 #define BIT_ALTER(w,m,f)    ((w) ^ ((-(f) ^ (w)) & (m)))
