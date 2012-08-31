@@ -129,19 +129,18 @@
 /* RAND_INT4_MIX64 produces more robust output than INT3, but is
    slightly slower. */
 #define RAND_INT4_MIX64(h) ({					\
-			(h) ^= (h) >> 20;			\
-			(h) *= 0x2f30d0ffcbe1d923ULL;		\
-			(h) ^= (h) >> 9;			\
-			(h) ^= (h) >> 27; })
+			(h) ^= (h) >> 29;			\
+			(h) *= 0xd36463187cc70d7bULL;		\
+			(h) ^= (h) >> 33;			\
+			(h) *= 0xb597d0ceca3f6e07ULL;		\
+			(h) ^= (h) >> 40; })
 
 /* Inverse of RAND_INT4_MIX64 */
 #define RAND_INT4_MIX64_INV(h) ({				\
-			(h) ^= ((h) ^ ((h) >> 27)) >> 27;	\
-			(h) ^= (h) >> 9;			\
-			(h) ^= (h) >> 18;			\
-			(h) ^= (h) >> 36;			\
-			(h) *= 217415536851492491ULL;		\
-			(h) ^= (h) >> 20;			\
-			(h) ^= (h) >> 40; })
+			(h) ^= (h) >> 40;			\
+			(h) *= 0xfbcdd61d299e9fb7ULL;		\
+			(h) ^= (h) >> 33;			\
+			(h) *= 0x0ce066597af4c9b3ULL;		\
+			(h) ^= ((h) >> 29) ^ ((h) >> 58); })
 
 #endif
