@@ -32,13 +32,13 @@
 #include "bfilter.h"
 
 #define OPTIMAL_NFUNC(nbits, nelem) ((int)ceilf(0.7*(nbits)/(nelem)))
-#define HASH_FUNCTION(buf,len,seed) hash_murmur64(buf, len, seed)
+#define HASH_FUNCTION(buf,len,seed) hash_fast64(buf, len, seed)
 
 static inline void
 __init_seeds(uint64_t *seeds, int nseed)
 {
 	uint64_t x, y, z;
-	uint64_t seed = lrand48();
+	uint64_t seed = (uint64_t)time(NULL);
 	int i;
 
 	RAND_NR_INIT(x, y, z, seed);
@@ -48,7 +48,6 @@ __init_seeds(uint64_t *seeds, int nseed)
 
 int bfilter_create(struct bloom_filter *bf, unsigned long nbits, unsigned long nelem)
 {
-	srand48(time(NULL));
 	bf->nbits = nbits;
 	bf->nelem = nelem;
 	bf->nfunc = OPTIMAL_NFUNC(nbits, nelem);

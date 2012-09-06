@@ -34,62 +34,12 @@ extern "C" {
 #endif
 
 /**
- * hash_fnv32 - 32-bit FNV-1a Hash, popular but produces less decent
- *              hash values
- * @buf: data buffer
- * @len: data size
- */
-	uint32_t hash_fnv32(const void *buf, size_t len);
-
-/**
- * hash_fnv64 - 64-bit FNV-1a Hash, popular but produces less decent
- *              hash values
- * @buf: data buffer
- * @len: data size
- */
-	uint64_t hash_fnv64(const void *buf, size_t len);
-
-/**
- * hash_murmur32 - 32-bit implementation of murmurhash2, fast and
- *                 produces decent hash values
- * @buf:  data buffer
- * @len:  data size
- * @seed: the seed
- */
-	uint32_t hash_murmur32(const void *buf, size_t len, uint32_t seed);
-
-/**
- * hash_murmur64 - 64-bit implementation of murmurhash2, fast but
- * distribution is slightly biased among bits
- * @buf:  data buffer
- * @len:  data size
- * @seed: the seed
- */
-	uint64_t hash_murmur64(const void *buf, size_t len, uint64_t seed);
-
-/**
  * hash_fast64 - 64-bit implementation of fasthash, 
  * @buf:  data buffer
  * @len:  data size
  * @seed: the seed
  */
 	uint64_t hash_fast64(const void *buf, size_t len, uint64_t seed);
-
-/**
- * hash_crapwow64 - 64-bit implementation of crapwowhash
- * @buf:  data buffer
- * @len:  data size
- * @seed: the seed
- * Note: only available for x86_64
- */
-	uint64_t hash_crapwow64(const void *buf, size_t len, uint64_t seed);
-
-/**
- * hash_crc32 - CRC-32 as a hash function
- * @buf: data buffer
- * @len: data size
- */
-	uint32_t hash_crc32(const unsigned char *buf, size_t len);
 
 /**
  * hash_jenkins - implementation of Jenkins hash
