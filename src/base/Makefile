@@ -9,7 +9,7 @@ CC		?= gcc
 CFLAGS		?= -g3 -O2 -Wall -W -Werror -pipe -c -fno-strict-aliasing
 DEBUG		?=
 
-DS_OBJS		= tree.o treeutils.o bitmap.o
+DS_OBJS		= tree.o treeutils.o bitmap.o chainhash.o
 SEARCH_OBJS	= fbsearch.o
 CRYPT_OBJS	= aes.o sha1sum.o md5sum.o sha256sum.o rc4.o
 SORT_OBJS	= listsort.o
