@@ -42,6 +42,14 @@ extern "C" {
 	uint64_t hash_fast64(const void *buf, size_t len, uint64_t seed);
 
 /**
+ * hash_fast32 - 32-bit implementation of fasthash, 
+ * @buf:  data buffer
+ * @len:  data size
+ * @seed: the seed
+ */
+	uint32_t hash_fast32(const void *buf, size_t len, uint32_t seed);
+
+/**
  * hash_jenkins - implementation of Jenkins hash
  * @buf: data buffer
  * @len: data size

@@ -25,6 +25,13 @@ int main()
 		}
 	}
 
+	uint64_t nil = 0;
+
+	printf("0 fasthash64: %016llx\n", (unsigned long long)hash_fast64(&nil, sizeof(nil), 0));
+	printf("1 fasthash64: %016llx\n", (unsigned long long)hash_fast64(&nil, sizeof(nil), 1));
+	printf("0 fasthash32: %08x\n",  hash_fast32(&nil, sizeof(nil), 0));
+	printf("1 fasthash32: %08x\n",  hash_fast32(&nil, sizeof(nil), 1));
+
 	printf("passed\n");
 	
 	return 0;

@@ -68,6 +68,15 @@ uint64_t hash_fast64(const void *buf, size_t len, uint64_t seed)
 	return h;
 }
 
+uint32_t hash_fast32(const void *buf, size_t len, uint32_t seed)
+{
+	// the following trick converts the 64-bit hashcode to Fermat
+	// residue, which shall retain information from both the higher
+	// and lower parts of hashcode.
+        uint64_t h = hash_fast64(buf, len, seed);
+	return h - (h >> 32);
+}
+
 /*
   -------------------------------------------------------------------------------
   mix -- mix 3 32-bit values reversibly.
