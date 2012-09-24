@@ -319,14 +319,14 @@ enum {
 #define alignhash_t(name) alignhash_##name##_t
 
 /**
- * alignhash_key - retrieves the key of an iterator
+ * alignhash_key - retrieves the key of a iterator
  * @h: pointer to aligned hash
  * @x: the iterator
  */
 #define alignhash_key(h, x) ((h)->keys[x])
 
 /**
- * alignhash_value - retrieves the value of an iterator
+ * alignhash_value - retrieves the value of a iterator
  * @h: pointer to aligned hash
  * @x: the iterator
  */
@@ -373,7 +373,7 @@ enum {
  * NOTE:   the insertion result, which is defined as AH_INS_*, will be
  * returned through @r. This function does not displace an existing
  * element. Displacement can be implemented using 'get' operation.
- * @return:returnns an iterator to the new element
+ * @return:returns a iterator to the new element
  */
 #define alignhash_set(name, h, k, r) alignhash_set_##name(h, k, r)
 
@@ -382,7 +382,7 @@ enum {
  * @name:  name of the aligned hash
  * @h:     pointer to allocated aligned hash
  * @k:     key of the element to retrieve
- * @return:returnns an iterator to the specified element
+ * @return:returns a iterator to the specified element
  */
 #define alignhash_get(name, h, k) alignhash_get_##name(h, k)
 
@@ -395,14 +395,14 @@ enum {
 #define alignhash_del(name, h, x) alignhash_del_##name(h, x)
 
 /**
- * alignhash_exist - tests if an iterator contains data
+ * alignhash_exist - tests if a iterator contains data
  * @h: pointer to allocated aligned hash
  * @x: iterator to the bucket
  */
 #define alignhash_exist(h, x) (!AH_ISEITHER((h)->flags, (x)))
 
 /**
- * alignhash_exist - gets the start iterator
+ * alignhash_begin - gets the start iterator
  * @h: pointer to allocated aligned hash
  */
 #define alignhash_begin(h) (ah_iter_t)(0)

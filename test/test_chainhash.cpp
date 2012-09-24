@@ -1,63 +1,80 @@
-#include <stdint.h>
 #include <stdio.h>
-#include <stdlib.h>
 #include <assert.h>
-#include <ulib/chainhash.h>
+#include <ulib/chainhash_tpl.h>
 
-typedef struct {
-	uint32_t key;
-	uint32_t value;
-} pair;
-
-static uint32_t hash_from_key_fn(void *k)
-{
-	return ((pair *)k)->key;
-}
-
-static int  keys_equal_fn(void *a, void *b)
-{
-	return ((pair *)a)->key == ((pair *)b)->key;
-}
+DEFINE_CHAINHASH(my, int, int, chainhash_hashfn, chainhash_cmpfn);
 
 int main()
 {
-	struct chainhash  *h;
-	pair p1 = { 1, 2 };
-	pair p2 = { 3, 5 };
-	void *found;
+	/* sanity check */
+	chainhash_t(my) *ch = chainhash_init(my, 100);
+	chainhash_destroy(my, ch);
+	ch = chainhash_init(my, 1);
+	chainhash_itr_t(my) it = chainhash_set(my, ch, 1, 2);
+	assert(!chainhash_end(it));
+	assert(chainhash_key(it) == 1);
+	assert(chainhash_value(it) == 2);
+	it = chainhash_get(my, ch, 1);
+	assert(!chainhash_end(it));
+	assert(chainhash_key(it) == 1);
+	assert(chainhash_value(it) == 2);
+	chainhash_del(my, it);
+	it = chainhash_get(my, ch, 1);
+	assert(chainhash_end(it));
+	it = chainhash_set(my, ch, 1, 2);
+	assert(!chainhash_end(it));
+	assert(chainhash_key(it) == 1);
+	assert(chainhash_value(it) == 2);
+	chainhash_clear(my, ch);
+	it = chainhash_get(my, ch, 1);
+	assert(chainhash_end(it));
+	chainhash_destroy(my, ch);
 
-	h = chainhash_create(0, hash_from_key_fn, keys_equal_fn);
-
-	assert((found = chainhash_search(h, &p1)) == NULL);
-	assert(chainhash_size(h) == 0);
-
-	if (chainhash_insert(h, &p1, &p1))
-	{
-		printf("insertion failed\n");
-		return -1;
+	/* snapshot test */
+	ch = chainhash_init(my, 3);
+	it = chainhash_set(my, ch, 3, 1);
+	assert(!chainhash_end(it));
+	it = chainhash_set(my, ch, 7, 2);
+	assert(!chainhash_end(it));
+	it = chainhash_set(my, ch, 5, 3);
+	assert(!chainhash_end(it));
+	it = chainhash_set(my, ch, 10, 4);
+	assert(!chainhash_end(it));
+	it = chainhash_set(my, ch, 0, 5);
+	assert(!chainhash_end(it));
+	it = chainhash_set(my, ch, 1, 6);
+	assert(!chainhash_end(it));
+	it = chainhash_set(my, ch, 5, 7);
+	assert(!chainhash_end(it));
+	printf("unordered iteration:\n");
+	for (it = chainhash_begin(my, ch); !chainhash_end(it);) {
+		printf("%d\t%d\n",
+		       chainhash_key(it),
+		       chainhash_value(it));
+		if (chainhash_advance(my, &it))
+			break;
+	}
+	chainhash_sort(my, ch);
+	printf("before snapshot, sorted iteration:\n");
+	for (it = chainhash_begin(my, ch); !chainhash_end(it);) {
+		printf("%d\t%d\n",
+		       chainhash_key(it),
+		       chainhash_value(it));
+		if (chainhash_advance(my, &it))
+			break;
+	}
+	chainhash_snap(my, ch);
+	chainhash_sort(my, ch);
+	printf("after snapshot, sorted iteration:\n");
+	for (it = chainhash_begin(my, ch); !chainhash_end(it);) {
+		printf("%d\t%d\n",
+		       chainhash_key(it),
+		       chainhash_value(it));
+		if (chainhash_advance(my, &it))
+			break;
 	}
 
-	assert((found = chainhash_search(h, &p1)) != NULL);
-	assert(keys_equal_fn(&p1, found));
-	assert((found = chainhash_search(h, &p2)) == NULL);
-	assert(chainhash_size(h) == 1);
-
-	if (chainhash_insert(h, &p2, &p2))
-	{
-		printf("insertion failed\n");
-		return -1;
-	}
-
-	assert((found = chainhash_search(h, &p2)) != NULL);
-	assert(keys_equal_fn(&p2, found));
-	assert(chainhash_size(h) == 2);
-
-	assert((found = chainhash_remove(h, &p2)) != NULL);
-	assert(keys_equal_fn(&p2, found));
-	assert(chainhash_size(h) == 1);
-
-	chainhash_destroy(h, 0);
-
+	chainhash_destroy(my, ch);
 	printf("passed\n");
 
 	return 0;
