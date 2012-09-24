@@ -46,7 +46,7 @@
 	typedef struct {						\
 		size_t mask;						\
 		chainhash_entry_##name##_t **tbl;			\
-		chainhash_entry_##name##_t *snap; /* current snapshot */ \
+		chainhash_entry_##name##_t *snap;			\
 	} chainhash_##name##_t;						\
 									\
 	typedef struct {						\
@@ -132,6 +132,31 @@
 	}								\
 									\
 	static inline chainhash_itr_##name##_t				\
+	chainhash_set_uniq_##name(chainhash_##name##_t *ch,		\
+				  const keytype key, const valtype val,	\
+				  int replace)				\
+	{								\
+		chainhash_itr_##name##_t itr = chainhash_get_##name(ch, key); \
+		if (itr.entry == NULL) {				\
+			chainhash_entry_##name##_t *e = (chainhash_entry_##name##_t *) \
+				malloc(sizeof(chainhash_entry_##name##_t)); \
+			if (e == NULL)					\
+				return itr;				\
+			e->next = NULL;					\
+			e->snap = NULL;					\
+			e->key  = key;					\
+			e->val  = val;					\
+			if (itr.parent)					\
+				itr.parent->next = e;			\
+			else						\
+				ch->tbl[itr.index] = e;			\
+			itr.entry = e;					\
+		} else if (replace)					\
+			itr.entry->val = val;				\
+		return itr;						\
+	}								\
+									\
+	static inline chainhash_itr_##name##_t				\
 	chainhash_set_##name(chainhash_##name##_t *ch,			\
 			     const keytype key, const valtype val)	\
 	{								\
@@ -184,7 +209,7 @@
 			itr.parent = p;					\
 			return itr;					\
 		}							\
-		while (ch->tbl[i] == NULL && i <= ch->mask)		\
+		while (i <= ch->mask && ch->tbl[i] == NULL)		\
 			++i;						\
 		itr.index = i;						\
 		if (i <= ch->mask)					\
@@ -285,7 +310,7 @@
 	{								\
 		chainhash_entry_##name##_t *cur, *last;			\
 		size_t i = 0;						\
-		while (ch->tbl[i] == NULL && i <= ch->mask)		\
+		while (i <= ch->mask && ch->tbl[i] == NULL)		\
 			++i;						\
 		if (i <= ch->mask)					\
 			cur = ch->tbl[i];				\
@@ -312,6 +337,7 @@
 	}
 
 /*------------------------- Human Interfaces -------------------------*/
+
 
 /**
  * chainhash_hashfn - naive hash function
@@ -380,6 +406,18 @@
 #define chainhash_set(name, h, k, v) chainhash_set_##name(h, k, v)
 
 /**
+ * chainhash_set_uniq - inserts a unique key, or change its value if
+ *                      the key exists
+ * @name:  name of the chainhash
+ * @h:     pointer to the chainhash
+ * @k:     key of the element
+ * @v:     value of the element
+ * @r:     whether to replace the value if the key exists
+ * @return:returns a iterator to the element
+ */
+#define chainhash_set_uniq(name,h,k,v,r) chainhash_set_uniq_##name(h,k,v,r)
+
+/**
  * chainhash_get - retrieves the iterator of an element
  * @name:  name of the chainhash
  * @h:     pointer to the chainhash
@@ -400,7 +438,7 @@
  * @name: name of the chainhash
  * @h:    pointer to the chainhash
  */
-#define chainhash_begin(name, h) (chainhash_iterator_##name(h))
+#define chainhash_begin(name, h) chainhash_iterator_##name(h)
 
 /**
  * chainhash_advance - advances the iterator
@@ -408,7 +446,7 @@
  * @x:    pointer to the iterator
  * @return: 0 if successful, nonzero otherwise
  */
-#define chainhash_advance(name, x) (chainhash_advance_##name(x))
+#define chainhash_advance(name, x) chainhash_advance_##name(x)
 
 /**
  * chainhash_end - tests if a iterator has reached the end
@@ -423,7 +461,7 @@
  * @h: pointer to the chainhash
  * Note: new items can only discovered
  */
-#define chainhash_snap(name, h) (chainhash_snap_##name(h))
+#define chainhash_snap(name, h) chainhash_snap_##name(h)
 
 /**
  * chainhash_sort - sorts the snapshot, this may affect subsequent
@@ -431,6 +469,12 @@
  * @name: name of the chainhash
  * @h: pointer to the chainhash
  */
-#define chainhash_sort(name, h) (chainhash_sort_##name(h))
+#define chainhash_sort(name, h) chainhash_sort_##name(h)
+
+/**
+ * chainhash_nbucket - number of bucket used
+ * @h: pointer to the chainhash
+ */
+#define chainhash_nbucket(h) ((h)->mask + 1)
 
 #endif /* __ULIB_CHAINHASH_H */

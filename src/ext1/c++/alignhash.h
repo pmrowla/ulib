@@ -324,10 +324,12 @@ public:
 	{ alignhash_del(inclass, _hashing, alignhash_get(inclass, _hashing, key)); }
 
 	void
-	erase(const iterator &it) { alignhash_del(inclass, _hashing, it._cur); }
+	erase(const iterator &it)
+	{ alignhash_del(inclass, _hashing, it._cur); }
 
 	void
-	clear() { alignhash_clear(inclass, _hashing); }
+	clear()
+	{ alignhash_clear(inclass, _hashing); }
 
 private:
 	hashing _hashing;
@@ -554,10 +556,12 @@ public:
 	{ alignhash_del(inclass, _hashing, alignhash_get(inclass, _hashing, key)); }
 
 	void
-	erase(const iterator &it) { alignhash_del(inclass, _hashing, it._cur); }
+	erase(const iterator &it)
+	{ alignhash_del(inclass, _hashing, it._cur); }
 
 	void
-	clear() { alignhash_clear(inclass, _hashing); }
+	clear()
+	{ alignhash_clear(inclass, _hashing); }
 
 private:
 	hashing _hashing;
