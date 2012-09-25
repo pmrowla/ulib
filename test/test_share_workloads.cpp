@@ -10,13 +10,13 @@
 
 using namespace ulib;
 
-#define R_TH_NUM 10
-#define W_TH_NUM 5
+#define R_TH_NUM 1
+#define W_TH_NUM 1
 
 pid_t gettid()
 { return syscall( __NR_gettid ); }
 
-chain_hash_map_r<int,int> shared_map(0x20000);
+chain_hash_map_r<int,int> shared_map(0x20000, 1024);
 
 class writer : public thread {
 public:

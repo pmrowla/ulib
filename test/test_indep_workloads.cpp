@@ -10,8 +10,8 @@
 
 using namespace ulib;
 
-#define R_TH_NUM 10
-#define W_TH_NUM 5
+#define R_TH_NUM 1
+#define W_TH_NUM 1
 
 pid_t gettid()
 { return syscall( __NR_gettid ); }
