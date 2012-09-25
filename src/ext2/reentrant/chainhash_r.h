@@ -27,8 +27,10 @@
 #define _CHAIN_HASH_R_H
 
 #include <pthread.h>
+#include <assert.h>
 #include <exception>
 #include <string.h>
+
 #include "chainhash.h"
 
 namespace ulib {
@@ -82,9 +84,9 @@ public:
 		return *this;
 	}
 
-	void 
+	void
 	acquire(size_t h) const
-	{ pthread_spin_lock(_locks + (h & _mask)); }	
+	{ pthread_spin_lock(_locks + (h & _mask)); }
 
 	void
 	release(size_t h) const
@@ -118,6 +120,11 @@ public:
 	chain_hash_map_r(size_t min_bucket, size_t min_lock)
 	: chain_hash_map<_Key,_Val,_Except>(min_bucket),
 	  concurrency(min_lock)
+	{ assert(min_bucket >= min_lock); } // this is important for locking consistency
+
+	chain_hash_map_r(size_t min_bucket)
+	: chain_hash_map<_Key,_Val,_Except>(min_bucket),
+	  concurrency(min_bucket)  // the same as min_bucket, maximizing concurrency
 	{ }
 
 	chain_hash_map_r(const chain_hash_map_r &other)
@@ -201,7 +208,7 @@ public:
 
 	void
 	erase(const iterator &it)
-	{ 
+	{
 		size_t key = it.key();
 		acquire(key);
 		chain_hash_map<_Key,_Val,_Except>::erase(it);

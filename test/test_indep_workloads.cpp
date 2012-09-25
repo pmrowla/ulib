@@ -1,8 +1,10 @@
 #include <stdint.h>
 #include <stdio.h>
 #include <assert.h>
+#include <sys/types.h>
+#include <sys/syscall.h>
 #include <ulib/rdtsc.h>
-#include <ulib/chainhash_r.h>
+#include <ulib/chainhash.h>
 #include <ulib/thread.h>
 #include <ulib/rand_tpl.h>
 
@@ -11,16 +13,17 @@ using namespace ulib;
 #define R_TH_NUM 10
 #define W_TH_NUM 5
 
-chain_hash_map_r<int,int> map(1000, 10);
+pid_t gettid()
+{ return syscall( __NR_gettid ); }
 
 class writer : public thread {
 public:
 	int
 	run()
 	{
+		uint64_t r = _seed++;
 		while (is_running()) {
-			map[RAND_NR_NEXT(_u, _v, _w) & 0xffffff] =
-				RAND_NR_NEXT(_u, _v, _w); 
+			(*map)[RAND_INT4_MIX64(r) >> 48] = r;
 			++_cnt;
 		}
 		return 0;
@@ -29,17 +32,23 @@ public:
 	writer()
 	: _cnt(0)
 	{
-		uint64_t seed = time(NULL);
-		RAND_NR_INIT(_u, _v, _w, seed);
+		_seed = gettid();
+		RAND_INT4_MIX64(_seed);
+		_seed += time(NULL);
+		map = new chain_hash_map<int,int>(0x20000);
 	}
+
+	~writer()
+	{ delete map; }
 
 	uint64_t
 	count() const
 	{ return _cnt; }
 
 private:
-	volatile uint64_t _cnt;
-	uint64_t _u, _v, _w;
+	chain_hash_map<int,int> *map;
+	uint64_t _cnt;
+	uint64_t _seed;
 };
 
 class reader : public thread {
@@ -47,9 +56,10 @@ public:
 	int
 	run()
 	{
+		uint64_t r = _seed++;
 		while (is_running()) {
 			chain_hash_map<int,int>::const_iterator it =
-				map.find(RAND_NR_NEXT(_u, _v, _w));
+				map->find(RAND_INT4_MIX64(r));
 			++_cnt;
 		}
 		return 0;
@@ -58,17 +68,27 @@ public:
 	reader()
 	: _cnt(0)
 	{
-		uint64_t seed = time(NULL);
-		RAND_NR_INIT(_u, _v, _w, seed);
+		_seed = gettid();
+		RAND_INT4_MIX64(_seed);
+		_seed += time(NULL);
+		map = new chain_hash_map<int,int>(0x20000);
+		for (int i = 0; i < 0xffff; ++i) {
+			++_seed;
+			(*map)[RAND_INT4_MIX64(_seed)] = _seed;
+		}
 	}
+
+	~reader()
+	{ delete map; }
 
 	uint64_t
 	count() const
 	{ return _cnt; }
 
 private:
-	volatile uint64_t _cnt;
-	uint64_t _u, _v, _w;
+	chain_hash_map<int,int> *map;
+	uint64_t _cnt;
+	uint64_t _seed;
 };
 
 int main()
@@ -101,8 +121,8 @@ int main()
 	uint64_t ns_per_write = elapse / w_cnt;
 
 	printf("total ops   :%lu read, %lu write\n", r_cnt, w_cnt);
-	printf("ns_per_read :%lu\t%lu op/s\n", ns_per_read,  1000000000ul / ns_per_read);
-	printf("ns_per_write:%lu\t%lu op/s\n", ns_per_write, 1000000000ul / ns_per_write);
+	printf("ns_per_read :%-6lu%10lu op/s\n", ns_per_read,  1000000000ul / ns_per_read);
+	printf("ns_per_write:%-6lu%10lu op/s\n", ns_per_write, 1000000000ul / ns_per_write);
 
 	printf("passed\n");
 
