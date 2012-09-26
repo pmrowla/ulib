@@ -23,8 +23,8 @@ public:
 	int
 	run()
 	{
-		uint64_t r = _seed++;
 		while (is_running()) {
+			uint64_t r = _seed++;
 			shared_map[RAND_INT4_MIX64(r) >> 48] = r;
 			++_cnt;
 		}
@@ -53,8 +53,8 @@ public:
 	int
 	run()
 	{
-		uint64_t r = _seed++;
 		while (is_running()) {
+			uint64_t r = _seed++;
 			chain_hash_map<int,int>::const_iterator it =
 				shared_map.find(RAND_INT4_MIX64(r));
 			++_cnt;
