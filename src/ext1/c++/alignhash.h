@@ -79,6 +79,8 @@ class align_hash_map
 public:
 	DEFINE_ALIGNHASH(inclass, _Key, _Val, 1, alignhash_hashfn, alignhash_equalfn);
 
+	typedef _Key        key_type;
+	typedef _Val        value_type;
 	typedef ah_iter_t   size_type;
 	typedef _Val *      pointer;
 	typedef const _Val* const_pointer;
@@ -341,6 +343,7 @@ class align_hash_set
 public:
 	DEFINE_ALIGNHASH(inclass, _Key, int, 0, alignhash_hashfn, alignhash_equalfn);
 
+	typedef _Key      key_type;
 	typedef ah_iter_t size_type;
 	typedef ah_iter_t hashing_iterator;
 	typedef alignhash_t(inclass) * hashing;

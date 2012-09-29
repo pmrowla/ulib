@@ -54,6 +54,8 @@ class chain_hash_map
 public:
 	DEFINE_CHAINHASH(inclass, _Key, _Val, chainhash_hashfn, chainhash_cmpfn);
 
+	typedef _Key        key_type;
+	typedef _Val        value_type;
 	typedef size_t      size_type;
 	typedef _Val *      pointer;
 	typedef const _Val* const_pointer;

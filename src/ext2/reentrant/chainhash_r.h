@@ -107,6 +107,8 @@ class chain_hash_map_r :
 		public concurrency
 {
 public:
+	typedef _Key key_type;
+	typedef _Val value_type;
 	typedef typename chain_hash_map<_Key,_Val,_Except>::size_type        size_type;
 	typedef typename chain_hash_map<_Key,_Val,_Except>::pointer          pointer;
 	typedef typename chain_hash_map<_Key,_Val,_Except>::const_pointer    const_pointer;
