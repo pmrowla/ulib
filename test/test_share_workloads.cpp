@@ -39,6 +39,9 @@ public:
 		_seed += time(NULL);
 	}
 
+	~writer()
+	{ stop_and_join(); }
+
 	uint64_t
 	count() const
 	{ return _cnt; }
@@ -69,6 +72,9 @@ public:
 		RAND_INT4_MIX64(_seed);
 		_seed += time(NULL);
 	}
+
+	~reader()
+	{ stop_and_join(); }
 
 	uint64_t
 	count() const

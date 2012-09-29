@@ -39,7 +39,10 @@ public:
 	}
 
 	~writer()
-	{ delete map; }
+	{
+		stop_and_join();
+		delete map;
+	}
 
 	uint64_t
 	count() const
@@ -79,7 +82,10 @@ public:
 	}
 
 	~reader()
-	{ delete map; }
+	{
+		stop_and_join();
+		delete map; 
+	}
 
 	uint64_t
 	count() const
