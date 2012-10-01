@@ -26,85 +26,19 @@
 #ifndef _CHAIN_HASH_R_H
 #define _CHAIN_HASH_R_H
 
-#include <pthread.h>
 #include <assert.h>
 #include <exception>
 #include <string.h>
 
+#include "regionlock.h"
 #include "chainhash.h"
 
 namespace ulib {
 
-class concurrency {
-public:
-	concurrency(size_t max)
-	{
-		--max;
-		max |= max >> 1;
-		max |= max >> 2;
-		max |= max >> 4;
-		max |= max >> 8;
-		max |= max >> 16;
-		if (sizeof(size_t) == 8)
-			max |= max >> 32;
-		_mask  = max;
-		_locks = new pthread_spinlock_t [max + 1];
-		for (size_t i = 0; i <= _mask; ++i)
-			pthread_spin_init(&_locks[i], 0);
-	}
-
-	concurrency(const concurrency &other)
-	{
-		_mask  = other.bucket_count() - 1;
-		_locks = new pthread_spinlock_t [_mask + 1];
-		for (size_t i = 0; i <= _mask; ++i)
-			pthread_spin_init(&_locks[i], 0);
-	}
-
-	virtual
-	~concurrency()
-	{
-		for (size_t i = 0; i <= _mask; ++i)
-			pthread_spin_destroy(_locks + i);
-		delete [] _locks;
-	}
-
-	concurrency &
-	operator= (const concurrency &other)
-	{
-		if (bucket_count() != other.bucket_count()) {
-			for (size_t i = 0; i <= _mask; ++i)
-				pthread_spin_destroy(_locks + i);
-			delete [] _locks;
-			_mask  = other.bucket_count() - 1;
-			_locks = new pthread_spinlock_t [_mask + 1];
-			for (size_t i = 0; i <= _mask; ++i)
-				pthread_spin_init(&_locks[i], 0);
-		}
-		return *this;
-	}
-
-	void
-	acquire(size_t h) const
-	{ pthread_spin_lock(_locks + (h & _mask)); }
-
-	void
-	release(size_t h) const
-	{ pthread_spin_unlock(_locks + (h & _mask)); }
-
-	size_t
-	bucket_count() const
-	{ return _mask + 1; }
-
-private:
-	size_t _mask;
-	pthread_spinlock_t *_locks;
-};
-
 template<class _Key, class _Val, class _Except = chain_hash_exception>
 class chain_hash_map_r :
 		public chain_hash_map<_Key, _Val, _Except>,
-		public concurrency
+		public region_lock
 {
 public:
 	typedef _Key key_type;
@@ -121,17 +55,17 @@ public:
 
 	chain_hash_map_r(size_t min_bucket, size_t min_lock)
 	: chain_hash_map<_Key,_Val,_Except>(min_bucket),
-	  concurrency(min_lock)
+	  region_lock(min_lock)
 	{ assert(min_bucket >= min_lock); } // this is important for locking consistency
 
 	chain_hash_map_r(size_t min_bucket)
 	: chain_hash_map<_Key,_Val,_Except>(min_bucket),
-	  concurrency(min_bucket)  // the same as min_bucket, maximizing concurrency
+	  region_lock(min_bucket)  // the same as min_bucket, maximizing region_lock
 	{ }
 
 	chain_hash_map_r(const chain_hash_map_r &other)
 	: chain_hash_map<_Key,_Val,_Except>(other),
-	  concurrency(((const concurrency *)&other)->bucket_count())
+	  region_lock(((const region_lock *)&other)->bucket_count())
 	{ }
 
 	chain_hash_map_r &
@@ -139,7 +73,7 @@ public:
 	{
 		*(chain_hash_map<_Key,_Val,_Except> *)this =
 			*(const chain_hash_map<_Key,_Val,_Except> *)&other;
-		*(concurrency *)this = *(const concurrency *)&other;
+		*(region_lock *)this = *(const region_lock *)&other;
 		return *this;
 	}
 
