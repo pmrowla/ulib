@@ -43,6 +43,7 @@ static const char *usage =
 	"  -n<size>    - dataset size in elements, default is 0x2000000\n"
 	"  -r<range>   - the range of value, default is 0x10000\n"
 	"  -s<exp>     - Zipf dataset parameter, default is 0\n"
+	"  -w<file>    - output data set to file\n"
 	"  -z          - correctness check\n"
 	"  -h          - print this message\n";
 
@@ -75,8 +76,9 @@ int main(int argc, char *argv[])
 	float  s     = 0.0;
 	size_t size  = 0x2000000;
 	bool   check = false;
+	char  * file = NULL;
 
-	while ((oc = getopt(argc, argv, "t:l:k:n:r:s:zh")) != -1) {
+	while ((oc = getopt(argc, argv, "t:l:k:n:r:s:w:zh")) != -1) {
 		switch (oc) {
 		case 't':
 			ntask = atoi(optarg);
@@ -95,6 +97,9 @@ int main(int argc, char *argv[])
 			break;
 		case 's':
 			s     = atof(optarg);
+			break;
+		case 'w':
+			file = optarg;
 			break;
 		case 'z':
 			check = true;
@@ -126,9 +131,22 @@ int main(int argc, char *argv[])
 	float elapsed = timer_stop(&timer);
 
 	// print job info
-	printf("ntask=%d, nlock=%d, nslot=%zu, range=%d, s=%f, size=%zu, elapsed=%f\n",
+	printf("ntask=%d, nlock=%d, nslot=%lu, range=%d, s=%f, size=%lu, elapsed=%f\n",
 	       ntask, nlock, nslot, range, s, size, elapsed);
 	
+	if (file) {
+		FILE *fp = fopen(file, "wb");
+		if (fp == NULL) {
+			fprintf(stderr, "cannot open %s\n", file);
+			exit(EXIT_FAILURE);
+		}
+		for (DS::const_iterator it = dataset.begin(); it != dataset.end(); ++it) {
+			DS::record_type r = *it;
+			fwrite(&r, sizeof(r), 1, fp);
+		}
+		fclose(fp);
+	}
+
 	if (check) {
 		AMAP map;
 		timer_start(&timer);
@@ -143,7 +161,7 @@ int main(int argc, char *argv[])
 		// AMAP.
 		for (RESULT::const_iterator it = result.begin(); it != result.end(); ++it) {
 			if (it.value() != map[it.key()]) {
-				fprintf(stderr, "expect %zu, actual %zu for key %d\n",
+				fprintf(stderr, "expect %lu, actual %lu for key %d\n",
 					map[it.key()], it.value(), it.key().key());
 				exit(EXIT_FAILURE);
 			}
@@ -151,7 +169,7 @@ int main(int argc, char *argv[])
 		fprintf(stderr, "forward check OK\n");
 		for (AMAP::const_iterator it = map.begin(); it != map.end(); ++it) {
 			if (it.value() != result[it.key()]) {
-				fprintf(stderr, "expect %zu, actual %zu for key %d\n",
+				fprintf(stderr, "expect %lu, actual %lu for key %d\n",
 					result[it.key()], it.value(), it.key().key());
 				exit(EXIT_FAILURE);
 			}
