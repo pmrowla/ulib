@@ -227,9 +227,9 @@ private:
 // overloaded, which amounts to customizing the reducer.
 template<class M, class D>
 class typical_job :
-	public  job<store, M, reducer<typename M::value_type>, partitioner, D> {
+	public  job<chain_hash_store, M, reducer<typename M::value_type>, partitioner, D> {
 public:
-	typedef job<store, M, reducer<typename M::value_type>, partitioner, D> job_type;	
+	typedef job<chain_hash_store, M, reducer<typename M::value_type>, partitioner, D> job_type;	
 	typedef typename job_type::mapper_type      mapper_type;
 	typedef typename job_type::reducer_type     reducer_type;
 	typedef typename job_type::dataset_type     dataset_type;

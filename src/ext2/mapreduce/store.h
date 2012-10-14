@@ -29,7 +29,6 @@
 #include <pthread.h>
 #include <assert.h>
 #include <string.h>
-
 #include <ulib/regionlock.h>
 #include <ulib/chainhash.h>
 
@@ -37,8 +36,9 @@ namespace ulib {
 
 namespace mapreduce {
 
+// store based on chain hash table
 template<class _Key, class _Val>
-class store : public ulib::chain_hash_map<_Key, _Val>,
+class chain_hash_store : public ulib::chain_hash_map<_Key, _Val>,
 	      public ulib::region_lock
 {
 public:
@@ -47,22 +47,21 @@ public:
 	typedef typename ulib::chain_hash_map<_Key,_Val>::const_pointer    const_pointer;
 	typedef typename ulib::chain_hash_map<_Key,_Val>::reference        reference;
 	typedef typename ulib::chain_hash_map<_Key,_Val>::const_reference  const_reference;
-	typedef typename ulib::chain_hash_map<_Key,_Val>::hashing          hashing;
-	typedef typename ulib::chain_hash_map<_Key,_Val>::hashing_iterator hashing_iterator;
 	typedef typename ulib::chain_hash_map<_Key,_Val>::iterator         iterator;
 	typedef typename ulib::chain_hash_map<_Key,_Val>::const_iterator   const_iterator;
 
-	store(size_t min_bucket, size_t min_lock)
+	chain_hash_store(size_t min_bucket, size_t min_lock)
 	: ulib::chain_hash_map<_Key,_Val>(min_bucket),
 	  ulib::region_lock(min_lock)
 	{ assert(min_bucket >= min_lock); }
 
-	store(size_t min_bucket)
+	chain_hash_store(size_t min_bucket)
 	: ulib::chain_hash_map<_Key,_Val>(min_bucket),
 	  ulib::region_lock(min_bucket)
 	{ }
 
-	store(const store &other)
+	// DO NOT copy the elements
+	chain_hash_store(const chain_hash_store &other)
 	: ulib::chain_hash_map<_Key,_Val>(other),
 	  ulib::region_lock(((const ulib::region_lock *)&other)->bucket_count())
 	{ }
@@ -75,8 +74,9 @@ public:
 	unlock(const _Key &key)
 	{ release(key); }
 
-	store &
-	operator= (const store &other)
+	// again DO NOT copy the elements
+	chain_hash_store &
+	operator= (const chain_hash_store &other)
 	{
 		*(ulib::chain_hash_map<_Key,_Val> *)this =
 			*(const ulib::chain_hash_map<_Key,_Val> *)&other;
