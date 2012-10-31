@@ -1,6 +1,6 @@
 /* The MIT License
 
-   Copyright (C) 2011 Zilong Tan (eric.zltan@gmail.com)
+   Copyright (C) 2011, 2012 Zilong Tan (eric.zltan@gmail.com)
 
    Permission is hereby granted, free of charge, to any person obtaining
    a copy of this software and associated documentation files (the
@@ -32,10 +32,10 @@ extern "C" {
 
 	unsigned long gcd(unsigned long a, unsigned long b);
 
-        /* Computes x,y st. ax + by = 1 */
+        /* compute x,y st. ax + by = 1 */
 	void egcd(unsigned long a, unsigned long b, long *x, long *y);
 	
-        /* Computes a st. a * b = 1 mod m */
+        /* computes a st. a * b = 1 mod m */
 	unsigned long invert(unsigned long m, unsigned long b);
 
 #ifdef __cplusplus

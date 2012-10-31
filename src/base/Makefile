@@ -1,7 +1,7 @@
-WORKROOT	= ../..
+ROOT		= ../..
 
-INCPATH		= $(WORKROOT)/include/ulib
-LIBPATH		= $(WORKROOT)/lib
+INCPATH		= $(ROOT)/include/ulib
+LIBPATH		= $(ROOT)/lib
 
 TARGET		= $(LIBPATH)/libubase.a
 

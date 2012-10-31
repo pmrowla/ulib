@@ -1,6 +1,6 @@
 /* The MIT License
 
-   Copyright (C) 2011 Zilong Tan (eric.zltan@gmail.com)
+   Copyright (C) 2011, 2012 Zilong Tan (eric.zltan@gmail.com)
 
    Permission is hereby granted, free of charge, to any person obtaining
    a copy of this software and associated documentation files (the
@@ -100,11 +100,6 @@ tree_predecessor(struct tree_root *root)
 	return p;
 }
 
-/*
- * Left rotate entry
- *
- * This is only for internal tree manipulation.
- */
 static inline void
 __rotate_left(struct tree_root *entry,
 	      struct tree_root **root)
@@ -130,11 +125,6 @@ __rotate_left(struct tree_root *entry,
 	entry->parent = n;
 }
 
-/*
- * Right rotate entry
- *
- * This is only for internal tree manipulation.
- */
 static inline void
 __rotate_right(struct tree_root *entry,
 	       struct tree_root **root)
@@ -171,9 +161,6 @@ tree_add(struct tree_root *new,
 
 	INIT_TREE_ROOT(new);
 
-	/*
-	 * searches the new entry
-	 */
 	while (r != NIL) {
 		n = r;
 		retval = compare(new, r);
@@ -204,9 +191,6 @@ tree_map(struct tree_root *new,
 
 	INIT_TREE_ROOT(new);
 
-	/*
-	 * searches the new entry
-	 */
 	while (r != NIL) {
 		n = r;
 		retval = compare(new, r);
@@ -256,9 +240,6 @@ tree_del(struct tree_root *entry, struct tree_root **root)
 		n->parent->right = r;
 
 	if (n != entry) {
-		/*
-		 * takes entry's position with n
-		 */
 		n->left = entry->left;
 		if (entry->left != NIL)
 			entry->left->parent = n;
@@ -275,13 +256,6 @@ tree_del(struct tree_root *entry, struct tree_root **root)
 	}
 }
 
-/*
- * Right rotate entry.
- *
- * @entry: node on which to perform rotation
- * @tmp:   left child of entry
- * Note:   Entry and tmp shall not be NIL.
- */
 #define SPLAY_ROTATE_RIGHT(entry, tmp) do {				\
 		(entry)->left = (tmp)->right;				\
 		if ((tmp)->right) (tmp)->right->parent = (entry);	\
@@ -291,13 +265,6 @@ tree_del(struct tree_root *entry, struct tree_root **root)
 		(entry) = (tmp);					\
 	} while (0)
 
-/*
- * Left rotate entry.
- *
- * @entry: node on which to perform rotation
- * @tmp:   right child of entry
- * Note:   Entry and tmp shall not be NIL.
- */
 #define SPLAY_ROTATE_LEFT(entry, tmp) do {			\
 		(entry)->right = (tmp)->left;			\
 		if ((tmp)->left) (tmp)->left->parent = (entry);	\
@@ -307,11 +274,6 @@ tree_del(struct tree_root *entry, struct tree_root **root)
 		(entry) = (tmp);				\
 	} while (0)
 
-/*
- * Splay tree link right operation.
- *
- * Entry and large shall not be NIL.
- */
 #define SPLAY_LINK_RIGHT(entry, large) do {	\
 		(large)->left = (entry);	\
 		(entry)->parent = (large);	\
@@ -319,11 +281,6 @@ tree_del(struct tree_root *entry, struct tree_root **root)
 		(entry) = (entry)->left;	\
 	} while (0)
 
-/*
- * Splay tree link left operation.
- *
- * Entry and small shall not be NIL.
- */
 #define SPLAY_LINK_LEFT(entry, small) do {	\
 		(small)->right = (entry);	\
 		(entry)->parent = (small);	\
@@ -331,11 +288,6 @@ tree_del(struct tree_root *entry, struct tree_root **root)
 		(entry) = (entry)->right;	\
 	} while (0)
 
-/*
- * Assemble splay tree from subtrees.
- *
- * Head, node, small and large shall not be NIL.
- */
 #define SPLAY_ASSEMBLE(head, node, small, large) do {		\
 		(small)->right = (head)->left;			\
 		if ((head)->left)				\
@@ -351,59 +303,30 @@ tree_del(struct tree_root *entry, struct tree_root **root)
 			(node)->left->parent = (head);		\
 	} while (0)
 
-/*
- * Right rotate entry.
- *
- * @entry: node on which to perform rotation
- * @tmp:   left child of entry
- * Note:   Entry and tmp shall not be NIL.
- */
 #define SPLAY_ROTATE_RIGHT_NPARENT(entry, tmp) do {	\
 		(entry)->left = (tmp)->right;		\
 		(tmp)->right = (entry);			\
 		(entry) = (tmp);			\
 	} while (0)
 
-/*
- * Left rotate entry.
- *
- * @entry: node on which to perform rotation
- * @tmp:   right child of entry
- * Note:   Entry and tmp shall not be NIL.
- */
 #define SPLAY_ROTATE_LEFT_NPARENT(entry, tmp) do {	\
 		(entry)->right = (tmp)->left;		\
 		(tmp)->left = (entry);			\
 		(entry) = (tmp);			\
 	} while (0)
 
-/*
- * Splay tree link right operation.
- *
- * Entry and large shall not be NIL.
- */
 #define SPLAY_LINK_RIGHT_NPARENT(entry, large) do {	\
 		(large)->left = (entry);		\
 		(large) = (entry);			\
 		(entry) = (entry)->left;		\
 	} while (0)
 
-/*
- * Splay tree link left operation.
- *
- * Entry and small shall not be NIL.
- */
 #define SPLAY_LINK_LEFT_NPARENT(entry, small) do {	\
 		(small)->right = (entry);		\
 		(small) = (entry);			\
 		(entry) = (entry)->right;		\
 	} while (0)
 
-/*
- * Assemble splay tree from subtrees.
- *
- * Head, node, small and large shall not be NIL.
- */
 #define SPLAY_ASSEMBLE_NPARENT(head, node, small, large) do {	\
 		(small)->right = (head)->left;			\
 		(large)->left = (head)->right;			\
@@ -641,12 +564,6 @@ splay_map_nparent(struct tree_root *new,
 	return head;
 }
 
-
-/*
- * Post-Insert balance factor update and entry rebalance
- *
- * This is only for internal AVL tree manipulation after adding new entry
- */
 static inline void
 __avl_balance(struct avl_root *new, struct avl_root **root)
 {
@@ -655,22 +572,14 @@ __avl_balance(struct avl_root *new, struct avl_root **root)
 	struct avl_root *r;
 
 	while (new->parent != NIL && balance == 0) {
-		/*
-		 * updates balance factor
-		 */
 		balance = new->parent->balance;
-
 		if (new == new->parent->left)
 			new->parent->balance--;
 		else
 			new->parent->balance++;
-
 		new = new->parent;
 	}
 
-	/*
-	 * rebalances AVL tree
-	 */
 	if (new->balance == -2) {
 		n = new->left;
 		if (n->balance == -1) {
@@ -730,10 +639,6 @@ avl_add(struct avl_root *new,
 	struct avl_root **root)
 {
 	new->balance = 0;
-
-	/*
-	 * inserts entry
-	 */
 	tree_add((struct tree_root *)new, compare, (struct tree_root **)root);
 	__avl_balance(new, root);
 }
@@ -746,16 +651,10 @@ avl_map(struct avl_root *new,
 	struct avl_root *n;
 
 	new->balance = 0;
-
-	/*
-	 * inserts entry
-	 */
 	n = (struct avl_root *)tree_map((struct tree_root *)new,
 					compare, (struct tree_root **)root);
-
 	if (n != new)
 		return n;
-
 	__avl_balance(new, root);
 
 	return new;
@@ -771,9 +670,6 @@ avl_del(struct avl_root *entry, struct avl_root **root)
 	struct avl_root *r;
 	struct avl_root *p;
 
-	/*
-	 * deletes entry
-	 */
 	if (entry->right == NIL) {
 		/*
 		 * Case 1: entry has no right child
@@ -838,9 +734,6 @@ avl_del(struct avl_root *entry, struct avl_root **root)
 	}
 
 	for (;;) {
-		/*
-		 * updates balance factor and rebalances if necessary
-		 */
 		p = new->parent;
 		if (p != NIL)
 			dir_next = (new == p->right);

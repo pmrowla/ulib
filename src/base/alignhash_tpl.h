@@ -1,6 +1,6 @@
 /* The MIT License
 
-   Copyright (C) 2011 Zilong Tan (eric.zltan@gmail.com)
+   Copyright (C) 2011, 2012  Zilong Tan (eric.zltan@gmail.com)
    Copyright (c) 2008, 2009, 2011 by Attractive Chaos <attractor@live.co.uk>
 
    Permission is hereby granted, free of charge, to any person obtaining
@@ -24,15 +24,16 @@
    SOFTWARE.
 */
 
-#ifndef __ULIB_ALIGN_HASHING_H
-#define __ULIB_ALIGN_HASHING_H
+#ifndef __ULIB_ALIGNHASH_H
+#define __ULIB_ALIGNHASH_H
 
 #include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
 #include "common.h"
 
-#ifdef AH_64BIT  /* specify if you are handling >4G keys */
+/* optionally enable 64-bit addressing by defining AH_64BIT */
+#ifdef AH_64BIT
 
 typedef uint64_t ah_iter_t;
 typedef uint64_t ah_size_t;
@@ -47,7 +48,7 @@ typedef uint64_t ah_size_t;
 
 #define AH_FLAGS_BYTE(nb)        ( (nb) < 32? 8: (nb) >> 2 )
 
-#else  /* by default, the 32-bit version is used */
+#else
 
 typedef uint32_t ah_iter_t;
 typedef uint32_t ah_size_t;
@@ -64,20 +65,20 @@ typedef uint32_t ah_size_t;
 
 #endif
 
-/* return codes for alignhash_set() */
+/* error codes for alignhash_set() */
 enum {
-	AH_INS_ERR = 0,  /**< insertion failed, the element to insert exists */
-	AH_INS_NEW = 1,  /**< inserted element is placed at a new bucket */
-	AH_INS_DEL = 2   /**< inserted element is placed at a deleted bucket */
+	AH_INS_ERR = 0,  /**< the inserted element already exists */
+	AH_INS_NEW = 1,  /**< element was placed at a new bucket */
+	AH_INS_DEL = 2   /**< element was placed at a deleted bucket */
 };
 
-/* Two probing methods are available, tier probing and linear probing.
+/* Two probing methods are available: tier probing and linear probing.
  * Tier probing, to some extent, balances the lookup cost both in the
  * best and worst cases. This is preferable when keys are not randomly
  * distributed thus resulting in many collisions. By contrast, linear
  * probing precedes tier probing especially when there are a lot of
- * <key,value> pairs stored in hash table due to better locality is
- * achieved. Please specify AH_TIER_PROBING to enable tier probing,
+ * <key,value> pairs stored in the hash table due to better locality
+ * is achieved. Please specify AH_TIER_PROBING to enable tier probing,
  * otherwise linear probing is used by default. */
 #ifdef AH_TIER_PROBING
 /* tier probing step, preferable for memory-efficient situations */
@@ -101,7 +102,8 @@ enum {
 	} alignhash_##_name##_t;					\
                                                                         \
 	static inline alignhash_##_name##_t *				\
-	alignhash_init_##_name() {					\
+	alignhash_init_##_name()					\
+	{								\
 		return (alignhash_##_name##_t*)				\
 			calloc(1, sizeof(alignhash_##_name##_t));	\
 	}								\
@@ -299,130 +301,61 @@ enum {
 	}
 
 
-/*------------------------- Human Interfaces -------------------------*/
+/*------------------------- Human Interface -------------------------*/
 
 
-/**
- * alignhash_hashfn - naive hash function
- * NOTE: does no mixing of bits
- */
+/* identity hash function */
 #define alignhash_hashfn(key) (ah_size_t)(key)
 
-/**
- * alignhash_equalfn - naive equality test function
- */
+/* boolean equality function */
 #define alignhash_equalfn(a, b) ((a) == (b))
 
-/**
- * alignhash_t - aligned hash type
- */
+/* alignhash type name */
 #define alignhash_t(name) alignhash_##name##_t
 
-/**
- * alignhash_key - retrieves the key of a iterator
- * @h: pointer to aligned hash
- * @x: the iterator
- */
+/* retrieve the key for the iterator */
 #define alignhash_key(h, x) ((h)->keys[x])
 
-/**
- * alignhash_value - retrieves the value of a iterator
- * @h: pointer to aligned hash
- * @x: the iterator
- */
+/* retrieve the value for the iterator */
 #define alignhash_value(h, x) ((h)->vals[x])
 
-/**
- * alignhash_init - initializes an aligned hash
- * @name:   name of the aligned hash
- * @return: returns allocated aligned hash
- */
+/* allocate an empty alignhash */
 #define alignhash_init(name) alignhash_init_##name()
 
-/**
- * alignhash_destroy - destroys an aligned hash
- * @name: name of the aligned hash
- * @h:    pointer to allocated aligned hash
- */
 #define alignhash_destroy(name, h) alignhash_destroy_##name(h)
 
-/**
- * alignhash_clear - clears an aligned hash without memory remapping
- * @name: name of the aligned hash
- * @h:    pointer to allocated aligned hash
- */
+/* clear an alignhash without reclaiming its memory */
 #define alignhash_clear(name, h) alignhash_clear_##name(h)
 
-/**
- * alignhash_resize - resizes an aligned hash
- * @name: name of the aligned hash
- * @h:    pointer to allocated aligned hash
- * @s:    new number of buckets
- * @r:    ln(new_nbucket/2)/ln2
- * NOTE:  bucket size should be in power of 2
- *        In general, this function should never be called outside
- */
+/* resize an alignhash
+ * @s: the new bucket number
+ * @r: power of 2
+ * NOTE: normally this function should not be called outside */
 #define alignhash_resize(name, h, s, r) alignhash_resize_##name(h, s, r)
 
-/**
- * alignhash_set - inserts an element
- * @name:  name of the aligned hash
- * @h:     pointer to allocated aligned hash
- * @k:     key of the element to insert
- * @r:     where to store the insertion result
- * NOTE:   the insertion result, which is defined as AH_INS_*, will be
- * returned through @r. This function does not displace an existing
- * element. Displacement can be implemented using 'get' operation.
- * @return:returns a iterator to the new element
- */
+/* insert a new element without replacement
+ * r will hold the error code as defined above.
+ * return an iterator to the new or existing element. */
 #define alignhash_set(name, h, k, r) alignhash_set_##name(h, k, r)
 
-/**
- * alignhash_get - retrieves the iterator of an element
- * @name:  name of the aligned hash
- * @h:     pointer to allocated aligned hash
- * @k:     key of the element to retrieve
- * @return:returns a iterator to the specified element
- */
 #define alignhash_get(name, h, k) alignhash_get_##name(h, k)
 
-/**
- * alignhash_del - deletes an element via its iterator
- * @name:  name of the aligned hash
- * @h:     pointer to allocated aligned hash
- * @x:     iterator of the element to delete
- */
+/* delete an element by iterator */
 #define alignhash_del(name, h, x) alignhash_del_##name(h, x)
 
-/**
- * alignhash_exist - tests if a iterator contains data
- * @h: pointer to allocated aligned hash
- * @x: iterator to the bucket
- */
+/* test whether an iterator is valid */
 #define alignhash_exist(h, x) (!AH_ISEITHER((h)->flags, (x)))
 
-/**
- * alignhash_begin - gets the start iterator
- * @h: pointer to allocated aligned hash
- */
+/* return the iterator for the first element */
 #define alignhash_begin(h) (ah_iter_t)(0)
 
-/**
- * alignhash_end - returns the sentinel/invalid iterator
- * @h: pointer to allocated aligned hash
- */
+/* return the iterator for the last element */
 #define alignhash_end(h) ((h)->nbucket)
 
-/**
- * alignhash_size - retrieves the size of an aligned hash
- * @h: pointer to allocated aligned hash
- */
+/* return the number of elements in an alignhash */
 #define alignhash_size(h) ((h)->size)
 
-/**
- * alignhash_nbucket - retrieves the number of buckets
- * @h: pointer to allocated aligned hash
- */
+/* return the capacity of an alignhash */
 #define alignhash_nbucket(h) ((h)->nbucket)
 
-#endif  /* __ULIB_ALIGN_HASHING_H */
+#endif  /* __ULIB_ALIGNHASH_H */

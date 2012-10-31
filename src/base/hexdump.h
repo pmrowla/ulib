@@ -1,6 +1,6 @@
 /* The MIT License
 
-   Copyright (C) 2011 Zilong Tan (eric.zltan@gmail.com)
+   Copyright (C) 2011, 2012 Zilong Tan (eric.zltan@gmail.com)
 
    Permission is hereby granted, free of charge, to any person obtaining
    a copy of this software and associated documentation files (the
@@ -52,7 +52,7 @@ extern "C" {
 	int hex_to_bin(char ch);
 
         /**
-	 * hex2bin - convert an ascii hexadecimal string to its binary representation
+	 * hex2bin - convert an ascii hexadecimal string to its binary form
 	 * @dst: binary result
 	 * @src: ascii hexadecimal string
 	 * @count: result length

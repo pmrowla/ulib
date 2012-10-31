@@ -28,7 +28,7 @@
 #include <string.h>
 #include "listsort.h"
 
-#define MAX_LIST_LENGTH_BITS 32
+#define MAX_LIST_LENGTH_BITS 48
 
 /*
  * Returns a list organized in an intermediate format suited

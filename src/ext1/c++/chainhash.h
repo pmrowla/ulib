@@ -23,12 +23,10 @@
    SOFTWARE.
 */
 
-/* NOTE: Generally, the linked-list implementation of hash_map is
- * slower than open addressing implementation, e.g., aligned hashing,
- * thus users should always use aligned hashing whenever
- * possible. Nevertheless, this chain hash has several advantages which
- * a typical open addressing hash_map does not have, such as
- * multithreaded read/write with appropriate locking.
+/* Although chainhash is slower than alignhash as a whole, it preserves
+ * several properties alignhash lacks. Notably, it has an inherented
+ * support for concurrent access. A fine-grained locking strategy is
+ * readily available for chainhash.
  */
 
 

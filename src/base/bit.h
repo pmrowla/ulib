@@ -1,6 +1,6 @@
 /* The MIT License
 
-   Copyright (C) 2011 Zilong Tan (eric.zltan@gmail.com)
+   Copyright (C) 2011, 2012 Zilong Tan (eric.zltan@gmail.com)
 
    Permission is hereby granted, free of charge, to any person obtaining
    a copy of this software and associated documentation files (the
@@ -73,7 +73,7 @@
 #define HAS_VALUE32(x,v)    HAS_ZERO32((x) ^ (~(uint32_t)0/255 * (v)))
 #define HAS_VALUE64(x,v)    HAS_ZERO64((x) ^ (~(uint64_t)0/255 * (v)))
 
-/* Requirements: x>=0; 0<=v<=128 */
+/* require x>=0, 0<=v<=128 */
 #define HAS_LESS32(x,v)     (((x) - ~(uint32_t)0/255 * (v)) & ~(x) & ~(uint32_t)0/255 * 128)
 #define HAS_LESS64(x,v)     (((x) - ~(uint64_t)0/255 * (v)) & ~(x) & ~(uint64_t)0/255 * 128)
 #define COUNT_LESS32(x,v)						\
@@ -83,7 +83,7 @@
 	(((~(uint64_t)0/255 * (127 + (v)) - ((x) & ~(uint64_t)0/255 * 127)) & \
 	  ~(x) & ~(uint64_t)0/255 * 128)/128 % 255)
 
-/* Requirements: x>=0; 0<=v<=127 */
+/* require x>=0; 0<=v<=127 */
 #define HAS_MORE32(x,v)     (((x) + ~(uint32_t)0/255 * (127 - (v)) | (x)) &~(uint32_t)0/255 * 128)
 #define HAS_MORE64(x,v)     (((x) + ~(uint64_t)0/255 * (127 - (v)) | (x)) &~(uint64_t)0/255 * 128)
 #define COUNT_MORE32(x,v)						\
@@ -134,19 +134,12 @@ static inline int test_bit(int nr, const volatile unsigned long *addr)
         return 1UL & (addr[BIT_WORD(nr)] >> (nr & (BITS_PER_LONG-1)));
 }
 
-/**
- * hweight15 - calculates the hamming weight of a natural number less than 2^15 - 1
- * @a: the natural number
- */
+/* calculate the hamming weight of an nonnegative integer less than 2^15 */
 static inline int hweight15(uint16_t a)
 {
 	return ((a * 35185445863425ULL) & 76861433640456465ULL) % 15;
 }
 
-/**
- * hweight32_fast - calculates hamming weight of a 32-bit integer
- * @a: the integer
- */
 static inline int hweight32(uint32_t a)
 {
 	register uint32_t t;
@@ -156,10 +149,6 @@ static inline int hweight32(uint32_t a)
 	return ((t + (t >> 3)) & 030707070707) % 63;
 }
 
-/**
- * hweight64 - calculates hamming weight of a 64-bit integer
- * @a: the integer
- */
 static inline int hweight64(uint64_t a)
 {
 	a = (a & 0x5555555555555555ULL) + ((a >> 1) & 0x5555555555555555ULL);
@@ -171,30 +160,17 @@ static inline int hweight64(uint64_t a)
 	return a & 0xFF;
 }
 
-/**
- * hweight64 - calculates hamming weight of a word
- * @a: the integer
- */
 static inline int hweight_long(unsigned long a)
 {
 	return sizeof(a) == 4? hweight32(a): hweight64(a);
 }
 
-/**
- * rev8 - reverses the order of bits in a byte
- * @n: the byte
- * returns the revd byte
- */
+/* reverse the bits of a byte */
 static inline unsigned char rev8(unsigned char n)
 {
 	return ((n * 0x000202020202ULL) & 0x010884422010ULL) % 1023;
 }
 
-/**
- * rev32 - reverses the order of bits in a 32-bit integer
- * @n: the integer
- * returns the revd integer
- */
 static inline uint32_t rev32(uint32_t n)
 {
 	n = ((n & 0xAAAAAAAA) >> 1) | ((n & 0x55555555) << 1);
@@ -204,11 +180,6 @@ static inline uint32_t rev32(uint32_t n)
 	return (n >> 16) | (n << 16);
 }
 
-/**
- * rev64 - reverses the order of bits in a 64-bit integer
- * @n: the integer
- * returns the revd integer
- */
 static inline uint64_t rev64(uint64_t n)
 {
 	n = ((n & 0xAAAAAAAAAAAAAAAAULL) >> 1) | ((n & 0x5555555555555555ULL) << 1);
@@ -219,31 +190,17 @@ static inline uint64_t rev64(uint64_t n)
 	return (n >> 32) | (n << 32);
 }
 
-/**
- * ispow2_32 - tests if the 32-bit integer is a power of 2
- * @n: the integer
- */
 static inline int ispow2_32(uint32_t n)
 {
 	return (n & (n - 1)) == 0;
 }
 
-/**
- * ispow2_64 - tests if the 64-bit integer is a power of 2
- * @n: the integer
- */
 static inline int ispow2_64(uint64_t n)
 {
 	return (n & (n - 1)) == 0;
 }
 
-/**
- * fls32 - finds last (most-significant) bit set
- * @x: the word to search
- *
- * This is defined the same way as ffs.
- * Note fls(0) = 0, fls(1) = 1, fls(0x80000000) = 32.
- */
+/* see fls64 */
 static inline int fls32(uint32_t x)
 {
 	int r = 32;
@@ -273,9 +230,7 @@ static inline int fls32(uint32_t x)
 	return r;
 }
 
-/**
- * fls64 - finds last set bit in a 64-bit word
- * @x: the word to search
+/* find the last set bit in a 64-bit word
  *
  * This is defined in a similar way as the libc and compiler builtin
  * ffsll, but returns the position of the most significant set bit.
@@ -292,14 +247,10 @@ static inline int fls64(uint64_t x)
 	return fls32(x);
 }
 
-/**
- * ffs32 - finds first bit set
- * @x: the word to search
- *
+/* find the first set bit
  * This is defined the same way as
  * the libc and compiler builtin ffs routines, therefore
- * differs in spirit from the above ffz (man ffs).
- */
+ * differs in spirit from the above ffz (man ffs). */
 static inline int ffs32(uint32_t x)
 {
 	int r = 1;
@@ -329,14 +280,10 @@ static inline int ffs32(uint32_t x)
 	return r;
 }
 
-/**
- * ffs64 - finds first bit in word.
- * @word: The word to search
- *
+/* find the first set bit
  * This is defined the same way as
  * the libc and compiler builtin ffs routines, therefore
- * differs in spirit from the above ffz (man ffs).
- */
+ * differs in spirit from the above ffz (man ffs). */
 static inline int ffs64(uint64_t word)
 {
 	uint32_t h = word & 0xffffffff;
@@ -345,13 +292,6 @@ static inline int ffs64(uint64_t word)
 	return ffs32(h);
 }
 
-/**
- * __ffs - find first bit in word.
- * @word: The word to search
- *
- * This is the intuitive version of ffs, which is different from ffs64.
- * Undefined if no bit exists, so code should check against 0 first.
- */
 /* use gcc builtin instead if possible */
 #define __ffs(w) (__builtin_ffsl(w) - 1)
 
@@ -388,19 +328,12 @@ static inline unsigned long __ffs(unsigned long word)
 }
 */
 
-/*
- * ffz - find first zero in word.
- * @word: The word to search
- *
- * Undefined if no zero exists, so code should check against ~0UL first.
- */
+/* ffz - find the first zero in word.
+ * Undefined if no zero exists, so code should check against ~0UL first. */
 #define ffz(x)  __ffs(~(x))
 
-/**
- * hweight_next32 - calculates the next higher integer
- * with the same hamming weight
- * @a: the integer
- */
+/* find the minimum integer that is larger than a and has the same
+ * hamming weight */
 static inline uint32_t hweight_next32(uint32_t a)
 {
 	uint32_t c = a & -a;
@@ -408,11 +341,6 @@ static inline uint32_t hweight_next32(uint32_t a)
 	return (((r ^ a) >> 2) / c) | r;
 }
 
-/**
- * hweight_next64 - calculates the next higher integer
- * with the same hamming weight
- * @a: the integer
- */
 static inline uint64_t hweight_next64(uint64_t a)
 {
 	uint64_t c = a & -a;
@@ -420,9 +348,7 @@ static inline uint64_t hweight_next64(uint64_t a)
 	return (((r ^ a) >> 2) / c) | r;
 }
 
-/*
- * Find the next set bit in a memory region.
- */
+/* find the next set bit in a memory region */
 static inline unsigned long
 find_next_bit(const unsigned long *addr, unsigned long size, unsigned long offset)
 {
@@ -462,10 +388,6 @@ found_middle:
 	return result + __ffs(tmp);
 }
 
-/*
- * This implementation of find_{first,next}_zero_bit was stolen from
- * Linus' asm-alpha/bitops.h.
- */
 static inline unsigned long
 find_next_zero_bit(const unsigned long *addr, unsigned long size, unsigned long offset)
 {
@@ -505,9 +427,6 @@ found_middle:
 	return result + ffz(tmp);
 }
 
-/*
- * Find the first set bit in a memory region.
- */
 static inline unsigned long
 find_first_bit(const unsigned long *addr, unsigned long size)
 {
@@ -531,9 +450,6 @@ found:
 	return result + __ffs(tmp);
 }
 
-/*
- * Find the first cleared bit in a memory region.
- */
 static inline unsigned long
 find_first_zero_bit(const unsigned long *addr, unsigned long size)
 {

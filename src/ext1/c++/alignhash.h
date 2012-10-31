@@ -1,6 +1,6 @@
 /* The MIT License
 
-   Copyright (C) 2011 Zilong Tan (eric.zltan@gmail.com)
+   Copyright (C) 2011, 2012 Zilong Tan (eric.zltan@gmail.com)
 
    Permission is hereby granted, free of charge, to any person obtaining
    a copy of this software and associated documentation files (the
@@ -24,32 +24,22 @@
 */
 
 /*
-  This file implements proxy classes for aligned hashing based on the
-  original C version, which can be found in alignhash_tpl.h. The
-  following are a few points needs to be noted.
+  This file provides proxy classes for alignhash. The origial
+  implementation is in C, which is located in alignhash_tpl.h. A few
+  points should be noted before using these classes:
 
-  First, three operators should be supported for the key class of
-  aligned hash_map/set, namely '==', '<' and unsigned long(usu. a hash
-  function). In contrast to STL, which supports optionally providing
-  classes for these operations as hash_map/set template arguments,
-  aligned hashing requires the key class intrinsically includes
-  implementations of the operations, and there is no optional template
-  arguments avaible for them. Otherwise, one must write a wrapper
-  class as the key that bundle the three operations in one class.
+  (1) Several implicit operators are used for key, namely '==', '<',
+  and the unsigned long operator. These operators must be implemented
+  on the part of the key class.
 
-  Second, key and value of align_hash_map/set iterator are accessed
-  using key() and value() member functions instead of 'first' and
-  'second' structure members. This is because aligned hashing stores key
-  and value separately to achieve better cache utilization. The data
-  structure for the element isn't std::pair and thereby doesn't have
-  'first' and 'second' members.
+  (2) Alignhash iterator does not have 'first' and 'second' members,
+  key() and value() are respectively responsible for accessing the key
+  and value associated with the iterator instead.
 
-  Lastly, a few flags are provided in aligned hashing for performance
-  optimization. For example, align_hash_map/set will use 64-bit
-  addressing if AH_64BIT is set. Enabling the flag could improve the
-  performance of aligned hashing on 64-bit OSes. Furthermore, enabling
-  AH_TIER_PROBING will tell aligned hashing to use double hashing
-  probing, which is preferable for small hash_maps/sets.
+  (3) Several flags can be specified before including alignhash.h,
+  including AH_64BIT, which enables 64-bit addressing, and
+  AH_TIER_PROBING, a double hashing variant that is suitable for small
+  tables.
 */
 
 #ifndef _ALIGN_HASH_H
@@ -58,11 +48,11 @@
 #include <exception>
 #include <string>
 
-// NOTE: enable features here, such as 64-bit and tier probing.
+/* optional flags */
 #if __WORDSIZE == 64
 #define AH_64BIT
 #endif
-//#define AH_TIER_PROBING
+
 #include "alignhash_tpl.h"
 
 namespace ulib {

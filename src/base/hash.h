@@ -1,6 +1,6 @@
 /* The MIT License
 
-   Copyright (C) 2011 Zilong Tan (eric.zltan@gmail.com)
+   Copyright (C) 2011, 2012 Zilong Tan (eric.zltan@gmail.com)
 
    Permission is hereby granted, free of charge, to any person obtaining
    a copy of this software and associated documentation files (the
@@ -33,34 +33,15 @@
 extern "C" {
 #endif
 
-/**
- * hash_fast64 - 64-bit implementation of fasthash, 
- * @buf:  data buffer
- * @len:  data size
- * @seed: the seed
- */
 	uint64_t hash_fast64(const void *buf, size_t len, uint64_t seed);
 
-/**
- * hash_fast32 - 32-bit implementation of fasthash, 
- * @buf:  data buffer
- * @len:  data size
- * @seed: the seed
- */
+	/* based on hash_fast64, thus may be slow on 32-bit platforms */
 	uint32_t hash_fast32(const void *buf, size_t len, uint32_t seed);
 
-/**
- * hash_jenkins - implementation of Jenkins hash
- * @buf: data buffer
- * @len: data size
- */
 	uint32_t hash_jenkins(const void *buf, size_t len, uint32_t seed);
 
-/**
- * hash_jenkins2 - 2-hash version of Jenkins hash, outputs two hash
- * values to pc and pb. Both pc and pb must be non-null and should be
- * initialized with seeds.
- */
+	/* @pc and @pb must be non-NULL and initialized with seeds.
+	 * Hash value will be stored in @pc and @pb also. */
 	void hash_jenkins2(const void *buf, size_t len, uint32_t * pc, uint32_t * pb);
 
 #ifdef __cplusplus

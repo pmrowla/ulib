@@ -59,9 +59,6 @@ public:
 		return 0;
 	}
 
-	// the difference between join() and stop_and_join() is that
-	// the later changes the status flag to tell the thread
-	// routine to voluntarily exit.
 	int
 	stop_and_join()
 	{

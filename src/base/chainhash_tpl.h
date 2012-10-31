@@ -336,145 +336,61 @@
 		last->snap = NULL;					\
 	}
 
-/*------------------------- Human Interfaces -------------------------*/
+/*------------------------- Human Interface -------------------------*/
 
-
-/**
- * chainhash_hashfn - naive hash function
- * NOTE: does no mixing of bits
- */
+/* identity hash function */
 #define chainhash_hashfn(key) (size_t)(key)
 
-/**
- * chainhash_cmpfn - general compare function
- */
+/* key compare function, boolean for hash table operations, signed for
+ * sorting */
 #define chainhash_cmpfn(a, b) (((a) > (b)) - ((a) < (b)))
 
-/**
- * chainhash_t - chainhash type
- */
 #define chainhash_t(name) chainhash_##name##_t
 
-/**
- * chainhash_itr_t - chainhash iterator type
- */
 #define chainhash_itr_t(name) chainhash_itr_##name##_t
 
-/**
- * chainhash_key - retrieves the key of a iterator
- * @x: chainhash iterator
- */
+/* retrieve the key of an iterator */
 #define chainhash_key(x) ((x).entry->key)
 
-/**
- * chainhash_value - retrieves the value of a iterator
- * @x: the iterator
- */
+/* retrieve the value of an iterator */
 #define chainhash_value(x) ((x).entry->val)
 
-/**
- * chainhash_init - initializes a chainhash
- * @name: name of the chainhash
- * @min:  minimum number of slots, this does not limit the size of a
- *        chainhash, however, it affects the performance.
- */
+/* initialize an empty chainhash
+ * @min: minimum slot number, which is typically 256 */
 #define chainhash_init(name, min) chainhash_init_##name(min)
 
-/**
- * chainhash_destroy - destroys a chainhash
- * @name: name of the chainhash
- * @h:    pointer to allocated aligned hash
- */
 #define chainhash_destroy(name, h) chainhash_destroy_##name(h)
 
-/**
- * chainhash_clear - clears an aligned hash without memory remapping
- * @name: name of the chainhash
- * @h:    pointer to the chainhash
- */
 #define chainhash_clear(name, h) chainhash_clear_##name(h)
 
-/**
- * chainhash_set - inserts an element
- * @name:  name of the chainhash
- * @h:     pointer to the chainhash
- * @k:     key of the element
- * @v:     value for the key
- * NOTE:   this method does not check the existence of the key.
- * @return:returns a iterator to the new element
- */
+/* insert an element
+ * NOTE: doesn't check for duplicates.
+ * return an iterator to the new element*/
 #define chainhash_set(name, h, k, v) chainhash_set_##name(h, k, v)
 
-/**
- * chainhash_set_uniq - inserts a unique key, or change its value if
- *                      the key exists
- * @name:  name of the chainhash
- * @h:     pointer to the chainhash
- * @k:     key of the element
- * @v:     value of the element
- * @r:     whether to replace the value if the key exists
- * @return:returns a iterator to the element
- */
+/* insert a unique element
+ * r: a flag that indicates whether or not to replace an existing one */
 #define chainhash_set_uniq(name,h,k,v,r) chainhash_set_uniq_##name(h,k,v,r)
 
-/**
- * chainhash_get - retrieves the iterator of an element
- * @name:  name of the chainhash
- * @h:     pointer to the chainhash
- * @k:     key of the element
- * @return:returns a iterator to the element
- */
 #define chainhash_get(name, h, k) chainhash_get_##name(h, k)
 
-/**
- * chainhash_del - deletes an element via its iterator
- * @name:  name of the chainhash
- * @x:     iterator of the element
- */
+/* delete an element by iterator */
 #define chainhash_del(name, x) chainhash_del_##name(x)
 
-/**
- * chainhash_begin - gets the start iterator
- * @name: name of the chainhash
- * @h:    pointer to the chainhash
- */
 #define chainhash_begin(name, h) chainhash_iterator_##name(h)
 
-/**
- * chainhash_advance - advances the iterator
- * @name: name of the chainhash
- * @x:    pointer to the iterator
- * @return: 0 if successful, nonzero otherwise
- */
+/* move the iterator to the next element */
 #define chainhash_advance(name, x) chainhash_advance_##name(x)
 
-/**
- * chainhash_end - tests if a iterator has reached the end
- * @x: the iterator
- */
 #define chainhash_end(x) ((x).entry == NULL)
 
-/**
- * chainhash_snap - takes a snapshot of current elements, this may
- * affect subsequent iteration orders.
- * @name: name of the chainhash
- * @h: pointer to the chainhash
- * Note: new items can only discovered
- */
+/* cause iteration order to change accordingly, new elements will not
+ * be "seen" until another snap is taken */
 #define chainhash_snap(name, h) chainhash_snap_##name(h)
 
-/**
- * chainhash_sort - sorts the snapshot, this may affect subsequent
- * iteration orders.
- * @name: name of the chainhash
- * @h: pointer to the chainhash
- */
+/* sort a snap, thus snap first */
 #define chainhash_sort(name, h) chainhash_sort_##name(h)
 
-/**
- * chainhash_nbucket - number of bucket used
- * @h: pointer to the chainhash
- */
 #define chainhash_nbucket(h) ((h)->mask + 1)
 
 #endif /* __ULIB_CHAINHASH_H */

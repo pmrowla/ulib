@@ -1,6 +1,6 @@
 /* The MIT License
 
-   Copyright (C) 2011 Zilong Tan (eric.zltan@gmail.com)
+   Copyright (C) 2011, 2012 Zilong Tan (eric.zltan@gmail.com)
 
    Permission is hereby granted, free of charge, to any person obtaining
    a copy of this software and associated documentation files (the
@@ -50,14 +50,9 @@ extern "C" {
 
 	int bfilter_get(struct bloom_filter *bf, const void *buf, unsigned long buflen);
 
-	void bfilter_clear(struct bloom_filter *bf, const void *buf, unsigned long buflen);
-
 	void bfilter_set_hash(struct bloom_filter *bf, unsigned long hash);
 
 	int bfilter_get_hash(struct bloom_filter *bf, unsigned long hash);
-
-	/* may clear multiple hashes */
-	void bfilter_clear_hash(struct bloom_filter *bf, unsigned long hash);
 
 #ifdef __cplusplus
 }

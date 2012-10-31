@@ -1,6 +1,6 @@
 /* The MIT License
 
-   Copyright (C) 2011 Zilong Tan (eric.zltan@gmail.com)
+   Copyright (C) 2011, 2012 Zilong Tan (eric.zltan@gmail.com)
 
    Permission is hereby granted, free of charge, to any person obtaining
    a copy of this software and associated documentation files (the
@@ -68,23 +68,22 @@ typedef struct aes_key_st AES_KEY;
 extern "C" {
 #endif
 
-	/* bits can be 128, 192 or 256 */
+	/* eligible values for bits are 128, 192, and 256 */
 	int  AES_set_encrypt_key(const unsigned char *userKey, const int bits,
 				AES_KEY *key);
 	int  AES_set_decrypt_key(const unsigned char *userKey, const int bits,
 				AES_KEY *key);
 
-	/* in/out can be the same for ECB encryption/decryption */
+	/* in and out can be the same buffer */
 	void AES_encrypt(const unsigned char *in, unsigned char *out,
 			 const AES_KEY *key);
 	void AES_decrypt(const unsigned char *in, unsigned char *out,
 			 const AES_KEY *key);
 
-	/* in/out can be the same */
 	void AES_cbc_encrypt(const unsigned char *in, unsigned char *out, unsigned char *ivec,
 			     unsigned long nblock, const AES_KEY *key);
 
-	/* in/out MUST be DIFFERENT */
+	/* in and out must NOT be the same buffer */
 	void AES_cbc_decrypt(const unsigned char *in, unsigned char *out, unsigned char *ivec,
 			     unsigned long nblock, const AES_KEY *key);
 
@@ -93,4 +92,4 @@ extern "C" {
 }
 #endif
 
-#endif
+#endif  /* __ULIB_AES_H */

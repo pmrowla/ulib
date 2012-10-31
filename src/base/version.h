@@ -1,6 +1,6 @@
 /* The MIT License
 
-   Copyright (C) 2011 Zilong Tan (eric.zltan@gmail.com)
+   Copyright (C) 2011, 2012 Zilong Tan (eric.zltan@gmail.com)
 
    Permission is hereby granted, free of charge, to any person obtaining
    a copy of this software and associated documentation files (the
@@ -33,9 +33,6 @@
 extern "C" {
 #endif
 
-/**
- * ulib_version - ulib version string
- */
 	const char *ulib_version();
 
 #ifdef __cplusplus

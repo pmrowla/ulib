@@ -1,6 +1,6 @@
 /* The MIT License
 
-   Copyright (C) 2011 Zilong Tan (eric.zltan@gmail.com)
+   Copyright (C) 2011, 2012 Zilong Tan (eric.zltan@gmail.com)
 
    Permission is hereby granted, free of charge, to any person obtaining
    a copy of this software and associated documentation files (the
@@ -25,7 +25,6 @@
 
 #include "gcd.h"
 
-/* Greatest common divisor */
 unsigned long gcd(unsigned long a, unsigned long b)
 {
 	unsigned long r;
@@ -38,7 +37,6 @@ unsigned long gcd(unsigned long a, unsigned long b)
 	return a;
 }
 
-/* Computes x,y st. ax + by = 1 mod m */
 void egcd(unsigned long a, unsigned long b, long *x, long *y)
 {
 	long x1, x2, x3, y1, y2, y3;
@@ -65,7 +63,6 @@ void egcd(unsigned long a, unsigned long b, long *x, long *y)
 	*y = y1;
 }
 
-/* Computes a st. a * b = 1 mod m */
 unsigned long invert(unsigned long m, unsigned long b)
 {
 	long s, t;

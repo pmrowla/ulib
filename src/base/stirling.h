@@ -30,9 +30,7 @@
 
 #define PI 3.1415926
 
-/**
- * st_perm_ln - calculates the log-factorial ln(n!) with Stirling's approximation
- */
+/* compute ln(n!) using stirling's approximation */
 static inline double
 st_perm_ln(unsigned int n)
 {
@@ -41,9 +39,7 @@ st_perm_ln(unsigned int n)
 	return n * (log(n) - 1.0) + 0.5 * log(2 * PI * n) + 1.0 / (12 * n);
 }
 
-/**
- * st_perm - calculates the factorial n! with Stirling's approximation
- */
+/* compute n! using stirling's approximation */
 static inline double
 st_perm(unsigned int n)
 {
@@ -52,10 +48,6 @@ st_perm(unsigned int n)
 	return sqrt(2 * PI) * pow(n, n + 0.5) * exp(-(double)n + 1.0 / (12 * n));
 }
 
-/**
- * st_comb_ln - calculates lnC(n,r) with Stirling's approximation
- * Note: doesn't support r > n cases.
- */
 static inline double
 st_comb_ln(unsigned int n, unsigned int r)
 {
@@ -66,9 +58,6 @@ st_comb_ln(unsigned int n, unsigned int r)
 		1.0 / 12 * (1.0 / n - 1.0 / (n - r) - 1.0 / r);
 }
 
-/**
- * st_comb - calculates C(n,r) with Stirling's approximation
- */
 static inline double
 st_comb(unsigned int n, unsigned int r)
 {
@@ -76,8 +65,8 @@ st_comb(unsigned int n, unsigned int r)
 		return 0;
 	if (n == 0 || r == 0 || n == r)
 		return 1;
-	/* doesn't calculate directly since it may lead to overflows */
+	/* won't calculate directly since it may cause overflow */
 	return exp(st_comb_ln(n, r));
 }
 
-#endif
+#endif  /* __ULIB_STIRLING_H */

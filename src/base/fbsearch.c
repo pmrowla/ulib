@@ -1,6 +1,6 @@
 /* The MIT License
 
-   Copyright (C) 2011 Zilong Tan (eric.zltan@gmail.com)
+   Copyright (C) 2011, 2012 Zilong Tan (eric.zltan@gmail.com)
 
    Permission is hereby granted, free of charge, to any person obtaining
    a copy of this software and associated documentation files (the
@@ -98,9 +98,8 @@ ssize_t findline(int fd, int (*comp) (const char *, void *),
 {
         struct stat state;
                 
-        if (fstat(fd, &state)) {
+        if (fstat(fd, &state))
 		return -1;
-        }
 
         return __findline(fd, comp, param, 0, state.st_size, maxlen);
 }
@@ -111,20 +110,15 @@ ssize_t findfirstline(int fd, int (*comp) (const char *, void *),
         struct stat state;
 	ssize_t pos;
                 
-        if (fstat(fd, &state)) {
+        if (fstat(fd, &state))
 		return -1;
-        }
 
         ssize_t init_pos = __findline(fd, comp, param, 0, state.st_size, maxlen);
                 
-        /*
-         * recursively find occurrence before last position
-         */
         while (init_pos > 0) {
 		pos = __findline(fd, comp, param, 0, init_pos, maxlen);
-		if (pos == -1) {
+		if (pos == -1)
 			break;
-		}
 		init_pos = pos;
         }
 

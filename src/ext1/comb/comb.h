@@ -1,6 +1,6 @@
 /* The MIT License
 
-   Copyright (C) 2011 Zilong Tan (eric.zltan@gmail.com)
+   Copyright (C) 2011, 2012 Zilong Tan (eric.zltan@gmail.com)
 
    Permission is hereby granted, free of charge, to any person obtaining
    a copy of this software and associated documentation files (the
@@ -40,7 +40,7 @@ extern "C" {
 	} combiter_t;
 
 	/**
-	 * comb_begin - begins the combination iteration by initializing @iter
+	 * comb_begin - begin the combination iteration by initializing @iter
 	 * @m:    total number of elements
 	 * @n:    number of elements to choose
 	 * @iter: generated combination iterator
@@ -49,20 +49,20 @@ extern "C" {
 	int comb_begin(int m, int n, combiter_t *iter);
 	
 	/**
-	 * comb_next - generates the next iterator
+	 * comb_next - generate next iterator
 	 * @iter: combination iterator
 	 */
 	int comb_next(combiter_t *iter);
 
 	/**
-	 * comb_get - gets the combination from iterator
+	 * comb_get - get combination from iterator
 	 * @iter: iterator for the combination
 	 * @comb: output combination
 	 */
 	int comb_get(combiter_t *iter, comb_t *comb);
 
 	/**
-	 * comb_elem - gets and removes an element from the combination
+	 * comb_elem - get and remove an element from the combination
 	 * @comb: input & output combination
 	 * Note: the elements are numbered starting from 1
 	 */

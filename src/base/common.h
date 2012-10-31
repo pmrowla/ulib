@@ -1,6 +1,6 @@
 /* The MIT License
 
-   Copyright (C) 2011 Zilong Tan (eric.zltan@gmail.com)
+   Copyright (C) 2011, 2012 Zilong Tan (eric.zltan@gmail.com)
 
    Permission is hereby granted, free of charge, to any person obtaining
    a copy of this software and associated documentation files (the
@@ -32,11 +32,6 @@
 #include <stddef.h>
 #include <stdint.h>
 
-/*
- * min()/max()/clamp() macros that also do
- * strict type-checking.. See the
- * "unnecessary" pointer comparison.
- */
 #define min(x, y) ({						\
 			typeof(x) _min1 = (x);			\
 			typeof(y) _min2 = (y);			\
@@ -95,12 +90,6 @@
 			__val = __val < __min ? __min: __val;	\
 			__val > __max ? __max: __val; })
 
-/*
- * ..and if you can't take the strict
- * types, you can specify one yourself.
- *
- * Or not use min/max/clamp at all, of course.
- */
 #define min_t(type, x, y) ({					\
 			type __min1 = (x);			\
 			type __min2 = (y);			\
@@ -147,9 +136,6 @@
 			__val > __max ? __max: __val; })
 
 
-/*
- * swap - swap value of @a and @b
- */
 #define swap(a, b)							\
 	do { typeof(a) __tmp = (a); (a) = (b); (b) = __tmp; } while (0)
 
@@ -180,7 +166,7 @@ static inline void memswp(unsigned long *x, unsigned long *y, size_t size)
 	h = (unsigned char *)x;
 	v = (unsigned char *)y;
 
-#if defined __x86_64__
+#if __WORDSIZE == 64
 	switch (size & 7) {
 	case 7: swap(h[6], v[6]);
 	case 6: swap(h[5], v[5]);

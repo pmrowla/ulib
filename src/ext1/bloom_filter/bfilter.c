@@ -1,6 +1,6 @@
 /* The MIT License
 
-   Copyright (C) 2011 Zilong Tan (eric.zltan@gmail.com)
+   Copyright (C) 2011, 2012 Zilong Tan (eric.zltan@gmail.com)
 
    Permission is hereby granted, free of charge, to any person obtaining
    a copy of this software and associated documentation files (the
@@ -100,17 +100,6 @@ int bfilter_get(struct bloom_filter *bf, const void *buf, unsigned long buflen)
 	return 1;
 }
 
-void bfilter_clear(struct bloom_filter *bf, const void *buf, unsigned long buflen)
-{
-	uint64_t hash;
-	int i;
-
-	for (i = 0; i < bf->nfunc; i++) {
-		hash = HASH_FUNCTION(buf, buflen, bf->seeds[i]);
-		bfilter_clear_hash(bf, hash);
-	}
-}
-
 void bfilter_set_hash(struct bloom_filter *bf, unsigned long hash)
 {
 	unsigned long *addr;
@@ -125,12 +114,4 @@ int bfilter_get_hash(struct bloom_filter *bf, unsigned long hash)
 	hash = hash % bf->nbits;
 	addr = bf->bitmap + BIT_WORD(hash);
 	return test_bit(hash & (BITS_PER_LONG - 1), addr);
-}
-
-void bfilter_clear_hash(struct bloom_filter *bf, unsigned long hash)
-{
-	unsigned long *addr;
-	hash = hash % bf->nbits;
-	addr = bf->bitmap + BIT_WORD(hash);
-	clear_bit(hash & (BITS_PER_LONG - 1), addr);
 }

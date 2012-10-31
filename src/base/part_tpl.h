@@ -1,6 +1,6 @@
 /* The MIT License
 
-   Copyright (C) 2011 Zilong Tan (eric.zltan@gmail.com)
+   Copyright (C) 2011, 2012 Zilong Tan (eric.zltan@gmail.com)
 
    Permission is hereby granted, free of charge, to any person obtaining
    a copy of this software and associated documentation files (the
@@ -29,7 +29,7 @@
 #include "common.h"
 
 /**
- * part - partitions any array into parts s.t.
+ * part - partition an array into tree parts:
  * array[<median] <= array[median] <= array[>median]
  */
 #define DEFINE_PART(name, type, lt)				\

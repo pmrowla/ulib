@@ -1,6 +1,6 @@
 /* The MIT License
 
-   Copyright (C) 2011 Zilong Tan (eric.zltan@gmail.com)
+   Copyright (C) 2011, 2012 Zilong Tan (eric.zltan@gmail.com)
 
    Permission is hereby granted, free of charge, to any person obtaining
    a copy of this software and associated documentation files (the
@@ -33,27 +33,21 @@ extern "C" {
 #endif
 
 /**
- * findline - finds the offset to a line satisfying comp(line,param) == 0
+ * findline - find a match line
  * @fd:     file descriptor
- * @comp:   comparing function for lines
- * @param:  parameter for comp (target line maybe)
- * @maxlen: line max length, including '\n'
- * Note: the file specified by fd should be sorted ascendingly
- * by comp before this call
+ * @comp:   line compare function
+ * @param:  parameter for @comp (e.g., target line)
+ * @maxlen: max line length, including the '\n'
+ * Note: lines in fd must be sorted in ascending order with respect to
+ * @comp.
+ *
+ * return -1 if the line was not found, or offset to the line
+ * otherwise.
  */
 	ssize_t findline(int fd, int (*comp) (const char *, void *),
 			 void *param, int maxlen);
 
-/**
- * findfirstline - finds the offset to the first occurrence of line
- * satisfying comp(line,param) == 0
- * @fd:     file descriptor
- * @comp:   comparing function for lines
- * @param:  parameter for comp (target line maybe)
- * @maxlen: line max length, including '\n'
- * Note: the file specified by fd should be sorted ascendingly
- * by comp before this call
- */
+/* find the first match line */
 	ssize_t findfirstline(int fd, int (*comp) (const char *, void *),
 			      void *param, int maxlen);
 

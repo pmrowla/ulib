@@ -1,6 +1,6 @@
 /* The MIT License
 
-   Copyright (C) 2011 Zilong Tan (eric.zltan@gmail.com)
+   Copyright (C) 2011, 2012 Zilong Tan (eric.zltan@gmail.com)
 
    Permission is hereby granted, free of charge, to any person obtaining
    a copy of this software and associated documentation files (the
@@ -28,14 +28,16 @@
 
 #include <time.h>
 
-static inline void timer_start(struct timespec *ts)
+typedef struct timespec ulib_timer_t;
+
+static inline void timer_start(ulib_timer_t  *ts)
 {
 	clock_gettime(CLOCK_MONOTONIC, ts);
 }
 
-static inline double timer_stop(const struct timespec *ts)
+static inline double timer_stop(const ulib_timer_t *ts)
 {
-	struct timespec tsnow;
+	ulib_timer_t tsnow;
 
 	clock_gettime(CLOCK_MONOTONIC, &tsnow);
 

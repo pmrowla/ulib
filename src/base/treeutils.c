@@ -1,6 +1,6 @@
 /* The MIT License
 
-   Copyright (C) 2011 Zilong Tan (eric.zltan@gmail.com)
+   Copyright (C) 2011, 2012 Zilong Tan (eric.zltan@gmail.com)
 
    Permission is hereby granted, free of charge, to any person obtaining
    a copy of this software and associated documentation files (the
@@ -38,6 +38,7 @@ size_t tree_height(struct tree_root *root)
 
 	if (hl > hr)
 		return hl + 1;
+
 	return hr + 1;
 }
 
@@ -56,7 +57,7 @@ int tree_verify(struct tree_root *root,
 			last = p;
 		else if (compare(p, last) <= 0)
 			return -1;
-		count++;
+		++count;
 	}
 
 	if (count != tree_count(root))
