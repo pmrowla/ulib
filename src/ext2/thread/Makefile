@@ -16,7 +16,7 @@ CXXFLAGS ?= -g3 -O2 -Wall -W -Werror -pipe -c -fno-strict-aliasing
 #
 # define object files below
 #
-OBJS	 = periodic.o
+OBJS	 = thread.o periodic.o
 
 .cpp.o:
 	$(CXX) -I $(INCPATH) $(CXXFLAGS) $< -o $@

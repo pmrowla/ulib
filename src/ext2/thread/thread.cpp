@@ -23,89 +23,22 @@
    SOFTWARE.
 */
 
-#ifndef __ULIB_THREAD_H
-#define __ULIB_THREAD_H
-
-#include <pthread.h>
+#include "thread.h"
 
 namespace ulib {
 
-class thread {
-public:
-	thread()
-	: _running(false) { }
+void *thread::_thread(void *param)
+{
+	thread *parent = (thread *) param;
 
-	int
-	start()
-	{
-		if (_running)
-			return 0;
-		_running = true;
-		if (pthread_create(&_tid, NULL, _thread, (void *)this)) {
-			_running = false;
-			return -1;
-		}
-		return 0;
+	int ret = parent->before_run();
+	if (ret) {
+		// if initialization fails, we won't proceed
+		return (void *)(unsigned long)-1;
 	}
-
-	int
-	join()
-	{
-		if (_running) {
-			if (pthread_join(_tid, NULL))
-				return -1;
-			_running = false;
-		}
-		return 0;
-	}
-
-	int
-	stop_and_join()
-	{
-		if (!_running)
-			return 0;
-		_running = false;
-		if (pthread_join(_tid, NULL)) {
-			_running = true;
-			return -1;
-		}
-		return 0;
-	}
-
-	void
-	set_state(bool started)
-	{ _running = started; }
-
-	bool
-	is_running() const
-	{ return _running; }
-
-	// ATTENTION: inherented classes must implement a custom
-	// destructor function and call join there.
-	virtual
-	~thread()
-	{ stop_and_join(); }
-
-	// optionally performs initialization for thread
-	virtual int
-	before_run()
-	{ return 0; }
-
-	// thread routine
-	virtual int
-	run() = 0;
-
-	// optionally performs clean up for thread
-	virtual int
-	after_run()
-	{ return 0; }
-
-private:
-	pthread_t     _tid;
-	volatile bool _running;
-	static void * _thread(void *param);
-};
+	ret = parent->run();
+	ret = parent->after_run();
+	return NULL;
+}
 
 }  // namespace ulib
-
-#endif  /* __ULIB_THREAD_H */
