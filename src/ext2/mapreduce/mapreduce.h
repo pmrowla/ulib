@@ -49,12 +49,12 @@ public:
 	: _value(val)
 	{ }
 
+	virtual
+	~associative()
+	{ }
+
 	virtual	associative &
-	operator+=(const V &other)
-	{
-		_value += other;
-		return *this;
-	}
+	operator+=(const V &other) = 0;
 
 	operator V()
 	{ return _value; }
@@ -81,6 +81,10 @@ public:
 	: _rec(rec)
 	{ }
 
+	virtual
+	~mapper()
+	{ }
+
 	// compute the intermediate key of a record, the
 	// implementation is left to the derived mapper.
 	virtual const K
@@ -100,7 +104,7 @@ protected:
 };
 
 // a simple reducer that is no more than associative
-template<class V>
+template<typename V>
 class reducer : public associative<V>
 {
 public:
@@ -108,6 +112,10 @@ public:
 
 	reducer(V &val)
 	: associative<V>(val)
+	{ }
+
+	virtual
+	~reducer()
 	{ }
 };
 
@@ -118,15 +126,14 @@ public:
 	: _key(key)
 	{ }
 
+	virtual
+	~partitioner()
+	{ }
+
 	// an enhancement on the key hash function, which is implied
 	// through the conversion from a key to an integer.
 	virtual
-	operator size_t() const
-	{
-		uint64_t h = _key;
-		RAND_INT3_MIX64(h);  // a lightweight transformation
-		return h;
-	}
+	operator size_t() const = 0;
 
 	// the equality of partitioners is defined as the equality of
 	// their keys.
@@ -138,7 +145,7 @@ public:
 	key() const
 	{ return _key; }
 
-private:
+protected:
 	K _key;
 };
 
@@ -146,13 +153,14 @@ private:
 // MapReduce paradigm of which a task has independent space for both
 // input and output. By contrast, in this task abstraction shared the
 // same output space.
-template<typename S, typename M, typename R, typename I>
+template<typename S, typename M, typename R, template<typename K> class P, typename I>
 class task : public ulib::thread {
 public:
 	task(S &s, I begin, I end)
 	: _store(s), _begin(begin), _end(end)
 	{ }
 
+	virtual
 	~task()
 	{ stop_and_join(); }
 
@@ -162,9 +170,10 @@ private:
 	{
 		for (I i = _begin; i != _end; ++i) {
 			M m(*i);
-			_store.lock(m.key());
+			P<typename M::key_type> p(m.key());
+			_store.lock(p);
 			R(_store[m.key()]) += m.value();
-			_store.unlock(m.key());
+			_store.unlock(p);
 		}
 		return 0;
 	}
@@ -196,18 +205,22 @@ public:
 	: _result(r), _dataset(d)
 	{ }
 
+	virtual
+	~job()
+	{ }
+
 	void
 	exec(int ntask)
 	{
-		task<result_type, M, R, typename D::const_iterator> **tasks =
-			new task<result_type, M, R, typename D::const_iterator> *[ntask];
+		task<result_type, M, R, P, typename D::const_iterator> **tasks =
+			new task<result_type, M, R, P, typename D::const_iterator> *[ntask];
 		// assuming approximate equality in the processing
 		// time of records follows the simple partition:
 		size_t len = _dataset.size() / ntask;
 		for (int i = 0; i < ntask - 1; ++i)
-			tasks[i] = new task<result_type, M, R, typename D::const_iterator>
+			tasks[i] = new task<result_type, M, R, P, typename D::const_iterator>
 				(_result, _dataset.begin() + len * i, _dataset.begin() + len * (i + 1));
-		tasks[ntask - 1] = new task<result_type, M, R, typename D::const_iterator>
+		tasks[ntask - 1] = new task<result_type, M, R, P, typename D::const_iterator>
 			(_result, _dataset.begin() + len * (ntask - 1), _dataset.end());
 		for (int i = 0; i < ntask; ++i)
 			tasks[i]->start();
@@ -221,15 +234,53 @@ private:
 	const D     &_dataset;
 };
 
+template<typename V>
+class typical_reducer : public reducer<V> {
+public:
+	typical_reducer(V &val)
+	: reducer<V>(val)
+	{ }
+
+	virtual
+	~typical_reducer()
+	{ }
+
+	virtual	typical_reducer &
+	operator+=(const V &other)
+	{
+		associative<V>::_value += other;
+		return *this;
+	}
+};
+
+template<typename K>
+class typical_partitioner : public partitioner<K> {
+public:
+	typical_partitioner(const K &key)
+	: partitioner<K>(key)
+	{ }
+
+	virtual
+	~typical_partitioner()
+	{ }
+
+	virtual
+	operator size_t() const
+	{
+		uint64_t h = partitioner<K>::_key;
+		RAND_INT3_MIX64(h);  // a lightweight transformation
+		return h;
+	}
+};
 
 // a typical job with default reducer and partitioner. Yet it is still
 // flexible as the += oprator of the value_type of mapper can be
 // overloaded, which amounts to customizing the reducer.
 template<class M, class D>
 class typical_job :
-	public  job<chain_hash_store, M, reducer<typename M::value_type>, partitioner, D> {
+	public  job<chain_hash_store, M, typical_reducer<typename M::value_type>, typical_partitioner, D> {
 public:
-	typedef job<chain_hash_store, M, reducer<typename M::value_type>, partitioner, D> job_type;	
+	typedef job<chain_hash_store, M, typical_reducer<typename M::value_type>, typical_partitioner, D> job_type;
 	typedef typename job_type::mapper_type      mapper_type;
 	typedef typename job_type::reducer_type     reducer_type;
 	typedef typename job_type::dataset_type     dataset_type;
@@ -238,6 +289,10 @@ public:
 
 	typical_job(result_type &r, const D &d)
 	: job_type(r, d)
+	{ }
+
+	virtual
+	~typical_job()
 	{ }
 };
 
