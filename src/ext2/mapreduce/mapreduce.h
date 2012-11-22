@@ -68,9 +68,9 @@ protected:
 	V &_value;
 };
 
-// the abstraction of a mapper, which is qualified by the conversion
-// from a record to an intermediate key or value. The R, K and V are
-// the record type, key type and value type respectively.
+// abstraction for a mapper, which is qualified by the conversion
+// from a record to a set of intermediate key/value pairs. The R, K
+// and V are the record type, key type and value type respectively.
 template<typename R, typename K, typename V>
 class mapper {
 public:
@@ -165,7 +165,7 @@ protected:
 	K _key;
 };
 
-// astraction for a task, in fact it does not follow the rigorous
+// abstraction for a task, in fact it does not follow the rigorous
 // MapReduce paradigm of which a task has independent space for both
 // input and output. By contrast, in this task abstraction shared the
 // same output space.
