@@ -1,8 +1,8 @@
-INCPATH=../../include
-LIBPATH=../../lib
+INCPATH = ../../include
+LIBPATH = ../../lib
 
-CXXFLAGS=-O2 -W -Wall -I$(INCPATH)
-LDFLAGS=-L$(LIBPATH) -lulib -lrt
+CXXFLAGS ?=-O2 -W -Wall -I$(INCPATH)
+LDFLAGS   =-L$(LIBPATH) -lulib -lrt
 
 .cpp.o:
 	$(CXX) -c $(CXXFLAGS) $< -o $@

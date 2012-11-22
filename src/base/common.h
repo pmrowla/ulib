@@ -32,13 +32,13 @@
 #include <stddef.h>
 #include <stdint.h>
 
-#define min(x, y) ({						\
+#define _min(x, y) ({						\
 			typeof(x) _min1 = (x);			\
 			typeof(y) _min2 = (y);			\
 			(void) (&_min1 == &_min2);		\
 			_min1 < _min2 ? _min1 : _min2; })
 
-#define max(x, y) ({						\
+#define _max(x, y) ({						\
 			typeof(x) _max1 = (x);			\
 			typeof(y) _max2 = (y);			\
 			(void) (&_max1 == &_max2);		\
@@ -70,7 +70,7 @@
 #define min_not_zero(x, y) ({						\
 			typeof(x) __x = (x);				\
 			typeof(y) __y = (y);				\
-			__x == 0 ? __y : ((__y == 0) ? __x : min(__x, __y)); })
+			__x == 0 ? __y : ((__y == 0) ? __x : _min(__x, __y)); })
 
 /**
  * clamp - return a value clamped to a given range with strict typechecking
@@ -136,7 +136,7 @@
 			__val > __max ? __max: __val; })
 
 
-#define swap(a, b)							\
+#define _swap(a, b)							\
 	do { typeof(a) __tmp = (a); (a) = (b); (b) = __tmp; } while (0)
 
 /**
@@ -158,7 +158,7 @@ static inline void memswp(unsigned long *x, unsigned long *y, size_t size)
 	unsigned char *h, *v;
 
 	while (x != p) {
-		swap(*x, *y);
+		_swap(*x, *y);
 		x++;
 		y++;
 	}
@@ -168,16 +168,16 @@ static inline void memswp(unsigned long *x, unsigned long *y, size_t size)
 
 #if __WORDSIZE == 64
 	switch (size & 7) {
-	case 7: swap(h[6], v[6]);
-	case 6: swap(h[5], v[5]);
-	case 5: swap(h[4], v[4]);
-	case 4: swap(h[3], v[3]);
+	case 7: _swap(h[6], v[6]);
+	case 6: _swap(h[5], v[5]);
+	case 5: _swap(h[4], v[4]);
+	case 4: _swap(h[3], v[3]);
 #else
 	switch (size & 3) {
 #endif
-	case 3: swap(h[2], v[2]);
-	case 2: swap(h[1], v[1]);
-	case 1: swap(h[0], v[0]);
+	case 3: _swap(h[2], v[2]);
+	case 2: _swap(h[1], v[1]);
+	case 1: _swap(h[0], v[0]);
 	}
 }
 

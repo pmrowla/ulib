@@ -201,9 +201,9 @@ enum {
 						i = (i + step) & new_mask; \
 					AH_CLEAR_EMPTY(new_flags, i);	\
 					if (i < h->nbucket && AH_ISEITHER(h->flags, i) == 0) { \
-						swap(h->keys[i], key);	\
+						_swap(h->keys[i], key);	\
 						if (_ismap)		\
-							swap(h->vals[i], val); \
+							_swap(h->vals[i], val); \
 						AH_SET_DEL(h->flags, i); \
 					} else {			\
 						h->keys[i] = key;	\

@@ -11,7 +11,7 @@ LIBPATH	 = $(ROOT)/lib
 TARGET	 = $(LIBPATH)/libthread.a
 
 CXX	 ?= g++
-CXXFLAGS ?= -g3 -O2 -Wall -W -Werror -pipe -c -fno-strict-aliasing
+CXXFLAGS ?= -g3 -O2 -Wall -W -Werror -pipe -fPIC -c -fno-strict-aliasing
 
 #
 # define object files below

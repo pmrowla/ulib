@@ -69,7 +69,7 @@ __findline(int fd, int (*comp) (const char *, void *),
 		}
 
 		/* one extra byte is included to get nextline work */
-		len = (int) min((ssize_t)(high - m), nb) + 1;
+		len = (int) _min((ssize_t)(high - m), nb) + 1;
 
 		line = __seekline(buf, len);
 		if (line == NULL) {

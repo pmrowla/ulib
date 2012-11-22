@@ -28,9 +28,9 @@
 #include <string.h>
 #include <getopt.h>
 #include <ulib/timer.h>
+#include <ulib/mapreduce.h>
 #include <ulib/alignhash.h>
 #include <ulib/chainhash_r.h>
-#include <ulib/mapreduce.h>
 
 static const char *usage =
 	"The Space-Sharing MapReduce Framework\n"
@@ -53,17 +53,9 @@ using namespace ulib::mapreduce;
 template<typename R, typename K, typename V>
 class wc_mapper : public mapper<R, K, V> {
 public:
-	wc_mapper(const R &rec)
-	: mapper<R, K, V>(rec)
-	{ }
-
-	const K
-	key() const
-	{ return mapper<R, K, V>::_rec; }
-
-	const V
-	value() const
-	{ return 1; }
+	void
+	operator()(const R &rec)
+	{ emit(rec, 1); }
 };
 
 int main(int argc, char *argv[]) 
@@ -151,8 +143,10 @@ int main(int argc, char *argv[])
 		AMAP map;
 		timer_start(&timer);
 		for (DS::const_iterator it = dataset.begin(); it != dataset.end(); ++it) {
-			MAPPER  m(*it);
-			REDUCER(map[m.key()]) += m.value();
+			MAPPER  m;
+			m(*it);
+			for (MAPPER::iterator mit = m.begin(); mit != m.end(); ++mit)
+				REDUCER(map[mit->first]) += mit->second;
 		}
 		elapsed = timer_stop(&timer);
 		fprintf(stderr, "checking with aligned hash OK: %f sec\n", elapsed);

@@ -26,6 +26,7 @@
 #ifndef __ULIB_MAPREDUCE_H
 #define __ULIB_MAPREDUCE_H
 
+#include <list>
 #include <utility>
 #include <ulib/thread.h>
 #include <ulib/rand_tpl.h>
@@ -77,30 +78,45 @@ public:
 	typedef K key_type;
 	typedef V value_type;
 
-	mapper(const R &rec)
-	: _rec(rec)
+	typedef typename std::list< std::pair<K,V> >::iterator       iterator;
+	typedef typename std::list< std::pair<K,V> >::const_iterator const_iterator;
+
+	mapper()
 	{ }
 
 	virtual
 	~mapper()
 	{ }
 
-	// compute the intermediate key of a record, the
-	// implementation is left to the derived mapper.
-	virtual const K
-	key() const = 0;
+	void
+	emit(const K &key, const V &value)
+	{ _pairs.push_back(std::pair<K,V>(key, value)); }
 
-	// compute the value for a record, again the implementation os
-	// left to the derived mapper.
-	virtual const V
-	value() const = 0;
+	virtual void
+	operator()(const R &rec) = 0;
 
-	const R &
-	record() const
-	{ return _rec; }
+	iterator
+	begin()
+	{ return _pairs.begin(); }
+
+	iterator
+	end()
+	{ return _pairs.end(); }
+
+	const_iterator
+	begin() const
+	{ return _pairs.begin(); }
+
+	const_iterator
+	end() const
+	{ return _pairs.end(); }
+
+	size_t
+	size() const
+	{ return _pairs.size(); }
 
 protected:
-	const R &_rec;
+	std::list< std::pair<K,V> > _pairs;
 };
 
 // a simple reducer that is no more than associative
@@ -169,11 +185,14 @@ private:
 	run()  // should not be called manully, making it private
 	{
 		for (I i = _begin; i != _end; ++i) {
-			M m(*i);
-			P<typename M::key_type> p(m.key());
-			_store.lock(p);
-			R(_store[m.key()]) += m.value();
-			_store.unlock(p);
+			M m;
+			m(*i);  // produce intermediate key/value pairs
+			for (typename M::const_iterator it = m.begin(); it != m.end(); ++it) {
+				P<typename M::key_type> p(it->first);
+				_store.lock(p);
+				R(_store[it->first]) += it->second;
+				_store.unlock(p);
+			}
 		}
 		return 0;
 	}

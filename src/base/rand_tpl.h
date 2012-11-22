@@ -90,7 +90,7 @@
 			double _z = 1., _x = drand48();			\
 			while (_x < _z) _z -= _z * _i / (_pop--);	\
 			if (_k != (_n) - _pop - 1)			\
-				swap((_buf)[_k], (_buf)[(_n) - _pop - 1]); \
+				_swap((_buf)[_k], (_buf)[(_n) - _pop - 1]); \
 			++_k;						\
 		}							\
 	} while (0)

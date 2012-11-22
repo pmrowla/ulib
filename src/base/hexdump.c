@@ -143,7 +143,7 @@ void print_hex_dump(const char *prefix_str, int prefix_type,
 		rowsize = 16;
 
 	for (i = 0; (size_t)i < len; i += rowsize) {
-		linelen = min(remaining, rowsize);
+		linelen = _min(remaining, rowsize);
 		remaining -= rowsize;
 
 		hex_dump_to_buffer(ptr + i, linelen, rowsize, groupsize,

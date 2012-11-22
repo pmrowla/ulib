@@ -40,7 +40,7 @@ void rc4_set_key(const unsigned char *buf, size_t len, rc4_key_t * key)
 
 	for (i = 0; i < 256; ++i) {
 		j = j + state[i] + buf[i % len];
-		swap(state[i], state[j]);
+		_swap(state[i], state[j]);
 	}
 }
 
@@ -56,7 +56,7 @@ void rc4_crypt(unsigned char *buf, size_t len, rc4_key_t * key)
 
 	for (i = 0; i < len; i++) {
 		y = y + state[++x];
-		swap(state[x], state[y]);
+		_swap(state[x], state[y]);
 		buf[i] ^= state[(state[x] + state[y]) & 0xff];
 	}
 

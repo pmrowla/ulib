@@ -11,7 +11,7 @@ LIBPATH	= $(ROOT)/lib
 TARGET	= $(LIBPATH)/libmapreduce.a
 
 CXX	 ?= g++
-CXXFLAGS ?= -g3 -O2 -Wall -W -Werror -pipe -c
+CXXFLAGS ?= -g3 -O2 -Wall -W -Werror -pipe -fPIC -c
 
 #
 # define object files below

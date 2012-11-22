@@ -46,11 +46,11 @@
 			q = t;					\
 			m = p + (q - p) / 2;			\
 			if (lt(m, p))				\
-				swap(*m, *p);			\
+				_swap(*m, *p);			\
 			if (lt(q, m)) {				\
-				swap(*q, *m);			\
+				_swap(*q, *m);			\
 				if (lt(m, p))			\
-					swap(*m, *p);		\
+					_swap(*m, *p);		\
 			}					\
 			e = *m;					\
 			for (;;) {				\
@@ -58,7 +58,7 @@
 				do --q; while (lt(&e, q));	\
 				if (p >= q)			\
 					break;			\
-				swap(*p, *q);			\
+				_swap(*p, *q);			\
 			}					\
 			if (p > median)				\
 				t = p - 1;			\
