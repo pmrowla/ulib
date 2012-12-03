@@ -67,12 +67,12 @@ public:
 	{ }
 
 	void
-	lock(const _Key &key)
-	{ acquire(key); }
+	lock(size_t h)
+	{ acquire(h); }
 
 	void
-	unlock(const _Key &key)
-	{ release(key); }
+	unlock(size_t h)
+	{ release(h); }
 
 	// again DO NOT copy the elements
 	chain_hash_store &

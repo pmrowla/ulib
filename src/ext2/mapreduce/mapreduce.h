@@ -188,10 +188,10 @@ private:
 			M m;
 			m(*i);  // produce intermediate key/value pairs
 			for (typename M::const_iterator it = m.begin(); it != m.end(); ++it) {
-				P<typename M::key_type> p(it->first);
-				_store.lock(p);
+				size_t h = P<typename M::key_type>(it->first);
+				_store.lock(h);
 				R(_store[it->first]) += it->second;
-				_store.unlock(p);
+				_store.unlock(h);
 			}
 		}
 		return 0;
