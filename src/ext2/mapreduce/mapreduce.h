@@ -136,14 +136,14 @@ public:
 };
 
 template<typename K>
-class partitioner {
+class partition {
 public:
-	partitioner(const K &key)
+	partition(const K &key)
 	: _key(key)
 	{ }
 
 	virtual
-	~partitioner()
+	~partition()
 	{ }
 
 	// an enhancement on the key hash function, which is implied
@@ -151,10 +151,10 @@ public:
 	virtual
 	operator size_t() const = 0;
 
-	// the equality of partitioners is defined as the equality of
+	// the equality of partitions is defined as the equality of
 	// their keys.
 	bool
-	operator==(const partitioner &other) const
+	operator==(const partition &other) const
 	{ return _key == other.key(); }
 
 	const K &
@@ -203,7 +203,7 @@ private:
 };
 
 // a job is defined as the set of a dataset, a mapper that converts
-// data records to key/value pairs, a partitioner that spreads the
+// data records to key/value pairs, a partition that spreads the
 // key/value pairs evenly to slots, and a reducer that combine the
 // values associated with the same key.
 template<
@@ -217,8 +217,8 @@ public:
 	typedef M mapper_type;
 	typedef R reducer_type;
 	typedef D dataset_type;
-	typedef P<typename M::key_type> partitioner_type;
-	typedef S<partitioner_type, typename M::value_type> result_type;
+	typedef P<typename M::key_type> partition_type;
+	typedef S<partition_type, typename M::value_type> result_type;
 
 	job(result_type &r, const D &d)
 	: _result(r), _dataset(d)
@@ -273,37 +273,37 @@ public:
 };
 
 template<typename K>
-class typical_partitioner : public partitioner<K> {
+class typical_partition : public partition<K> {
 public:
-	typical_partitioner(const K &key)
-	: partitioner<K>(key)
+	typical_partition(const K &key)
+	: partition<K>(key)
 	{ }
 
 	virtual
-	~typical_partitioner()
+	~typical_partition()
 	{ }
 
 	virtual
 	operator size_t() const
 	{
-		uint64_t h = partitioner<K>::_key;
+		uint64_t h = partition<K>::_key;
 		RAND_INT3_MIX64(h);  // a lightweight transformation
 		return h;
 	}
 };
 
-// a typical job with default reducer and partitioner. Yet it is still
+// a typical job with default reducer and partition. Yet it is still
 // flexible as the += oprator of the value_type of mapper can be
 // overloaded, which amounts to customizing the reducer.
 template<class M, class D>
 class typical_job :
-	public  job<chain_hash_store, M, typical_reducer<typename M::value_type>, typical_partitioner, D> {
+	public  job<chain_hash_store, M, typical_reducer<typename M::value_type>, typical_partition, D> {
 public:
-	typedef job<chain_hash_store, M, typical_reducer<typename M::value_type>, typical_partitioner, D> job_type;
+	typedef job<chain_hash_store, M, typical_reducer<typename M::value_type>, typical_partition, D> job_type;
 	typedef typename job_type::mapper_type      mapper_type;
 	typedef typename job_type::reducer_type     reducer_type;
 	typedef typename job_type::dataset_type     dataset_type;
-	typedef typename job_type::partitioner_type partitioner_type;
+	typedef typename job_type::partition_type   partition_type;
 	typedef typename job_type::result_type      result_type;
 
 	typical_job(result_type &r, const D &d)
