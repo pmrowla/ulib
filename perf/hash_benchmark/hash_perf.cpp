@@ -31,21 +31,20 @@
 #include <google/dense_hash_map>
 #include <google/malloc_extension.h>
 #include <ext/hash_map>
-#include <rdestl/hash_map.h>
+#include <hash_map.h>
 #include <EASTL/hash_map.h>
 #include <ulib/timer.h>
 
 // Random Number Generator
 #include <ulib/rand_tpl.h>
 
-// NOTE: define AH_TIER_PROBING when keys are NOT random
-// However, undefine it increase the performance
-#define AH_TIER_PROBING
+#define AH_DOUBLE_HASHING
 #include <ulib/alignhash.h>
 
 using google::sparse_hash_map;
 using google::dense_hash_map;
 using __gnu_cxx::hash_map;
+using ulib::align_hash_map;
 
 struct nullhash {
 	uint64_t

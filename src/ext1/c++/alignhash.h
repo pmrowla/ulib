@@ -36,10 +36,8 @@
   key() and value() are respectively responsible for accessing the key
   and value associated with the iterator instead.
 
-  (3) Several flags can be specified before including alignhash.h,
-  including AH_64BIT, which enables 64-bit addressing, and
-  AH_TIER_PROBING, a double hashing variant that is suitable for small
-  tables.
+  (3) Optional flags can be specified preceding alignhash.h, such as
+  AH_DOUBLE_HASHING.
 */
 
 #ifndef _ALIGN_HASH_H
@@ -47,11 +45,6 @@
 
 #include <exception>
 #include <string>
-
-/* optional flags */
-#if __WORDSIZE == 64
-#define AH_64BIT
-#endif
 
 #include "alignhash_tpl.h"
 

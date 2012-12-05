@@ -26,7 +26,9 @@ int main()
 	RAND_INT4_MIX64_INV(s);
 
 	if (s != r)
-		fprintf(stderr, "expected %016llx, acutal %016llx\n", r, s);
+		fprintf(stderr, "expected %016llx, acutal %016llx\n",
+			(unsigned long long)r,
+			(unsigned long long)s);
 	else
 		printf("passed\n");
 

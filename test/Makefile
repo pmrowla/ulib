@@ -11,7 +11,7 @@ INCPATH		= ../include
 LIBPATH		= ../lib
 
 CXX		?= g++
-CXXFLAGS	?= -g3 -O2 -W -Wall -fPIC
+CXXFLAGS	?= -g3 -O2 -W -Wall
 LDFLAGS		?= -lulib -lrt -lm
 DEBUG		?=
 

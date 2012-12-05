@@ -32,8 +32,7 @@
 #include <string.h>
 #include "common.h"
 
-/* optionally enable 64-bit addressing by defining AH_64BIT */
-#ifdef AH_64BIT
+#if __WORDSIZE == 64
 
 typedef uint64_t ah_iter_t;
 typedef uint64_t ah_size_t;
@@ -72,30 +71,23 @@ enum {
 	AH_INS_DEL = 2   /**< element was placed at a deleted bucket */
 };
 
-/* Two probing methods are available: tier probing and linear probing.
- * Tier probing, to some extent, balances the lookup cost both in the
- * best and worst cases. This is preferable when keys are not randomly
- * distributed thus resulting in many collisions. By contrast, linear
- * probing precedes tier probing especially when there are a lot of
- * <key,value> pairs stored in the hash table due to better locality
- * is achieved. Please specify AH_TIER_PROBING to enable tier probing,
- * otherwise linear probing is used by default. */
-#ifdef AH_TIER_PROBING
-/* tier probing step, preferable for memory-efficient situations */
-#define AH_PROBE_STEP(h)         ( ((h) * 0xc6a4a7935bd1e995ULL >> 47) | 1 )
-#define AH_LOAD_FACTOR           0.80
+/* Users can optionally specify double hashing by defining
+ * AH_DOUBLE_HASHING. Double hashing is preferable only when key is
+ * not randomly distributed. */
+#ifdef AH_DOUBLE_HASHING
+#define AH_PROBING_STEP(h)       ( ((h) ^ (h) >> 3) | 1 )
 #else
-/* linear probing, for fast lookups */
-#define AH_PROBE_STEP(h)         ( 1 )
-#define AH_LOAD_FACTOR           0.50
+#define AH_PROBING_STEP(h)       ( 1 )
 #endif
+
+#define AH_LOAD_FACTOR           0.7
 
 #define DEFINE_ALIGNHASH(_name, _key_t, _val_t, _ismap, _hashfn, _hasheq) \
 	typedef struct {						\
 		ah_size_t nbucket;					\
-		ah_size_t size;     /* number of elements */		\
-		ah_size_t nused;    /* number of bucket used */		\
-		ah_size_t sup;      /* upper bound */			\
+		ah_size_t nelem;					\
+		ah_size_t noccupied;					\
+		ah_size_t bound;					\
 		ah_size_t *flags;					\
 		_key_t    *keys;					\
 		_val_t    *vals;					\
@@ -124,8 +116,8 @@ enum {
 	{								\
 		if (h && h->flags) {					\
 			memset(h->flags, 0xaa, AH_FLAGS_BYTE(h->nbucket)); \
-			h->size  = 0;					\
-			h->nused = 0;					\
+			h->nelem  = 0;					\
+			h->noccupied = 0;				\
 		}							\
 	}								\
                                                                         \
@@ -138,7 +130,7 @@ enum {
 			ah_size_t k, last;				\
 			k = _hashfn(key);				\
 			i = k & mask;					\
-			step = AH_PROBE_STEP(k);			\
+			step = AH_PROBING_STEP(k);			\
 			last = i;					\
 			while (!AH_ISEMPTY(h->flags, i) &&		\
 			       (AH_ISDEL(h->flags, i) || !_hasheq(h->keys[i], key))) { \
@@ -159,7 +151,7 @@ enum {
 		_val_t    *new_vals  = 0;				\
 		ah_size_t  new_mask  = new_nbucket - 1;			\
 		ah_size_t  j, flaglen;					\
-		if (h->size >= (ah_size_t)(new_nbucket * AH_LOAD_FACTOR + 0.5))	\
+		if (h->nelem >= (ah_size_t)(new_nbucket * AH_LOAD_FACTOR + 0.5)) \
 			return -1;					\
 		flaglen = AH_FLAGS_BYTE(new_nbucket);			\
 		new_flags = (ah_size_t *) malloc(flaglen);		\
@@ -196,7 +188,7 @@ enum {
 					ah_size_t k;			\
 					k = _hashfn(key);		\
 					i = k & new_mask;		\
-					step = AH_PROBE_STEP(k);	\
+					step = AH_PROBING_STEP(k);	\
 					while (!AH_ISEMPTY(new_flags, i)) \
 						i = (i + step) & new_mask; \
 					AH_CLEAR_EMPTY(new_flags, i);	\
@@ -229,8 +221,8 @@ enum {
 		free(h->flags);						\
 		h->flags = new_flags;					\
 		h->nbucket = new_nbucket;				\
-		h->nused = h->size;					\
-		h->sup = (ah_size_t)(h->nbucket * AH_LOAD_FACTOR + 0.5); \
+		h->noccupied = h->nelem;				\
+		h->bound = (ah_size_t)(h->nbucket * AH_LOAD_FACTOR + 0.5); \
 		return 0;						\
 	}								\
                                                                         \
@@ -239,7 +231,7 @@ enum {
 	{								\
 		register ah_size_t i, step;				\
 		ah_size_t x, k, mask, site, last;			\
-		if (h->nused >= h->sup) {				\
+		if (h->noccupied >= h->bound) {				\
 			if (h->nbucket) {				\
 				if (alignhash_resize_##_name(h, h->nbucket * 2)) \
 					return h->nbucket;		\
@@ -256,7 +248,7 @@ enum {
 		if (AH_ISEMPTY(h->flags, i))				\
 			x = i;						\
 		else {							\
-			step = AH_PROBE_STEP(k);			\
+			step = AH_PROBING_STEP(k);			\
 			last = i;					\
 			while (!AH_ISEMPTY(h->flags, i) &&		\
 			       (AH_ISDEL(h->flags, i) || !_hasheq(h->keys[i], key))) { \
@@ -278,13 +270,13 @@ enum {
 		if (AH_ISEMPTY(h->flags, x)) {				\
 			h->keys[x] = key;				\
 			AH_CLEAR_BOTH(h->flags, x);			\
-			++h->size;					\
-			++h->nused;					\
+			++h->nelem;					\
+			++h->noccupied;					\
 			*ret = AH_INS_NEW;				\
 		} else if (AH_ISDEL(h->flags, x)) {			\
 			h->keys[x] = key;				\
 			AH_CLEAR_BOTH(h->flags, x);			\
-			++h->size;					\
+			++h->nelem;					\
 			*ret = AH_INS_DEL;				\
 		} else							\
 			*ret = AH_INS_ERR;				\
@@ -296,7 +288,7 @@ enum {
 	{								\
 		if (x != h->nbucket && !AH_ISEITHER(h->flags, x)) {	\
 			AH_SET_DEL(h->flags, x);			\
-			--h->size;					\
+			--h->nelem;					\
 		}							\
 	}
 
@@ -353,7 +345,7 @@ enum {
 #define alignhash_end(h) ((h)->nbucket)
 
 /* return the number of elements in an alignhash */
-#define alignhash_size(h) ((h)->size)
+#define alignhash_size(h) ((h)->nelem)
 
 /* return the capacity of an alignhash */
 #define alignhash_nbucket(h) ((h)->nbucket)
