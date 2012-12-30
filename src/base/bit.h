@@ -44,26 +44,26 @@
  */
 #define SIGN(x)             (((v) > 0) - ((v) < 0))
 #define OPPOSITE_SIGN(x,y)  ((x) ^ (y) < 0)
-#define ABS(x) ({							\
-			typeof(x) _t = (x) >> sizeof(x) * BITS_PER_BYTE - 1; \
-			((x) ^ _t) - _t; })
+#define ABS(x) ({                                                   \
+            typeof(x) _t = (x) >> sizeof(x) * BITS_PER_BYTE - 1;    \
+            ((x) ^ _t) - _t; })
 #define XOR_MIN(x,y)        ((y) ^ (((x) ^ (y)) & -((x) < (y))))
 #define XOR_MAX(x,y)        ((x) ^ (((x) ^ (y)) & -((x) < (y))))
 
 #define BIN_TO_GRAYCODE(b)  ((b) ^ ((b) >> 1))
-#define GRAYCODE_TO_BIN32(g)  ({		\
-			(g) ^= (g) >> 1;	\
-			(g) ^= (g) >> 2;	\
-			(g) ^= (g) >> 4;	\
-			(g) ^= (g) >> 8;	\
-			(g) ^= (g) >> 16;	\
-		})
-#define GRAYCODE_TO_BIN64(g)  ({		\
-			GRAYCODE_TO_BIN32(g);	\
-			(g) ^= (g) >> 32;	\
-		})
+#define GRAYCODE_TO_BIN32(g)  ({                \
+            (g) ^= (g) >> 1;                    \
+            (g) ^= (g) >> 2;                    \
+            (g) ^= (g) >> 4;                    \
+            (g) ^= (g) >> 8;                    \
+            (g) ^= (g) >> 16;                   \
+        })
+#define GRAYCODE_TO_BIN64(g)  ({                \
+            GRAYCODE_TO_BIN32(g);               \
+            (g) ^= (g) >> 32;                   \
+        })
 
-/* conditionally set or clear bits, where w is the word to modify, 
+/* conditionally set or clear bits, where w is the word to modify,
  * m is the bit mask and f is the condition flag */
 #define BIT_ALTER(w,m,f)    ((w) ^ ((-(f) ^ (w)) & (m)))
 
@@ -76,43 +76,43 @@
 /* require x>=0, 0<=v<=128 */
 #define HAS_LESS32(x,v)     (((x) - ~(uint32_t)0/255 * (v)) & ~(x) & ~(uint32_t)0/255 * 128)
 #define HAS_LESS64(x,v)     (((x) - ~(uint64_t)0/255 * (v)) & ~(x) & ~(uint64_t)0/255 * 128)
-#define COUNT_LESS32(x,v)						\
-	(((~(uint32_t)0/255 * (127 + (v)) - ((x) & ~(uint32_t)0/255 * 127)) & \
-	  ~(x) & ~(uint32_t)0/255 * 128)/128 % 255)
-#define COUNT_LESS64(x,v)						\
-	(((~(uint64_t)0/255 * (127 + (v)) - ((x) & ~(uint64_t)0/255 * 127)) & \
-	  ~(x) & ~(uint64_t)0/255 * 128)/128 % 255)
+#define COUNT_LESS32(x,v)                                               \
+    (((~(uint32_t)0/255 * (127 + (v)) - ((x) & ~(uint32_t)0/255 * 127)) & \
+      ~(x) & ~(uint32_t)0/255 * 128)/128 % 255)
+#define COUNT_LESS64(x,v)                                               \
+    (((~(uint64_t)0/255 * (127 + (v)) - ((x) & ~(uint64_t)0/255 * 127)) & \
+      ~(x) & ~(uint64_t)0/255 * 128)/128 % 255)
 
 /* require x>=0; 0<=v<=127 */
 #define HAS_MORE32(x,v)     (((x) + ~(uint32_t)0/255 * (127 - (v)) | (x)) &~(uint32_t)0/255 * 128)
 #define HAS_MORE64(x,v)     (((x) + ~(uint64_t)0/255 * (127 - (v)) | (x)) &~(uint64_t)0/255 * 128)
-#define COUNT_MORE32(x,v)						\
-	(((((x) & ~(uint32_t)0/255 * 127) + ~(uint32_t)0/255 * (127 - (v)) | \
-	   (x)) & ~(uint32_t)0/255 * 128)/128 % 255)
-#define COUNT_MORE64(x,v)						\
-	(((((x) & ~(uint64_t)0/255 * 127) + ~(uint64_t)0/255 * (127 - (v)) | \
-	   (x)) & ~(uint64_t)0/255 * 128)/128 % 255)
+#define COUNT_MORE32(x,v)                                               \
+    (((((x) & ~(uint32_t)0/255 * 127) + ~(uint32_t)0/255 * (127 - (v)) | \
+       (x)) & ~(uint32_t)0/255 * 128)/128 % 255)
+#define COUNT_MORE64(x,v)                                               \
+    (((((x) & ~(uint64_t)0/255 * 127) + ~(uint64_t)0/255 * (127 - (v)) | \
+       (x)) & ~(uint64_t)0/255 * 128)/128 % 255)
 
-#define ROUND_UP32(x) ({			\
-			(x)--;			\
-			(x) |= (x) >> 1;	\
-			(x) |= (x) >> 2;	\
-			(x) |= (x) >> 4;	\
-			(x) |= (x) >> 8;	\
-			(x) |= (x) >> 16;	\
-			(x)++;			\
-		})
+#define ROUND_UP32(x) ({                        \
+            (x)--;                              \
+            (x) |= (x) >> 1;                    \
+            (x) |= (x) >> 2;                    \
+            (x) |= (x) >> 4;                    \
+            (x) |= (x) >> 8;                    \
+            (x) |= (x) >> 16;                   \
+            (x)++;                              \
+        })
 
-#define ROUND_UP64(x) ({			\
-			(x)--;			\
-			(x) |= (x) >> 1;	\
-			(x) |= (x) >> 2;	\
-			(x) |= (x) >> 4;	\
-			(x) |= (x) >> 8;	\
-			(x) |= (x) >> 16;	\
-			(x) |= (x) >> 32;	\
-			(x)++;			\
-		})
+#define ROUND_UP64(x) ({                        \
+            (x)--;                              \
+            (x) |= (x) >> 1;                    \
+            (x) |= (x) >> 2;                    \
+            (x) |= (x) >> 4;                    \
+            (x) |= (x) >> 8;                    \
+            (x) |= (x) >> 16;                   \
+            (x) |= (x) >> 32;                   \
+            (x)++;                              \
+        })
 
 static inline void set_bit(int nr, volatile unsigned long *addr)
 {
@@ -131,7 +131,7 @@ static inline void change_bit(int nr, volatile unsigned long *addr)
 
 static inline int test_bit(int nr, const volatile unsigned long *addr)
 {
-        return 1UL & (addr[BIT_WORD(nr)] >> (nr & (BITS_PER_LONG-1)));
+	return 1UL & (addr[BIT_WORD(nr)] >> (nr & (BITS_PER_LONG - 1)));
 }
 
 /* calculate the hamming weight of an nonnegative integer less than 2^15 */
@@ -143,9 +143,9 @@ static inline int hweight15(uint16_t a)
 static inline int hweight32(uint32_t a)
 {
 	register uint32_t t;
-	
+
 	t = a - ((a >> 1) & 033333333333)
-		- ((a >> 2) & 011111111111);
+	    - ((a >> 2) & 011111111111);
 	return ((t + (t >> 3)) & 030707070707) % 63;
 }
 
@@ -154,7 +154,7 @@ static inline int hweight64(uint64_t a)
 	a = (a & 0x5555555555555555ULL) + ((a >> 1) & 0x5555555555555555ULL);
 	a = (a & 0x3333333333333333ULL) + ((a >> 2) & 0x3333333333333333ULL);
 	a = (a + (a >> 4)) & 0x0F0F0F0F0F0F0F0FULL;
-	a = (a + (a >> 8)); 
+	a = (a + (a >> 8));
 	a = (a + (a >> 16));
 	a = (a + (a >> 32));
 	return a & 0xFF;
@@ -162,7 +162,7 @@ static inline int hweight64(uint64_t a)
 
 static inline int hweight_long(unsigned long a)
 {
-	return sizeof(a) == 4? hweight32(a): hweight64(a);
+	return sizeof(a) == 4 ? hweight32(a) : hweight64(a);
 }
 
 /* reverse the bits of a byte */
@@ -182,11 +182,16 @@ static inline uint32_t rev32(uint32_t n)
 
 static inline uint64_t rev64(uint64_t n)
 {
-	n = ((n & 0xAAAAAAAAAAAAAAAAULL) >> 1) | ((n & 0x5555555555555555ULL) << 1);
-	n = ((n & 0xCCCCCCCCCCCCCCCCULL) >> 2) | ((n & 0x3333333333333333ULL) << 2);
-	n = ((n & 0xF0F0F0F0F0F0F0F0ULL) >> 4) | ((n & 0x0F0F0F0F0F0F0F0FULL) << 4);
-	n = ((n & 0xFF00FF00FF00FF00ULL) >> 8) | ((n & 0x00FF00FF00FF00FFULL) << 8);
-	n = ((n & 0xFFFF0000FFFF0000ULL) >> 16)| ((n & 0x0000FFFF0000FFFFULL) << 16);
+	n = ((n & 0xAAAAAAAAAAAAAAAAULL) >> 1) | ((n & 0x5555555555555555ULL) <<
+			1);
+	n = ((n & 0xCCCCCCCCCCCCCCCCULL) >> 2) | ((n & 0x3333333333333333ULL) <<
+			2);
+	n = ((n & 0xF0F0F0F0F0F0F0F0ULL) >> 4) | ((n & 0x0F0F0F0F0F0F0F0FULL) <<
+			4);
+	n = ((n & 0xFF00FF00FF00FF00ULL) >> 8) | ((n & 0x00FF00FF00FF00FFULL) <<
+			8);
+	n = ((n & 0xFFFF0000FFFF0000ULL) >> 16) | ((n & 0x0000FFFF0000FFFFULL)
+			<< 16);
 	return (n >> 32) | (n << 32);
 }
 
@@ -296,36 +301,36 @@ static inline int ffs64(uint64_t word)
 #define __ffs(w) (__builtin_ffsl(w) - 1)
 
 /*
-static inline unsigned long __ffs(unsigned long word)
-{
-	int num = 0;
+  static inline unsigned long __ffs(unsigned long word)
+  {
+  int num = 0;
 
-#if __WORDSIZE == 64
-	if ((word & 0xffffffff) == 0) {
-		num += 32;
-		word >>= 32;
-	}
-#endif
-	if ((word & 0xffff) == 0) {
-		num += 16;
-		word >>= 16;
-	}
-	if ((word & 0xff) == 0) {
-		num += 8;
-		word >>= 8;
-	}
-	if ((word & 0xf) == 0) {
-		num += 4;
-		word >>= 4;
-	}
-	if ((word & 0x3) == 0) {
-		num += 2;
-		word >>= 2;
-	}
-	if ((word & 0x1) == 0)
-		num += 1;
-	return num;
-}
+  #if __WORDSIZE == 64
+  if ((word & 0xffffffff) == 0) {
+  num += 32;
+  word >>= 32;
+  }
+  #endif
+  if ((word & 0xffff) == 0) {
+  num += 16;
+  word >>= 16;
+  }
+  if ((word & 0xff) == 0) {
+  num += 8;
+  word >>= 8;
+  }
+  if ((word & 0xf) == 0) {
+  num += 4;
+  word >>= 4;
+  }
+  if ((word & 0x3) == 0) {
+  num += 2;
+  word >>= 2;
+  }
+  if ((word & 0x1) == 0)
+  num += 1;
+  return num;
+  }
 */
 
 /* ffz - find the first zero in word.
@@ -350,10 +355,11 @@ static inline uint64_t hweight_next64(uint64_t a)
 
 /* find the next set bit in a memory region */
 static inline unsigned long
-find_next_bit(const unsigned long *addr, unsigned long size, unsigned long offset)
+find_next_bit(const unsigned long *addr, unsigned long size,
+	      unsigned long offset)
 {
 	const unsigned long *p = addr + BIT_WORD(offset);
-	unsigned long result = offset & ~(BITS_PER_LONG-1);
+	unsigned long result = offset & ~(BITS_PER_LONG - 1);
 	unsigned long tmp;
 
 	if (offset >= size)
@@ -370,7 +376,7 @@ find_next_bit(const unsigned long *addr, unsigned long size, unsigned long offse
 		size -= BITS_PER_LONG;
 		result += BITS_PER_LONG;
 	}
-	while (size & ~(BITS_PER_LONG-1)) {
+	while (size & ~(BITS_PER_LONG - 1)) {
 		if ((tmp = *(p++)))
 			goto found_middle;
 		result += BITS_PER_LONG;
@@ -382,17 +388,18 @@ find_next_bit(const unsigned long *addr, unsigned long size, unsigned long offse
 
 found_first:
 	tmp &= (~0UL >> (BITS_PER_LONG - size));
-	if (tmp == 0UL)		/* Are any bits set? */
-		return result + size;	/* Nope. */
+	if (tmp == 0UL)     /* Are any bits set? */
+		return result + size;   /* Nope. */
 found_middle:
 	return result + __ffs(tmp);
 }
 
 static inline unsigned long
-find_next_zero_bit(const unsigned long *addr, unsigned long size, unsigned long offset)
+find_next_zero_bit(const unsigned long *addr, unsigned long size,
+		   unsigned long offset)
 {
 	const unsigned long *p = addr + BIT_WORD(offset);
-	unsigned long result = offset & ~(BITS_PER_LONG-1);
+	unsigned long result = offset & ~(BITS_PER_LONG - 1);
 	unsigned long tmp;
 
 	if (offset >= size)
@@ -409,7 +416,7 @@ find_next_zero_bit(const unsigned long *addr, unsigned long size, unsigned long 
 		size -= BITS_PER_LONG;
 		result += BITS_PER_LONG;
 	}
-	while (size & ~(BITS_PER_LONG-1)) {
+	while (size & ~(BITS_PER_LONG - 1)) {
 		if (~(tmp = *(p++)))
 			goto found_middle;
 		result += BITS_PER_LONG;
@@ -421,8 +428,8 @@ find_next_zero_bit(const unsigned long *addr, unsigned long size, unsigned long 
 
 found_first:
 	tmp |= ~0UL << size;
-	if (tmp == ~0UL)	/* Are any bits zero? */
-		return result + size;	/* Nope. */
+	if (tmp == ~0UL)    /* Are any bits zero? */
+		return result + size;   /* Nope. */
 found_middle:
 	return result + ffz(tmp);
 }
@@ -434,7 +441,7 @@ find_first_bit(const unsigned long *addr, unsigned long size)
 	unsigned long result = 0;
 	unsigned long tmp;
 
-	while (size & ~(BITS_PER_LONG-1)) {
+	while (size & ~(BITS_PER_LONG - 1)) {
 		if ((tmp = *(p++)))
 			goto found;
 		result += BITS_PER_LONG;
@@ -444,8 +451,8 @@ find_first_bit(const unsigned long *addr, unsigned long size)
 		return result;
 
 	tmp = (*p) & (~0UL >> (BITS_PER_LONG - size));
-	if (tmp == 0UL)		/* Are any bits set? */
-		return result + size;	/* Nope. */
+	if (tmp == 0UL)     /* Are any bits set? */
+		return result + size;   /* Nope. */
 found:
 	return result + __ffs(tmp);
 }
@@ -457,7 +464,7 @@ find_first_zero_bit(const unsigned long *addr, unsigned long size)
 	unsigned long result = 0;
 	unsigned long tmp;
 
-	while (size & ~(BITS_PER_LONG-1)) {
+	while (size & ~(BITS_PER_LONG - 1)) {
 		if (~(tmp = *(p++)))
 			goto found;
 		result += BITS_PER_LONG;
@@ -467,15 +474,15 @@ find_first_zero_bit(const unsigned long *addr, unsigned long size)
 		return result;
 
 	tmp = (*p) | (~0UL << size);
-	if (tmp == ~0UL)	/* Are any bits zero? */
-		return result + size;	/* Nope. */
+	if (tmp == ~0UL)    /* Are any bits zero? */
+		return result + size;   /* Nope. */
 found:
 	return result + ffz(tmp);
 }
 
-#define for_each_set_bit(bit, addr, size)			\
-	for ((bit) = find_first_bit((addr), (size));		\
-	     (bit) < (size);					\
-	     (bit) = find_next_bit((addr), (size), (bit) + 1))
+#define for_each_set_bit(bit, addr, size)                   \
+    for ((bit) = find_first_bit((addr), (size));            \
+         (bit) < (size);                                    \
+         (bit) = find_next_bit((addr), (size), (bit) + 1))
 
-#endif  /* __ULIB_BIT_H */
+#endif              /* __ULIB_BIT_H */

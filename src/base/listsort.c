@@ -36,14 +36,14 @@
  * sentinel head node, "prev" links not maintained.
  */
 static struct list_head *merge(void *priv,
-			       int (*cmp)(void *priv, const void *, const void *),
-			       struct list_head *a, struct list_head *b)
-{
+			       int (*cmp) (void *priv, const void *,
+					       const void *), struct list_head *a,
+			       struct list_head *b) {
 	struct list_head head, *tail = &head;
 
 	while (a && b) {
 		/* if equal, take 'a' -- important for sort stability */
-		if ((*cmp)(priv, a, b) <= 0) {
+		if ((*cmp) (priv, a, b) <= 0) {
 			tail->next = a;
 			a = a->next;
 		} else {
@@ -52,7 +52,7 @@ static struct list_head *merge(void *priv,
 		}
 		tail = tail->next;
 	}
-	tail->next = a?:b;
+	tail->next = a ? : b;
 	return head.next;
 }
 
@@ -64,15 +64,17 @@ static struct list_head *merge(void *priv,
  * throughout.
  */
 static void merge_and_restore_back_links(void *priv,
-					 int (*cmp)(void *priv, const void *, const void *),
-					 struct list_head *head,
-					 struct list_head *a, struct list_head *b)
+		int (*cmp) (void *priv, const void *,
+			    const void *),
+		struct list_head *head,
+		struct list_head *a,
+		struct list_head *b)
 {
 	struct list_head *tail = head;
 
 	while (a && b) {
 		/* if equal, take 'a' -- important for sort stability */
-		if ((*cmp)(priv, a, b) <= 0) {
+		if ((*cmp) (priv, a, b) <= 0) {
 			tail->next = a;
 			a->prev = tail;
 			a = a->next;
@@ -92,7 +94,7 @@ static void merge_and_restore_back_links(void *priv,
 		 * element comparison is needed, so the client's cmp()
 		 * routine can invoke cond_resched() periodically.
 		 */
-		(*cmp)(priv, tail->next, tail->next);
+		(*cmp) (priv, tail->next, tail->next);
 
 		tail->next->prev = tail;
 		tail = tail->next;
@@ -103,11 +105,11 @@ static void merge_and_restore_back_links(void *priv,
 }
 
 void list_sort(void *priv, struct list_head *head,
-	       int (*cmp)(void *priv, const void *, const void *))
+	       int (*cmp) (void *priv, const void *, const void *))
 {
-	struct list_head *part[MAX_LIST_LENGTH_BITS + 1]; /* sorted partial lists
-							   -- last slot is a sentinel */
-	int lev;  /* index into part[] */
+	struct list_head *part[MAX_LIST_LENGTH_BITS + 1];   /* sorted partial lists
+                                                           -- last slot is a sentinel */
+	int lev;        /* index into part[] */
 	int max_lev = 0;
 	struct list_head *list;
 

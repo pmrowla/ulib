@@ -28,16 +28,17 @@
 
 #include <pthread.h>
 
-namespace ulib {
+namespace ulib
+{
 
-class thread {
+class thread
+{
 public:
 	thread()
-	: _running(false) { }
+		: _running(false) { }
 
 	int
-	start()
-	{
+	start() {
 		if (_running)
 			return 0;
 		_running = true;
@@ -49,8 +50,7 @@ public:
 	}
 
 	int
-	join()
-	{
+	join() {
 		if (_running) {
 			if (pthread_join(_tid, NULL))
 				return -1;
@@ -60,8 +60,7 @@ public:
 	}
 
 	int
-	stop_and_join()
-	{
+	stop_and_join() {
 		if (!_running)
 			return 0;
 		_running = false;
@@ -73,23 +72,27 @@ public:
 	}
 
 	void
-	set_state(bool started)
-	{ _running = started; }
+	set_state(bool started) {
+		_running = started;
+	}
 
 	bool
-	is_running() const
-	{ return _running; }
+	is_running() const {
+		return _running;
+	}
 
 	// ATTENTION: inherented classes must implement a custom
 	// destructor function and call join there.
 	virtual
-	~thread()
-	{ stop_and_join(); }
+	~thread() {
+		stop_and_join();
+	}
 
 	// optionally performs initialization for thread
 	virtual int
-	before_run()
-	{ return 0; }
+	before_run() {
+		return 0;
+	}
 
 	// thread routine
 	virtual int
@@ -97,8 +100,9 @@ public:
 
 	// optionally performs clean up for thread
 	virtual int
-	after_run()
-	{ return 0; }
+	after_run() {
+		return 0;
+	}
 
 private:
 	pthread_t     _tid;

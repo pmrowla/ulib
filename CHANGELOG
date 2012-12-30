@@ -1,2 +1,12 @@
-Dec. 2nd, 2012 - 1.2.1 stable
-Aug. 2nd, 2012 - 1.2 stable
+Changelogs
+-------------------------------------
+12/30/2012	1.2.2 was released
+	1. Fixed the compiling problem for some tests.
+	2. Reformatted the source code and added more comments to improve
+	the readability.
+	3. Improved the map-reduce framework performance when a mapper
+	produces multiple pairs for a single data record.
+
+12/02/2012	1.2.1 was released
+	1. Added new features such as chainhash,  reentrant chainhash_r,
+	and etc.

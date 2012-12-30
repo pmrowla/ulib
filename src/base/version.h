@@ -38,5 +38,4 @@ extern "C" {
 #ifdef __cplusplus
 }
 #endif
-
-#endif  /* __ULIB_VERSION_H */
+#endif              /* __ULIB_VERSION_H */

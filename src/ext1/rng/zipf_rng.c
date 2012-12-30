@@ -31,30 +31,30 @@
 
 static inline int isequalf(float a, float b)
 {
-	return fabs(a - b) < 0.000001;
+    return fabs(a - b) < 0.000001;
 }
 
 void zipf_rng_init(struct zipf_rng *rng, int range, float s)
 {
-	uint64_t seed = (uint64_t) time(NULL);
+    uint64_t seed = (uint64_t) time(NULL);
 
-	rng->range = range++;
-	rng->s = s;
+    rng->range = range++;
+    rng->s = s;
 
-	if (isequalf(s, 1.0))
-		rng->sum = log(range);
-	else
-		rng->sum = (pow(range, 1.0 - s) - 1.0)/(1.0 - s);
+    if (isequalf(s, 1.0))
+        rng->sum = log(range);
+    else
+        rng->sum = (pow(range, 1.0 - s) - 1.0)/(1.0 - s);
 
-	RAND_NR_INIT(rng->u, rng->v, rng->w, seed);
+    RAND_NR_INIT(rng->u, rng->v, rng->w, seed);
 }
 
 int zipf_rng_next(struct zipf_rng *rng)
 {
-	double m = RAND_NR_DOUBLE(RAND_NR_NEXT(rng->u, rng->v, rng->w));
+    double m = RAND_NR_DOUBLE(RAND_NR_NEXT(rng->u, rng->v, rng->w));
 
-	if (isequalf(rng->s, 1.0))
-		return (int)exp(m * rng->sum);
+    if (isequalf(rng->s, 1.0))
+        return (int)exp(m * rng->sum);
 
-	return (int)pow(m * rng->sum * (1.0 - rng->s) + 1.0, 1.0/(1.0 - rng->s));
+    return (int)pow(m * rng->sum * (1.0 - rng->s) + 1.0, 1.0/(1.0 - rng->s));
 }

@@ -26,8 +26,9 @@
 #ifndef __ULIB_TREE_H
 #define __ULIB_TREE_H
 
-/* to avoid conflicts with C++ new operator */
+#ifdef __cplusplus
 #define new _new_
+#endif
 
 struct tree_root {
 	struct tree_root *left, *right;
@@ -210,7 +211,8 @@ extern "C" {
 	     pos = n,							\
 		     n = tree_entry(&n->member != NIL? tree_successor((struct tree_root *)&n->member): NIL, typeof(*n), member))
 
-/* to avoid conflicts with C++ new operator */
+#ifdef __cplusplus
 #undef new
+#endif
 
 #endif  /* __ULIB_TREE_H */

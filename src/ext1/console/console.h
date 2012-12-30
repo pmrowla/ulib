@@ -34,32 +34,32 @@
 typedef int (*console_fcn_t) (int argc, const char *argv[]);
 
 typedef struct {
-	void * idx;
-	char * pmpt;
-	char * rbuf;
-	int    rfd;
-	int    rbuflen;
+    void * idx;
+    char * pmpt;
+    char * rbuf;
+    int    rfd;
+    int    rbuflen;
 } console_t;
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-	int console_init(console_t *ctx);
+    int console_init(console_t *ctx);
 
-	/* set prompt */
-	int console_pmpt(console_t *ctx, const char *pmpt);
+    /* set prompt */
+    int console_pmpt(console_t *ctx, const char *pmpt);
 
-	int console_bind(console_t *ctx, const char *cmdlet, console_fcn_t f);
+    int console_bind(console_t *ctx, const char *cmdlet, console_fcn_t f);
 
-	int console_exec(console_t *ctx, const char *cmd);
+    int console_exec(console_t *ctx, const char *cmd);
 
-	/* enter command processing loop
-	 * @count: how many commands to process, -1 for infinite
-	 * @term:  terminating command */
-	int console_loop(console_t *ctx, int count, const char *term);
+    /* enter command processing loop
+     * @count: how many commands to process, -1 for infinite
+     * @term:  terminating command */
+    int console_loop(console_t *ctx, int count, const char *term);
 
-	void console_destroy(console_t *ctx);
+    void console_destroy(console_t *ctx);
 
 #ifdef __cplusplus
 }

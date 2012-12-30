@@ -29,30 +29,30 @@
 #include <stdint.h>
 
 struct bloom_filter {
-	unsigned long *bitmap;
-	unsigned long  nbits;
-	unsigned long  nelem;  /* estimated number of elements */
-	int            nfunc;  /* number of hash functions */
-	uint64_t      *seeds;  /* seeds for hash functions */
+    unsigned long *bitmap;
+    unsigned long  nbits;
+    unsigned long  nelem;  /* estimated number of elements */
+    int            nfunc;  /* number of hash functions */
+    uint64_t      *seeds;  /* seeds for hash functions */
 };
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-	int bfilter_create(struct bloom_filter *bf, unsigned long nbits, unsigned long nelem);
+    int bfilter_create(struct bloom_filter *bf, unsigned long nbits, unsigned long nelem);
 
-	void bfilter_destroy(struct bloom_filter *bf);
-	
-	void bfilter_zero(struct bloom_filter *bf);
+    void bfilter_destroy(struct bloom_filter *bf);
+        
+    void bfilter_zero(struct bloom_filter *bf);
 
-	void bfilter_set(struct bloom_filter *bf, const void *buf, unsigned long buflen);
+    void bfilter_set(struct bloom_filter *bf, const void *buf, unsigned long buflen);
 
-	int bfilter_get(struct bloom_filter *bf, const void *buf, unsigned long buflen);
+    int bfilter_get(struct bloom_filter *bf, const void *buf, unsigned long buflen);
 
-	void bfilter_set_hash(struct bloom_filter *bf, unsigned long hash);
+    void bfilter_set_hash(struct bloom_filter *bf, unsigned long hash);
 
-	int bfilter_get_hash(struct bloom_filter *bf, unsigned long hash);
+    int bfilter_get_hash(struct bloom_filter *bf, unsigned long hash);
 
 #ifdef __cplusplus
 }

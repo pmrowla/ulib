@@ -1,9 +1,9 @@
+.PHONY: all clean release test
+
 all:
 	make -C src/
 	make -C lib/
 	make -C test/
-
-.PHONY: all clean remove_bak release
 
 release:
 	make DEBUG=-DUNDEBUG -C src/
@@ -14,6 +14,7 @@ clean:
 	make -C src/ clean
 	make -C test/ clean
 	make -C lib/ clean
+	@find . -name "*~" | xargs rm -rf
 
-remove_bak:
-	find . -name "*~" | xargs rm
+test:
+	make -C test/ test

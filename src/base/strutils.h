@@ -30,7 +30,7 @@
 extern "C" {
 #endif
 
-        /**
+	/**
 	 * nextline - extracts the next line from memory
 	 * returns the start of next line or NULL
 	 * @buf:  buffer
@@ -52,7 +52,7 @@ extern "C" {
 	 */
 	const char *getfield(const char *line, long line_size, char *field,
 			     long field_size, int fid, char delim);
-	
+
 	/**
 	 * getlinefield - retrieves a field from line
 	 * @line:         line buffer
@@ -69,5 +69,4 @@ extern "C" {
 #ifdef __cplusplus
 }
 #endif
-
-#endif  /* __ULIB_STRUTILS_H */
+#endif              /* __ULIB_STRUTILS_H */

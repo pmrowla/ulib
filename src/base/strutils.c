@@ -28,26 +28,26 @@
 
 char *nextline(char *buf, long size)
 {
-        char *end = buf + size;
+	char *end = buf + size;
 
-        while (buf < end && *buf != '\n' && *buf != '\0')
+	while (buf < end && *buf != '\n' && *buf != '\0')
 		buf++;
 
-        if (buf >= end)
+	if (buf >= end)
 		return NULL;
 
-        *buf++ = '\0';
+	*buf++ = '\0';
 
-	return (buf >= end? NULL: buf);
+	return (buf >= end ? NULL : buf);
 }
 
 const char *getfield(const char *line, long line_size, char *field,
 		     long field_size, int fid, char delim)
 {
-        const char *end = line + line_size;
+	const char *end = line + line_size;
 	const char *p;
 
-        while (fid-- > 0 && line < end) {
+	while (fid-- > 0 && line < end) {
 		/* shift right one field */
 		while (line < end && *line && *line != delim)
 			line++;
@@ -57,9 +57,9 @@ const char *getfield(const char *line, long line_size, char *field,
 			else if (*line == '\0')
 				return NULL;
 		}
-        }
+	}
 
-        if (fid == -1 && *line && line < end) {
+	if (fid == -1 && *line && line < end) {
 		if (field) {
 			for (p = line; p < end && *p && *p != delim; p++) {
 				if (p - line >= field_size - 1)
@@ -69,18 +69,18 @@ const char *getfield(const char *line, long line_size, char *field,
 			*field = '\0';
 		}
 		return line;
-        }
+	}
 
-        return NULL;
+	return NULL;
 }
 
 const char *getlinefield(const char *line, long line_size, char *field,
 			 long field_size, int fid, char delim)
 {
-        const char *end = line + line_size;
+	const char *end = line + line_size;
 	const char *p;
 
-        while (fid-- > 0 && line < end) {
+	while (fid-- > 0 && line < end) {
 		/* shift right one field */
 		while (line < end && *line && *line != '\n' && *line != delim)
 			line++;
@@ -90,11 +90,12 @@ const char *getlinefield(const char *line, long line_size, char *field,
 			else if (*line == '\0' || *line == '\n')
 				return NULL;
 		}
-        }
+	}
 
-        if (fid == -1 && *line && line < end) {
+	if (fid == -1 && *line && line < end) {
 		if (field) {
-			for (p = line; p < end && *p && *p != '\n' && *p != delim; p++) {
+			for (p = line;
+			     p < end && *p && *p != '\n' && *p != delim; p++) {
 				if (p - line >= field_size - 1)
 					break;
 				*field++ = *p;
@@ -102,7 +103,7 @@ const char *getlinefield(const char *line, long line_size, char *field,
 			*field = '\0';
 		}
 		return line;
-        }
+	}
 
-        return NULL;
+	return NULL;
 }

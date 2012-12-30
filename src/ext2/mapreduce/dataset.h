@@ -28,12 +28,15 @@
 
 #include "zipf_rng.h"
 
-namespace ulib {
+namespace ulib
+{
 
-namespace mapreduce {
+namespace mapreduce
+{
 
 // generate dataset of Zipf distribution
-class dataset_zipf {
+class dataset_zipf
+{
 public:
 	typedef int record_type;
 
@@ -44,104 +47,112 @@ public:
 
 	struct iterator {
 		iterator(int *p = 0)
-		: _pos(p)
+			: _pos(p)
 		{ }
 
 		int &
-		operator *()
-		{ return *_pos; }
+		operator *() {
+			return *_pos;
+		}
 
 		iterator
-		operator +(size_t dist)
-		{ return iterator(_pos + dist); }
+		operator +(size_t dist) {
+			return iterator(_pos + dist);
+		}
 
 		iterator &
-		operator++()
-		{
+		operator++() {
 			++_pos;
 			return *this;
 		}
 
 		iterator
-		operator++(int)
-		{
+		operator++(int) {
 			iterator old = *this;
 			++*this;
 			return old;
 		}
 
 		bool
-		operator!=(const iterator &other) const
-		{ return _pos != other._pos; }
+		operator!=(const iterator &other) const {
+			return _pos != other._pos;
+		}
 
 		int *_pos;
 	};
 
 	struct const_iterator {
 		const_iterator(const int *p = 0)
-		: _pos(p)
+			: _pos(p)
 		{ }
 
 		const_iterator(const iterator &other)
-		: _pos(other._pos)
+			: _pos(other._pos)
 		{ }
 
 		const int &
-		operator *()
-		{ return *_pos; }
+		operator *() {
+			return *_pos;
+		}
 
 		const_iterator
-		operator +(size_t dist)
-		{ return const_iterator(_pos + dist); }
+		operator +(size_t dist) {
+			return const_iterator(_pos + dist);
+		}
 
 		const_iterator &
-		operator++()
-		{
+		operator++() {
 			++_pos;
 			return *this;
 		}
 
 		const_iterator
-		operator++(int)
-		{
+		operator++(int) {
 			const_iterator old = *this;
 			++*this;
 			return old;
 		}
 
 		bool
-		operator!=(const const_iterator &other) const
-		{ return _pos != other._pos; }
+		operator!=(const const_iterator &other) const {
+			return _pos != other._pos;
+		}
 
 		const int *_pos;
 	};
 
 	iterator
-	begin()
-	{ return iterator(_buf); }
+	begin() {
+		return iterator(_buf);
+	}
 
 	const_iterator
-	begin() const
-	{ return const_iterator(_buf); }
+	begin() const {
+		return const_iterator(_buf);
+	}
 
 	iterator
-	end()
-	{ return iterator(_buf + _size); }
-    
+	end() {
+		return iterator(_buf + _size);
+	}
+
 	const_iterator
-	end() const
-	{ return const_iterator(_buf + _size); }
+	end() const {
+		return const_iterator(_buf + _size);
+	}
 
 	size_t
-	size() const
-	{ return _size; }
+	size() const {
+		return _size;
+	}
 
 private:
 	int   *_buf;
 	size_t _size;
 };
 
-class dataset_random {
+class dataset_random
+{
 public:
 	typedef size_t record_type;
 
@@ -151,97 +162,104 @@ public:
 
 	struct iterator {
 		iterator(int *p = 0)
-		: _pos(p)
+			: _pos(p)
 		{ }
 
 		int &
-		operator *()
-		{ return *_pos; }
+		operator *() {
+			return *_pos;
+		}
 
 		iterator
-		operator +(size_t dist)
-		{ return iterator(_pos + dist); }
+		operator +(size_t dist) {
+			return iterator(_pos + dist);
+		}
 
 		iterator &
-		operator++()
-		{
+		operator++() {
 			++_pos;
 			return *this;
 		}
 
 		iterator
-		operator++(int)
-		{
+		operator++(int) {
 			iterator old = *this;
 			++*this;
 			return old;
 		}
 
 		bool
-		operator!=(const iterator &other) const
-		{ return _pos != other._pos; }
+		operator!=(const iterator &other) const {
+			return _pos != other._pos;
+		}
 
 		int *_pos;
 	};
 
 	struct const_iterator {
 		const_iterator(const int *p = 0)
-		: _pos(p)
+			: _pos(p)
 		{ }
 
 		const_iterator(const iterator &other)
-		: _pos(other._pos)
+			: _pos(other._pos)
 		{ }
 
 		const int &
-		operator *()
-		{ return *_pos; }
+		operator *() {
+			return *_pos;
+		}
 
 		const_iterator
-		operator +(size_t dist)
-		{ return const_iterator(_pos + dist); }
+		operator +(size_t dist) {
+			return const_iterator(_pos + dist);
+		}
 
 		const_iterator &
-		operator++()
-		{
+		operator++() {
 			++_pos;
 			return *this;
 		}
 
 		const_iterator
-		operator++(int)
-		{
+		operator++(int) {
 			const_iterator old = *this;
 			++*this;
 			return old;
 		}
 
 		bool
-		operator!=(const const_iterator &other) const
-		{ return _pos != other._pos; }
+		operator!=(const const_iterator &other) const {
+			return _pos != other._pos;
+		}
 
 		const int *_pos;
 	};
 
 	iterator
-	begin()
-	{ return iterator(_buf); }
+	begin() {
+		return iterator(_buf);
+	}
 
 	const_iterator
-	begin() const
-	{ return const_iterator(_buf); }
+	begin() const {
+		return const_iterator(_buf);
+	}
 
 	iterator
-	end()
-	{ return iterator(_buf + _size); }
-    
+	end() {
+		return iterator(_buf + _size);
+	}
+
 	const_iterator
-	end() const
-	{ return const_iterator(_buf + _size); }
+	end() const {
+		return const_iterator(_buf + _size);
+	}
 
 	size_t
-	size() const
-	{ return _size; }
+	size() const {
+		return _size;
+	}
 
 private:
 	int   *_buf;

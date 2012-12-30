@@ -12,15 +12,15 @@ LIBPATH		= ../lib
 
 CXX		?= g++
 CXXFLAGS	?= -g3 -O2 -W -Wall
-LDFLAGS		?= -lulib -lrt -lm
+LDFLAGS		?= -lulib -lpthread -lrt
 DEBUG		?=
 
 %.test: test_%.cpp
 	$(CXX) -I $(INCPATH) $(CXXFLAGS) $(DEBUG) $< -o $@ -L $(LIBPATH) $(LDFLAGS)
 
-.PHONY: all clean
-
 all: $(TARGET)
 
 clean:
 	rm -rf $(TARGET)
+
+.PHONY: all clean

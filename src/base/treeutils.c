@@ -75,8 +75,7 @@ size_t tree_count(struct tree_root * root)
 
 static inline void
 __tree_print(struct tree_root *root,
-	     void (*callback)(struct tree_root *),
-	     uint64_t bitpath)
+	     void (*callback) (struct tree_root *), uint64_t bitpath)
 {
 	int n;
 	int h = 0;
@@ -85,14 +84,14 @@ __tree_print(struct tree_root *root,
 		__tree_print(root->left, callback, bitpath << 1);
 	if (root->right)
 		__tree_print(root->right, callback, bitpath << 1 | 1);
-	
+
 	for (n = 32; n > 0; n >>= 1) {
-		if ((bitpath & (uint64_t)(-((uint64_t)1 << (64 - n)))) == 0) {
+		if ((bitpath & (uint64_t) (-((uint64_t) 1 << (64 - n)))) == 0) {
 			bitpath <<= n;
 			h += n;
 		}
 	}
-	bitpath <<= 1;  /* skip the tree marker bit */
+	bitpath <<= 1;      /* skip the tree marker bit */
 	h = 63 - h;
 	while (h-- > 0) {
 		if (bitpath & 0x8000000000000000ULL)
@@ -106,7 +105,7 @@ __tree_print(struct tree_root *root,
 		callback(root);
 }
 
-void tree_print(struct tree_root *root, void (*callback)(struct tree_root *))
+void tree_print(struct tree_root *root, void (*callback) (struct tree_root *))
 {
 	if (root)
 		__tree_print(root, callback, 1);

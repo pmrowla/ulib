@@ -42,10 +42,10 @@ extern "C" {
 
 	/* @pc and @pb must be non-NULL and initialized with seeds.
 	 * Hash value will be stored in @pc and @pb also. */
-	void hash_jenkins2(const void *buf, size_t len, uint32_t * pc, uint32_t * pb);
+	void hash_jenkins2(const void *buf, size_t len, uint32_t * pc,
+			   uint32_t * pb);
 
 #ifdef __cplusplus
 }
 #endif
-
-#endif  /* __ULIB_HASH_H */
+#endif              /* __ULIB_HASH_H */

@@ -38,10 +38,10 @@
 
 #include "chainhash_tpl.h"
 
-namespace ulib {
-
-struct chain_hash_exception : public std::exception
+namespace ulib
 {
+
+struct chain_hash_exception : public std::exception {
 	virtual
 	~chain_hash_exception() throw() { }
 };
@@ -62,8 +62,7 @@ public:
 	typedef chainhash_t(inclass)   * hashing;
 	typedef chainhash_itr_t(inclass) hashing_iterator;
 
-	struct iterator
-	{
+	struct iterator {
 		typedef size_t size_type;
 		typedef _Val&  reference;
 		typedef _Val*  pointer;
@@ -72,53 +71,56 @@ public:
 		chainhash_itr_t(inclass) _cur;
 
 		iterator(hashing_iterator itr)
-		: _cur(itr) { }
+			: _cur(itr) { }
 
 		iterator() { }
 
 		_Key &
-		key() const
-		{ return chainhash_key(_cur); }
+		key() const {
+			return chainhash_key(_cur);
+		}
 
 		reference
-		value() const
-		{ return chainhash_value(_cur); }
+		value() const {
+			return chainhash_value(_cur);
+		}
 
 		reference
-		operator*() const
-		{ return value(); }
+		operator*() const {
+			return value();
+		}
 
 		pointer
-		operator->() const
-		{ return &(operator*()); }
+		operator->() const {
+			return &(operator*());
+		}
 
 		iterator&
-		operator++()
-		{
+		operator++() {
 			if (chainhash_advance(inclass, &_cur))
 				_cur.entry = NULL;
 			return *this;
 		}
 
 		iterator
-		operator++(int)
-		{
+		operator++(int) {
 			iterator old = *this;
 			++*this;
 			return old;
 		}
 
 		bool
-		operator==(const iterator &other) const
-		{ return _cur.entry == other._cur.entry; }
+		operator==(const iterator &other) const {
+			return _cur.entry == other._cur.entry;
+		}
 
 		bool
-		operator!=(const iterator &other) const
-		{ return _cur.entry != other._cur.entry; }
+		operator!=(const iterator &other) const {
+			return _cur.entry != other._cur.entry;
+		}
 	};
 
-	struct const_iterator
-	{
+	struct const_iterator {
 		typedef size_t size_type;
 		typedef const _Val& reference;
 		typedef const _Val* pointer;
@@ -127,63 +129,65 @@ public:
 		chainhash_itr_t(inclass) _cur;
 
 		const_iterator(hashing_iterator itr)
-		: _cur(itr) { }
+			: _cur(itr) { }
 
 		const_iterator() { }
 
 		const_iterator(const iterator &it)
-		: _cur(it._cur) { }
+			: _cur(it._cur) { }
 
 		const _Key &
-		key() const
-		{ return chainhash_key(_cur); }
+		key() const {
+			return chainhash_key(_cur);
+		}
 
 		reference
-		value() const
-		{ return chainhash_value(_cur); }
+		value() const {
+			return chainhash_value(_cur);
+		}
 
 		reference
-		operator*() const
-		{ return value(); }
+		operator*() const {
+			return value();
+		}
 
 		pointer
-		operator->() const
-		{ return &(operator*()); }
+		operator->() const {
+			return &(operator*());
+		}
 
 		const_iterator &
-		operator++()
-		{
+		operator++() {
 			if (chainhash_advance(inclass, &_cur))
 				_cur.entry = NULL;
 			return *this;
 		}
 
 		const_iterator
-		operator++(int)
-		{
+		operator++(int) {
 			const_iterator old = *this;
 			++*this;
 			return old;
 		}
 
 		bool
-		operator==(const const_iterator &other) const
-		{ return _cur.entry == other._cur.entry; }
+		operator==(const const_iterator &other) const {
+			return _cur.entry == other._cur.entry;
+		}
 
 		bool
-		operator!=(const const_iterator &other) const
-		{ return _cur.entry != other._cur.entry; }
+		operator!=(const const_iterator &other) const {
+			return _cur.entry != other._cur.entry;
+		}
 	};
 
-	chain_hash_map(size_t min)
-	{
+	chain_hash_map(size_t min) {
 		_hashing = chainhash_init(inclass, min);
 		if (_hashing == 0)
 			throw _Except();
 	}
 
-	chain_hash_map(const chain_hash_map &other)
-	{
+	chain_hash_map(const chain_hash_map &other) {
 		_hashing = chainhash_init(inclass, other.bucket_count());
 		if (_hashing == 0)
 			throw _Except();
@@ -192,8 +196,7 @@ public:
 	}
 
 	chain_hash_map &
-	operator= (const chain_hash_map &other)
-	{
+	operator= (const chain_hash_map &other) {
 		if (&other != this) {
 			clear();
 			for (const_iterator it = other.begin(); it != other.end(); ++it)
@@ -203,40 +206,41 @@ public:
 	}
 
 	virtual
-	~chain_hash_map()
-	{ chainhash_destroy(inclass, _hashing); }
+	~chain_hash_map() {
+		chainhash_destroy(inclass, _hashing);
+	}
 
 	iterator
-	begin()
-	{ return iterator(chainhash_begin(inclass, _hashing)); }
+	begin() {
+		return iterator(chainhash_begin(inclass, _hashing));
+	}
 
 	iterator
-	end()
-	{ 
+	end() {
 		chainhash_itr_t(inclass) itr;
 		itr.entry = NULL;
 		return iterator(itr);
 	}
 
 	const_iterator
-	begin() const
-	{ return const_iterator(chainhash_begin(inclass, _hashing)); }
+	begin() const {
+		return const_iterator(chainhash_begin(inclass, _hashing));
+	}
 
 	const_iterator
-	end() const
-	{
+	end() const {
 		chainhash_itr_t(inclass) itr;
 		itr.entry = NULL;
 		return const_iterator(itr);
 	}
 
 	bool
-	contain(const _Key &key) const
-	{ return chainhash_get(inclass, _hashing, key).entry != NULL; }
+	contain(const _Key &key) const {
+		return chainhash_get(inclass, _hashing, key).entry != NULL;
+	}
 
 	iterator
-	insert(const _Key &key, const _Val &val)
-	{
+	insert(const _Key &key, const _Val &val) {
 		hashing_iterator itr = chainhash_set(inclass, _hashing, key, val);
 		if (itr.entry == NULL)
 			throw _Except();
@@ -244,8 +248,7 @@ public:
 	}
 
 	iterator
-	find_or_insert(const _Key &key, const _Val &val)
-	{
+	find_or_insert(const _Key &key, const _Val &val) {
 		hashing_iterator itr =
 			chainhash_set_uniq(inclass, _hashing, key, val, false);
 		if (itr.entry == NULL)
@@ -254,40 +257,49 @@ public:
 	}
 
 	reference
-	operator[](const _Key &key)
-	{ return *find_or_insert(key, _Val()); }
+	operator[](const _Key &key) {
+		return *find_or_insert(key, _Val());
+	}
 
 	iterator
-	find(const _Key &key)
-	{ return iterator(chainhash_get(inclass, _hashing, key)); }
+	find(const _Key &key) {
+		return iterator(chainhash_get(inclass, _hashing, key));
+	}
 
 	const_iterator
-	find(const _Key &key) const
-	{ return const_iterator(chainhash_get(inclass, _hashing, key)); }
+	find(const _Key &key) const {
+		return const_iterator(chainhash_get(inclass, _hashing, key));
+	}
 
 	void
-	erase(const _Key &key)
-	{ chainhash_del(inclass, chainhash_get(inclass, _hashing, key)); }
+	erase(const _Key &key) {
+		chainhash_del(inclass, chainhash_get(inclass, _hashing, key));
+	}
 
 	void
-	erase(const iterator &it)
-	{ chainhash_del(inclass, it._cur); }
+	erase(const iterator &it) {
+		chainhash_del(inclass, it._cur);
+	}
 
 	void
-	clear()
-	{ chainhash_clear(inclass, _hashing); }
+	clear() {
+		chainhash_clear(inclass, _hashing);
+	}
 
 	void
-	snap()
-	{ chainhash_snap(inclass, _hashing); }
+	snap() {
+		chainhash_snap(inclass, _hashing);
+	}
 
 	void
-	sort()
-	{ chainhash_sort(inclass, _hashing); }
+	sort() {
+		chainhash_sort(inclass, _hashing);
+	}
 
 	size_t
-	bucket_count() const
-	{ return chainhash_nbucket(_hashing); }
+	bucket_count() const {
+		return chainhash_nbucket(_hashing);
+	}
 
 private:
 	hashing _hashing;

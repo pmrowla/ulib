@@ -28,8 +28,7 @@
 struct tree_root *
 tree_search(struct tree_root *entry,
 	    int (*compare) (const void *, const void *),
-	    struct tree_root *root)
-{
+	    struct tree_root *root) {
 	int retval;
 
 	while (root != NIL) {
@@ -45,8 +44,7 @@ tree_search(struct tree_root *entry,
 }
 
 struct tree_root *
-tree_min(struct tree_root *root)
-{
+tree_min(struct tree_root *root) {
 	if (root != NIL) {
 		while (root->left != NIL)
 			root = root->left;
@@ -55,8 +53,7 @@ tree_min(struct tree_root *root)
 }
 
 struct tree_root *
-tree_max(struct tree_root *root)
-{
+tree_max(struct tree_root *root) {
 	if (root != NIL) {
 		while (root->right != NIL)
 			root = root->right;
@@ -65,8 +62,7 @@ tree_max(struct tree_root *root)
 }
 
 struct tree_root *
-tree_successor(struct tree_root *root)
-{
+tree_successor(struct tree_root *root) {
 	struct tree_root *p = NIL;
 
 	if (root != NIL) {
@@ -83,8 +79,7 @@ tree_successor(struct tree_root *root)
 }
 
 struct tree_root *
-tree_predecessor(struct tree_root *root)
-{
+tree_predecessor(struct tree_root *root) {
 	struct tree_root *p = NIL;
 
 	if (root != NIL) {
@@ -183,8 +178,7 @@ tree_add(struct tree_root *new,
 struct tree_root *
 tree_map(struct tree_root *new,
 	 int (*compare) (const void *, const void *),
-	 struct tree_root **root)
-{
+	 struct tree_root **root) {
 	int retval = 0;
 	struct tree_root *r = *root;
 	struct tree_root *n = NIL;
@@ -256,89 +250,88 @@ tree_del(struct tree_root *entry, struct tree_root **root)
 	}
 }
 
-#define SPLAY_ROTATE_RIGHT(entry, tmp) do {				\
-		(entry)->left = (tmp)->right;				\
-		if ((tmp)->right) (tmp)->right->parent = (entry);	\
-		(tmp)->right = (entry);					\
-		(tmp)->parent = (entry)->parent;			\
-		(entry)->parent = (tmp);				\
-		(entry) = (tmp);					\
-	} while (0)
+#define SPLAY_ROTATE_RIGHT(entry, tmp) do {                 \
+        (entry)->left = (tmp)->right;                       \
+        if ((tmp)->right) (tmp)->right->parent = (entry);   \
+        (tmp)->right = (entry);                             \
+        (tmp)->parent = (entry)->parent;                    \
+        (entry)->parent = (tmp);                            \
+        (entry) = (tmp);                                    \
+    } while (0)
 
-#define SPLAY_ROTATE_LEFT(entry, tmp) do {			\
-		(entry)->right = (tmp)->left;			\
-		if ((tmp)->left) (tmp)->left->parent = (entry);	\
-		(tmp)->left = (entry);				\
-		(tmp)->parent = (entry)->parent;		\
-		(entry)->parent = (tmp);			\
-		(entry) = (tmp);				\
-	} while (0)
+#define SPLAY_ROTATE_LEFT(entry, tmp) do {              \
+        (entry)->right = (tmp)->left;                   \
+        if ((tmp)->left) (tmp)->left->parent = (entry); \
+        (tmp)->left = (entry);                          \
+        (tmp)->parent = (entry)->parent;                \
+        (entry)->parent = (tmp);                        \
+        (entry) = (tmp);                                \
+    } while (0)
 
-#define SPLAY_LINK_RIGHT(entry, large) do {	\
-		(large)->left = (entry);	\
-		(entry)->parent = (large);	\
-		(large) = (entry);		\
-		(entry) = (entry)->left;	\
-	} while (0)
+#define SPLAY_LINK_RIGHT(entry, large) do {     \
+        (large)->left = (entry);                \
+        (entry)->parent = (large);              \
+        (large) = (entry);                      \
+        (entry) = (entry)->left;                \
+    } while (0)
 
-#define SPLAY_LINK_LEFT(entry, small) do {	\
-		(small)->right = (entry);	\
-		(entry)->parent = (small);	\
-		(small) = (entry);		\
-		(entry) = (entry)->right;	\
-	} while (0)
+#define SPLAY_LINK_LEFT(entry, small) do {      \
+        (small)->right = (entry);               \
+        (entry)->parent = (small);              \
+        (small) = (entry);                      \
+        (entry) = (entry)->right;               \
+    } while (0)
 
-#define SPLAY_ASSEMBLE(head, node, small, large) do {		\
-		(small)->right = (head)->left;			\
-		if ((head)->left)				\
-			(head)->left->parent = (small);		\
-		(large)->left = (head)->right;			\
-		if ((head)->right)				\
-			(head)->right->parent = (large);	\
-		(head)->left = (node)->right;			\
-		if ((node)->right)				\
-			(node)->right->parent = (head);		\
-		(head)->right = (node)->left;			\
-		if ((node)->left)				\
-			(node)->left->parent = (head);		\
-	} while (0)
+#define SPLAY_ASSEMBLE(head, node, small, large) do {   \
+        (small)->right = (head)->left;                  \
+        if ((head)->left)                               \
+            (head)->left->parent = (small);             \
+        (large)->left = (head)->right;                  \
+        if ((head)->right)                              \
+            (head)->right->parent = (large);            \
+        (head)->left = (node)->right;                   \
+        if ((node)->right)                              \
+            (node)->right->parent = (head);             \
+        (head)->right = (node)->left;                   \
+        if ((node)->left)                               \
+            (node)->left->parent = (head);              \
+    } while (0)
 
-#define SPLAY_ROTATE_RIGHT_NPARENT(entry, tmp) do {	\
-		(entry)->left = (tmp)->right;		\
-		(tmp)->right = (entry);			\
-		(entry) = (tmp);			\
-	} while (0)
+#define SPLAY_ROTATE_RIGHT_NPARENT(entry, tmp) do { \
+        (entry)->left = (tmp)->right;               \
+        (tmp)->right = (entry);                     \
+        (entry) = (tmp);                            \
+    } while (0)
 
-#define SPLAY_ROTATE_LEFT_NPARENT(entry, tmp) do {	\
-		(entry)->right = (tmp)->left;		\
-		(tmp)->left = (entry);			\
-		(entry) = (tmp);			\
-	} while (0)
+#define SPLAY_ROTATE_LEFT_NPARENT(entry, tmp) do {  \
+        (entry)->right = (tmp)->left;               \
+        (tmp)->left = (entry);                      \
+        (entry) = (tmp);                            \
+    } while (0)
 
-#define SPLAY_LINK_RIGHT_NPARENT(entry, large) do {	\
-		(large)->left = (entry);		\
-		(large) = (entry);			\
-		(entry) = (entry)->left;		\
-	} while (0)
+#define SPLAY_LINK_RIGHT_NPARENT(entry, large) do { \
+        (large)->left = (entry);                    \
+        (large) = (entry);                          \
+        (entry) = (entry)->left;                    \
+    } while (0)
 
-#define SPLAY_LINK_LEFT_NPARENT(entry, small) do {	\
-		(small)->right = (entry);		\
-		(small) = (entry);			\
-		(entry) = (entry)->right;		\
-	} while (0)
+#define SPLAY_LINK_LEFT_NPARENT(entry, small) do {  \
+        (small)->right = (entry);                   \
+        (small) = (entry);                          \
+        (entry) = (entry)->right;                   \
+    } while (0)
 
-#define SPLAY_ASSEMBLE_NPARENT(head, node, small, large) do {	\
-		(small)->right = (head)->left;			\
-		(large)->left = (head)->right;			\
-		(head)->left = (node)->right;			\
-		(head)->right = (node)->left;			\
-	} while (0)
+#define SPLAY_ASSEMBLE_NPARENT(head, node, small, large) do {   \
+        (small)->right = (head)->left;                          \
+        (large)->left = (head)->right;                          \
+        (head)->left = (node)->right;                           \
+        (head)->right = (node)->left;                           \
+    } while (0)
 
 struct tree_root *
 splay_search(struct tree_root *entry,
 	     int (*compare) (const void *, const void *),
-	     struct tree_root **root)
-{
+	     struct tree_root **root) {
 	int cmp;
 	TREE_ROOT(node);  /* node for assembly use */
 	struct tree_root *small, *large, *head, *tmp;
@@ -382,8 +375,7 @@ splay_search(struct tree_root *entry,
 struct tree_root *
 splay_map(struct tree_root *new,
 	  int (*compare) (const void *, const void *),
-	  struct tree_root **root)
-{
+	  struct tree_root **root) {
 	int cmp;
 	TREE_ROOT(node);  /* node for assembly use */
 	struct tree_root *small, *large, *head, *tmp;
@@ -453,8 +445,7 @@ splay_map(struct tree_root *new,
 struct tree_root *
 splay_search_nparent(struct tree_root *entry,
 		     int (*compare) (const void *, const void *),
-		     struct tree_root **root)
-{
+		     struct tree_root **root) {
 	int cmp;
 	TREE_ROOT(node);  /* node for assembly use */
 	struct tree_root *small, *large, *head, *tmp;
@@ -498,8 +489,7 @@ splay_search_nparent(struct tree_root *entry,
 struct tree_root *
 splay_map_nparent(struct tree_root *new,
 		  int (*compare) (const void *, const void *),
-		  struct tree_root **root)
-{
+		  struct tree_root **root) {
 	int cmp;
 	TREE_ROOT(node);  /* node for assembly use */
 	struct tree_root *small, *large, *head, *tmp;
@@ -646,8 +636,7 @@ avl_add(struct avl_root *new,
 struct avl_root *
 avl_map(struct avl_root *new,
 	int (*compare) (const void *, const void *),
-	struct avl_root **root)
-{
+	struct avl_root **root) {
 	struct avl_root *n;
 
 	new->balance = 0;

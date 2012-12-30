@@ -28,7 +28,7 @@
 
 #include <inttypes.h>
 
-#define SHA256_HASH_SIZE 32	/* 256 bit */
+#define SHA256_HASH_SIZE 32 /* 256 bit */
 #define SHA256_HASH_WORDS 8
 
 struct _SHA256Context {
@@ -55,5 +55,4 @@ extern "C" {
 #ifdef __cplusplus
 }
 #endif
-
-#endif  /* __ULIB_SHA256_H */
+#endif              /* __ULIB_SHA256_H */

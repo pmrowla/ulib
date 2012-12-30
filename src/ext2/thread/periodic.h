@@ -31,7 +31,8 @@
 #include <pthread.h>
 #include <list>
 
-namespace ulib {
+namespace ulib
+{
 
 /**
  * us_from - calculates timespec for us microseconds from ts
@@ -69,7 +70,8 @@ static inline timespec sec_from_now(uint64_t sec)
 	return us_from_now(sec * 1000000);
 }
 
-class periodic {
+class periodic
+{
 public:
 	typedef void *(*task_func_t) (void *);
 	typedef uint64_t taskid_t;

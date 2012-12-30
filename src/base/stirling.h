@@ -31,8 +31,7 @@
 #define PI 3.1415926
 
 /* compute ln(n!) using stirling's approximation */
-static inline double
-st_perm_ln(unsigned int n)
+static inline double st_perm_ln(unsigned int n)
 {
 	if (n == 0)
 		return 0;
@@ -40,26 +39,24 @@ st_perm_ln(unsigned int n)
 }
 
 /* compute n! using stirling's approximation */
-static inline double
-st_perm(unsigned int n)
+static inline double st_perm(unsigned int n)
 {
 	if (n == 0)
 		return 1;
-	return sqrt(2 * PI) * pow(n, n + 0.5) * exp(-(double)n + 1.0 / (12 * n));
+	return sqrt(2 * PI) * pow(n,
+				  n + 0.5) * exp(-(double)n + 1.0 / (12 * n));
 }
 
-static inline double
-st_comb_ln(unsigned int n, unsigned int r)
+static inline double st_comb_ln(unsigned int n, unsigned int r)
 {
 	if (r == n || r == 0)
 		return 0;
-	return (n - r) * log((double)n / (n - r)) + r * log((double)n / r) - 
-		0.5 * log(2 * PI * r * (n - r) / n) +
-		1.0 / 12 * (1.0 / n - 1.0 / (n - r) - 1.0 / r);
+	return (n - r) * log((double)n / (n - r)) + r * log((double)n / r) -
+	       0.5 * log(2 * PI * r * (n - r) / n) +
+	       1.0 / 12 * (1.0 / n - 1.0 / (n - r) - 1.0 / r);
 }
 
-static inline double
-st_comb(unsigned int n, unsigned int r)
+static inline double st_comb(unsigned int n, unsigned int r)
 {
 	if (r > n)
 		return 0;
@@ -69,4 +66,4 @@ st_comb(unsigned int n, unsigned int r)
 	return exp(st_comb_ln(n, r));
 }
 
-#endif  /* __ULIB_STIRLING_H */
+#endif              /* __ULIB_STIRLING_H */

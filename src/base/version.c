@@ -30,13 +30,10 @@ const char *ulib_version()
 {
 	static char version[256] = { 0 };
 
-	snprintf(
-		version, sizeof(version),
-		"ULIB %d.%d\n"
-		"Copyright (C) 2009-2012 Zilong Tan (eric.zltan@gmail.com)\n",
-		ULIB_VERSION_MAJOR,
-		ULIB_VERSION_MINOR
-		);
+	snprintf(version, sizeof(version),
+		 "ULIB %d.%d\n"
+		 "Copyright (C) 2009-2012 Zilong Tan (eric.zltan@gmail.com)\n",
+		 ULIB_VERSION_MAJOR, ULIB_VERSION_MINOR);
 
 	return version;
 }

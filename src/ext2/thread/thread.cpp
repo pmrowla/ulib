@@ -25,7 +25,8 @@
 
 #include "thread.h"
 
-namespace ulib {
+namespace ulib
+{
 
 void *thread::_thread(void *param)
 {

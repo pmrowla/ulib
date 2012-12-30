@@ -32,39 +32,39 @@
  * part - partition an array into tree parts:
  * array[<median] <= array[median] <= array[>median]
  */
-#define DEFINE_PART(name, type, lt)				\
-	static inline void					\
-	part_##name(type *base, type *median, type *last)	\
-	{							\
-		register type *s, *t, *p, *q, *m;		\
-		type e;						\
-								\
-		s = base;					\
-		t = last - 1;					\
-		while (s < t) {					\
-			p = s;					\
-			q = t;					\
-			m = p + (q - p) / 2;			\
-			if (lt(m, p))				\
-				_swap(*m, *p);			\
-			if (lt(q, m)) {				\
-				_swap(*q, *m);			\
-				if (lt(m, p))			\
-					_swap(*m, *p);		\
-			}					\
-			e = *m;					\
-			for (;;) {				\
-				do ++p; while (lt(p, &e));	\
-				do --q; while (lt(&e, q));	\
-				if (p >= q)			\
-					break;			\
-				_swap(*p, *q);			\
-			}					\
-			if (p > median)				\
-				t = p - 1;			\
-			else					\
-				s = p;				\
-		}						\
-	}
+#define DEFINE_PART(name, type, lt)                     \
+    static inline void                                  \
+    part_##name(type *base, type *median, type *last)   \
+    {                                                   \
+        register type *s, *t, *p, *q, *m;               \
+        type e;                                         \
+                                                        \
+        s = base;                                       \
+        t = last - 1;                                   \
+        while (s < t) {                                 \
+            p = s;                                      \
+            q = t;                                      \
+            m = p + (q - p) / 2;                        \
+            if (lt(m, p))                               \
+                _swap(*m, *p);                          \
+            if (lt(q, m)) {                             \
+                _swap(*q, *m);                          \
+                if (lt(m, p))                           \
+                    _swap(*m, *p);                      \
+            }                                           \
+            e = *m;                                     \
+            for (;;) {                                  \
+                do ++p; while (lt(p, &e));              \
+                do --q; while (lt(&e, q));              \
+                if (p >= q)                             \
+                    break;                              \
+                _swap(*p, *q);                          \
+            }                                           \
+            if (p > median)                             \
+                t = p - 1;                              \
+            else                                        \
+                s = p;                                  \
+        }                                               \
+    }
 
-#endif  /* __ULIB_PART_TPL_H */
+#endif              /* __ULIB_PART_TPL_H */

@@ -2,7 +2,7 @@ INCPATH = ../../include
 LIBPATH = ../../lib
 
 CXXFLAGS ?=-O2 -W -Wall -I$(INCPATH)
-LDFLAGS   =-L$(LIBPATH) -lulib -lrt
+LDFLAGS   =-L$(LIBPATH) -lulib -lpthread -lrt
 
 .cpp.o:
 	$(CXX) -c $(CXXFLAGS) $< -o $@

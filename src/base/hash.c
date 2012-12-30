@@ -29,7 +29,7 @@
 
 uint64_t hash_fast64(const void *buf, size_t len, uint64_t seed)
 {
-	const uint64_t    m = 0x880355f21e6d1965ULL;
+	const uint64_t m = 0x880355f21e6d1965ULL;
 	const uint64_t *pos = (const uint64_t *)buf;
 	const uint64_t *end = pos + (len >> 3);
 	const unsigned char *pc;
@@ -37,24 +37,31 @@ uint64_t hash_fast64(const void *buf, size_t len, uint64_t seed)
 	uint64_t v;
 
 	while (pos != end) {
-		v  = *pos++;
+		v = *pos++;
 		v ^= v >> 23;
 		v *= 0x2127599bf4325c37ULL;
 		h ^= v ^ (v >> 47);
 		h *= m;
 	}
 
-	pc = (const unsigned char*)pos;
+	pc = (const unsigned char *)pos;
 	v = 0;
 
 	switch (len & 7) {
-	case 7: v ^= (uint64_t)pc[6] << 48;
-	case 6: v ^= (uint64_t)pc[5] << 40;
-	case 5: v ^= (uint64_t)pc[4] << 32;
-	case 4: v ^= (uint64_t)pc[3] << 24;
-	case 3: v ^= (uint64_t)pc[2] << 16;
-	case 2: v ^= (uint64_t)pc[1] << 8;
-	case 1: v ^= (uint64_t)pc[0];
+	case 7:
+		v ^= (uint64_t) pc[6] << 48;
+	case 6:
+		v ^= (uint64_t) pc[5] << 40;
+	case 5:
+		v ^= (uint64_t) pc[4] << 32;
+	case 4:
+		v ^= (uint64_t) pc[3] << 24;
+	case 3:
+		v ^= (uint64_t) pc[2] << 16;
+	case 2:
+		v ^= (uint64_t) pc[1] << 8;
+	case 1:
+		v ^= (uint64_t) pc[0];
 		v ^= v >> 23;
 		v *= 0x2127599bf4325c37ULL;
 		h ^= v ^ (v >> 47);
@@ -73,7 +80,7 @@ uint32_t hash_fast32(const void *buf, size_t len, uint32_t seed)
 	// the following trick converts the 64-bit hashcode to Fermat
 	// residue, which shall retain information from both the higher
 	// and lower parts of hashcode.
-        uint64_t h = hash_fast64(buf, len, seed);
+	uint64_t h = hash_fast64(buf, len, seed);
 	return h - (h >> 32);
 }
 
@@ -95,7 +102,7 @@ uint32_t hash_fast32(const void *buf, size_t len, uint32_t seed)
   the output delta to a Gray code (a^(a>>1)) so a string of 1's (as
   is commonly produced by subtraction) look like a single 1-bit
   difference.
-  * the base values were pseudorandom, all zero but one bit set, or 
+  * the base values were pseudorandom, all zero but one bit set, or
   all zero plus a counter that starts at zero.
 
   Some k values for my "a-=c; a^=rot(c,k); c+=b;" arrangement that
@@ -105,7 +112,7 @@ uint32_t hash_fast32(const void *buf, size_t len, uint32_t seed)
   14  9  3  7 17  3
   Well, "9 15 3 18 27 15" didn't quite get 32 bits diffing
   for "differ" defined as + with a one-bit base and a two-bit delta.  I
-  used http://burtleburtle.net/bob/hash/avalanche.html to choose 
+  used http://burtleburtle.net/bob/hash/avalanche.html to choose
   the operations, constants, and arrangements of the variables.
 
   This does not achieve avalanche.  There are input bits of (a,b,c)
@@ -121,15 +128,15 @@ uint32_t hash_fast32(const void *buf, size_t len, uint32_t seed)
   rotates.
   -------------------------------------------------------------------------------
 */
-#define mix(a,b,c)					\
-	{						\
-		a -= c;  a ^= rot(c, 4);  c += b;	\
-		b -= a;  b ^= rot(a, 6);  a += c;	\
-		c -= b;  c ^= rot(b, 8);  b += a;	\
-		a -= c;  a ^= rot(c,16);  c += b;	\
-		b -= a;  b ^= rot(a,19);  a += c;	\
-		c -= b;  c ^= rot(b, 4);  b += a;	\
-	}
+#define mix(a,b,c)                              \
+    {                                           \
+        a -= c;  a ^= rot(c, 4);  c += b;       \
+        b -= a;  b ^= rot(a, 6);  a += c;       \
+        c -= b;  c ^= rot(b, 8);  b += a;       \
+        a -= c;  a ^= rot(c,16);  c += b;       \
+        b -= a;  b ^= rot(a,19);  a += c;       \
+        c -= b;  c ^= rot(b, 4);  b += a;       \
+    }
 
 /*
   -------------------------------------------------------------------------------
@@ -144,7 +151,7 @@ uint32_t hash_fast32(const void *buf, size_t len, uint32_t seed)
   the output delta to a Gray code (a^(a>>1)) so a string of 1's (as
   is commonly produced by subtraction) look like a single 1-bit
   difference.
-  * the base values were pseudorandom, all zero but one bit set, or 
+  * the base values were pseudorandom, all zero but one bit set, or
   all zero plus a counter that starts at zero.
 
   These constants passed:
@@ -156,16 +163,16 @@ uint32_t hash_fast32(const void *buf, size_t len, uint32_t seed)
   11  8 15 26 3 22 24
   -------------------------------------------------------------------------------
 */
-#define final(a,b,c)				\
-	{					\
-		c ^= b; c -= rot(b,14);		\
-		a ^= c; a -= rot(c,11);		\
-		b ^= a; b -= rot(a,25);		\
-		c ^= b; c -= rot(b,16);		\
-		a ^= c; a -= rot(c,4);		\
-		b ^= a; b -= rot(a,14);		\
-		c ^= b; c -= rot(b,24);		\
-	}
+#define final(a,b,c)                            \
+    {                                           \
+        c ^= b; c -= rot(b,14);                 \
+        a ^= c; a -= rot(c,11);                 \
+        b ^= a; b -= rot(a,25);                 \
+        c ^= b; c -= rot(b,16);                 \
+        a ^= c; a -= rot(c,4);                  \
+        b ^= a; b -= rot(a,14);                 \
+        c ^= b; c -= rot(b,24);                 \
+    }
 
 #define hashsize(n) ((uint32_t)1<<(n))
 #define hashmask(n) (hashsize(n)-1)
@@ -200,30 +207,32 @@ uint32_t hash_fast32(const void *buf, size_t len, uint32_t seed)
 
 uint32_t hash_jenkins(const void *key, size_t length, uint32_t initval)
 {
-	uint32_t a,b,c;                                          /* internal state */
-	union { const void *ptr; size_t i; } u;     /* needed for Mac Powerbook G4 */
+	uint32_t a, b, c;   /* internal state */
+	union {
+		const void *ptr;
+		size_t i;
+	} u;            /* needed for Mac Powerbook G4 */
 
 	/* Set up the internal state */
-	a = b = c = 0xdeadbeef + ((uint32_t)length) + initval;
+	a = b = c = 0xdeadbeef + ((uint32_t) length) + initval;
 
 	u.ptr = key;
 	if ((u.i & 0x3) == 0) {
-		const uint32_t *k = (const uint32_t *)key;         /* read 32-bit chunks */
+		const uint32_t *k = (const uint32_t *)key;  /* read 32-bit chunks */
 		/* const uint8_t  *k8; */
 
 		/*------ all but last block: aligned reads and affect 32 bits of (a,b,c) */
-		while (length > 12)
-		{
+		while (length > 12) {
 			a += k[0];
 			b += k[1];
 			c += k[2];
-			mix(a,b,c);
+			mix(a, b, c);
 			length -= 12;
 			k += 3;
 		}
 
 		/*----------------------------- handle the last (probably partial) block */
-		/* 
+		/*
 		 * "k[2]&0xffffff" actually reads beyond the end of the string, but
 		 * then masks off the part it's not allowed to read.  Because the
 		 * string is aligned, the masked-off tail is in the same word as the
@@ -234,139 +243,215 @@ uint32_t hash_jenkins(const void *key, size_t length, uint32_t initval)
 		 */
 #ifndef VALGRIND
 
-		switch(length)
-		{
-		case 12: c+=k[2]; b+=k[1]; a+=k[0]; break;
-		case 11: c+=k[2]&0xffffff; b+=k[1]; a+=k[0]; break;
-		case 10: c+=k[2]&0xffff; b+=k[1]; a+=k[0]; break;
-		case 9 : c+=k[2]&0xff; b+=k[1]; a+=k[0]; break;
-		case 8 : b+=k[1]; a+=k[0]; break;
-		case 7 : b+=k[1]&0xffffff; a+=k[0]; break;
-		case 6 : b+=k[1]&0xffff; a+=k[0]; break;
-		case 5 : b+=k[1]&0xff; a+=k[0]; break;
-		case 4 : a+=k[0]; break;
-		case 3 : a+=k[0]&0xffffff; break;
-		case 2 : a+=k[0]&0xffff; break;
-		case 1 : a+=k[0]&0xff; break;
-		case 0 : return c;              /* zero length strings require no mixing */
+		switch (length) {
+		case 12:
+			c += k[2];
+			b += k[1];
+			a += k[0];
+			break;
+		case 11:
+			c += k[2] & 0xffffff;
+			b += k[1];
+			a += k[0];
+			break;
+		case 10:
+			c += k[2] & 0xffff;
+			b += k[1];
+			a += k[0];
+			break;
+		case 9:
+			c += k[2] & 0xff;
+			b += k[1];
+			a += k[0];
+			break;
+		case 8:
+			b += k[1];
+			a += k[0];
+			break;
+		case 7:
+			b += k[1] & 0xffffff;
+			a += k[0];
+			break;
+		case 6:
+			b += k[1] & 0xffff;
+			a += k[0];
+			break;
+		case 5:
+			b += k[1] & 0xff;
+			a += k[0];
+			break;
+		case 4:
+			a += k[0];
+			break;
+		case 3:
+			a += k[0] & 0xffffff;
+			break;
+		case 2:
+			a += k[0] & 0xffff;
+			break;
+		case 1:
+			a += k[0] & 0xff;
+			break;
+		case 0:
+			return c;   /* zero length strings require no mixing */
 		}
 
-#else /* make valgrind happy */
+#else               /* make valgrind happy */
 
 		k8 = (const uint8_t *)k;
-		switch(length)
-		{
-		case 12: c+=k[2]; b+=k[1]; a+=k[0]; break;
-		case 11: c+=((uint32_t)k8[10])<<16;  /* fall through */
-		case 10: c+=((uint32_t)k8[9])<<8;    /* fall through */
-		case 9 : c+=k8[8];                   /* fall through */
-		case 8 : b+=k[1]; a+=k[0]; break;
-		case 7 : b+=((uint32_t)k8[6])<<16;   /* fall through */
-		case 6 : b+=((uint32_t)k8[5])<<8;    /* fall through */
-		case 5 : b+=k8[4];                   /* fall through */
-		case 4 : a+=k[0]; break;
-		case 3 : a+=((uint32_t)k8[2])<<16;   /* fall through */
-		case 2 : a+=((uint32_t)k8[1])<<8;    /* fall through */
-		case 1 : a+=k8[0]; break;
-		case 0 : return c;
+		switch (length) {
+		case 12:
+			c += k[2];
+			b += k[1];
+			a += k[0];
+			break;
+		case 11:
+			c += ((uint32_t) k8[10]) << 16; /* fall through */
+		case 10:
+			c += ((uint32_t) k8[9]) << 8;   /* fall through */
+		case 9:
+			c += k8[8]; /* fall through */
+		case 8:
+			b += k[1];
+			a += k[0];
+			break;
+		case 7:
+			b += ((uint32_t) k8[6]) << 16;  /* fall through */
+		case 6:
+			b += ((uint32_t) k8[5]) << 8;   /* fall through */
+		case 5:
+			b += k8[4]; /* fall through */
+		case 4:
+			a += k[0];
+			break;
+		case 3:
+			a += ((uint32_t) k8[2]) << 16;  /* fall through */
+		case 2:
+			a += ((uint32_t) k8[1]) << 8;   /* fall through */
+		case 1:
+			a += k8[0];
+			break;
+		case 0:
+			return c;
 		}
 
-#endif /* !valgrind */
+#endif              /* !valgrind */
 
 	} else if ((u.i & 0x1) == 0) {
-		const uint16_t *k = (const uint16_t *)key;         /* read 16-bit chunks */
-		const uint8_t  *k8;
+		const uint16_t *k = (const uint16_t *)key;  /* read 16-bit chunks */
+		const uint8_t *k8;
 
 		/*--------------- all but last block: aligned reads and different mixing */
-		while (length > 12)
-		{
-			a += k[0] + (((uint32_t)k[1])<<16);
-			b += k[2] + (((uint32_t)k[3])<<16);
-			c += k[4] + (((uint32_t)k[5])<<16);
-			mix(a,b,c);
+		while (length > 12) {
+			a += k[0] + (((uint32_t) k[1]) << 16);
+			b += k[2] + (((uint32_t) k[3]) << 16);
+			c += k[4] + (((uint32_t) k[5]) << 16);
+			mix(a, b, c);
 			length -= 12;
 			k += 6;
 		}
 
 		/*----------------------------- handle the last (probably partial) block */
 		k8 = (const uint8_t *)k;
-		switch(length)
-		{
-		case 12: c+=k[4]+(((uint32_t)k[5])<<16);
-			b+=k[2]+(((uint32_t)k[3])<<16);
-			a+=k[0]+(((uint32_t)k[1])<<16);
+		switch (length) {
+		case 12:
+			c += k[4] + (((uint32_t) k[5]) << 16);
+			b += k[2] + (((uint32_t) k[3]) << 16);
+			a += k[0] + (((uint32_t) k[1]) << 16);
 			break;
-		case 11: c+=((uint32_t)k8[10])<<16;     /* fall through */
-		case 10: c+=k[4];
-			b+=k[2]+(((uint32_t)k[3])<<16);
-			a+=k[0]+(((uint32_t)k[1])<<16);
+		case 11:
+			c += ((uint32_t) k8[10]) << 16; /* fall through */
+		case 10:
+			c += k[4];
+			b += k[2] + (((uint32_t) k[3]) << 16);
+			a += k[0] + (((uint32_t) k[1]) << 16);
 			break;
-		case 9 : c+=k8[8];                      /* fall through */
-		case 8 : b+=k[2]+(((uint32_t)k[3])<<16);
-			a+=k[0]+(((uint32_t)k[1])<<16);
+		case 9:
+			c += k8[8]; /* fall through */
+		case 8:
+			b += k[2] + (((uint32_t) k[3]) << 16);
+			a += k[0] + (((uint32_t) k[1]) << 16);
 			break;
-		case 7 : b+=((uint32_t)k8[6])<<16;      /* fall through */
-		case 6 : b+=k[2];
-			a+=k[0]+(((uint32_t)k[1])<<16);
+		case 7:
+			b += ((uint32_t) k8[6]) << 16;  /* fall through */
+		case 6:
+			b += k[2];
+			a += k[0] + (((uint32_t) k[1]) << 16);
 			break;
-		case 5 : b+=k8[4];                      /* fall through */
-		case 4 : a+=k[0]+(((uint32_t)k[1])<<16);
+		case 5:
+			b += k8[4]; /* fall through */
+		case 4:
+			a += k[0] + (((uint32_t) k[1]) << 16);
 			break;
-		case 3 : a+=((uint32_t)k8[2])<<16;      /* fall through */
-		case 2 : a+=k[0];
+		case 3:
+			a += ((uint32_t) k8[2]) << 16;  /* fall through */
+		case 2:
+			a += k[0];
 			break;
-		case 1 : a+=k8[0];
+		case 1:
+			a += k8[0];
 			break;
-		case 0 : return c;                     /* zero length requires no mixing */
+		case 0:
+			return c;   /* zero length requires no mixing */
 		}
 
-	} else {                        /* need to read the key one byte at a time */
+	} else {        /* need to read the key one byte at a time */
 		const uint8_t *k = (const uint8_t *)key;
 
 		/*--------------- all but the last block: affect some 32 bits of (a,b,c) */
-		while (length > 12)
-		{
+		while (length > 12) {
 			a += k[0];
-			a += ((uint32_t)k[1])<<8;
-			a += ((uint32_t)k[2])<<16;
-			a += ((uint32_t)k[3])<<24;
+			a += ((uint32_t) k[1]) << 8;
+			a += ((uint32_t) k[2]) << 16;
+			a += ((uint32_t) k[3]) << 24;
 			b += k[4];
-			b += ((uint32_t)k[5])<<8;
-			b += ((uint32_t)k[6])<<16;
-			b += ((uint32_t)k[7])<<24;
+			b += ((uint32_t) k[5]) << 8;
+			b += ((uint32_t) k[6]) << 16;
+			b += ((uint32_t) k[7]) << 24;
 			c += k[8];
-			c += ((uint32_t)k[9])<<8;
-			c += ((uint32_t)k[10])<<16;
-			c += ((uint32_t)k[11])<<24;
-			mix(a,b,c);
+			c += ((uint32_t) k[9]) << 8;
+			c += ((uint32_t) k[10]) << 16;
+			c += ((uint32_t) k[11]) << 24;
+			mix(a, b, c);
 			length -= 12;
 			k += 12;
 		}
 
 		/*-------------------------------- last block: affect all 32 bits of (c) */
-		switch(length)                   /* all the case statements fall through */
-		{
-		case 12: c+=((uint32_t)k[11])<<24;
-		case 11: c+=((uint32_t)k[10])<<16;
-		case 10: c+=((uint32_t)k[9])<<8;
-		case 9 : c+=k[8];
-		case 8 : b+=((uint32_t)k[7])<<24;
-		case 7 : b+=((uint32_t)k[6])<<16;
-		case 6 : b+=((uint32_t)k[5])<<8;
-		case 5 : b+=k[4];
-		case 4 : a+=((uint32_t)k[3])<<24;
-		case 3 : a+=((uint32_t)k[2])<<16;
-		case 2 : a+=((uint32_t)k[1])<<8;
-		case 1 : a+=k[0];
+		switch (length) {   /* all the case statements fall through */
+		case 12:
+			c += ((uint32_t) k[11]) << 24;
+		case 11:
+			c += ((uint32_t) k[10]) << 16;
+		case 10:
+			c += ((uint32_t) k[9]) << 8;
+		case 9:
+			c += k[8];
+		case 8:
+			b += ((uint32_t) k[7]) << 24;
+		case 7:
+			b += ((uint32_t) k[6]) << 16;
+		case 6:
+			b += ((uint32_t) k[5]) << 8;
+		case 5:
+			b += k[4];
+		case 4:
+			a += ((uint32_t) k[3]) << 24;
+		case 3:
+			a += ((uint32_t) k[2]) << 16;
+		case 2:
+			a += ((uint32_t) k[1]) << 8;
+		case 1:
+			a += k[0];
 			break;
-		case 0 : return c;
+		case 0:
+			return c;
 		}
 	}
 
-	final(a,b,c);
+	final(a, b, c);
 	return c;
 }
-
 
 /*
  * hash_jenkins2 - return 2 32-bit hash values
@@ -378,33 +463,35 @@ uint32_t hash_jenkins(const void *key, size_t length, uint32_t initval)
  * the key.  *pc is better mixed than *pb, so use *pc first.  If you want
  * a 64-bit value do something like "*pc + (((uint64_t)*pb)<<32)".
  */
-void hash_jenkins2(const void *key, size_t length, uint32_t *pc, uint32_t *pb)
+void hash_jenkins2(const void *key, size_t length, uint32_t * pc, uint32_t * pb)
 {
-	uint32_t a,b,c;                                          /* internal state */
-	union { const void *ptr; size_t i; } u;     /* needed for Mac Powerbook G4 */
+	uint32_t a, b, c;   /* internal state */
+	union {
+		const void *ptr;
+		size_t i;
+	} u;            /* needed for Mac Powerbook G4 */
 
 	/* Set up the internal state */
-	a = b = c = 0xdeadbeef + ((uint32_t)length) + *pc;
+	a = b = c = 0xdeadbeef + ((uint32_t) length) + *pc;
 	c += *pb;
 
 	u.ptr = key;
 	if ((u.i & 0x3) == 0) {
-		const uint32_t *k = (const uint32_t *)key;         /* read 32-bit chunks */
+		const uint32_t *k = (const uint32_t *)key;  /* read 32-bit chunks */
 		/* const uint8_t  *k8; */
 
 		/*------ all but last block: aligned reads and affect 32 bits of (a,b,c) */
-		while (length > 12)
-		{
+		while (length > 12) {
 			a += k[0];
 			b += k[1];
 			c += k[2];
-			mix(a,b,c);
+			mix(a, b, c);
 			length -= 12;
 			k += 3;
 		}
 
 		/*----------------------------- handle the last (probably partial) block */
-		/* 
+		/*
 		 * "k[2]&0xffffff" actually reads beyond the end of the string, but
 		 * then masks off the part it's not allowed to read.  Because the
 		 * string is aligned, the masked-off tail is in the same word as the
@@ -415,135 +502,221 @@ void hash_jenkins2(const void *key, size_t length, uint32_t *pc, uint32_t *pb)
 		 */
 #ifndef VALGRIND
 
-		switch(length)
-		{
-		case 12: c+=k[2]; b+=k[1]; a+=k[0]; break;
-		case 11: c+=k[2]&0xffffff; b+=k[1]; a+=k[0]; break;
-		case 10: c+=k[2]&0xffff; b+=k[1]; a+=k[0]; break;
-		case 9 : c+=k[2]&0xff; b+=k[1]; a+=k[0]; break;
-		case 8 : b+=k[1]; a+=k[0]; break;
-		case 7 : b+=k[1]&0xffffff; a+=k[0]; break;
-		case 6 : b+=k[1]&0xffff; a+=k[0]; break;
-		case 5 : b+=k[1]&0xff; a+=k[0]; break;
-		case 4 : a+=k[0]; break;
-		case 3 : a+=k[0]&0xffffff; break;
-		case 2 : a+=k[0]&0xffff; break;
-		case 1 : a+=k[0]&0xff; break;
-		case 0 : *pc=c; *pb=b; return;  /* zero length strings require no mixing */
+		switch (length) {
+		case 12:
+			c += k[2];
+			b += k[1];
+			a += k[0];
+			break;
+		case 11:
+			c += k[2] & 0xffffff;
+			b += k[1];
+			a += k[0];
+			break;
+		case 10:
+			c += k[2] & 0xffff;
+			b += k[1];
+			a += k[0];
+			break;
+		case 9:
+			c += k[2] & 0xff;
+			b += k[1];
+			a += k[0];
+			break;
+		case 8:
+			b += k[1];
+			a += k[0];
+			break;
+		case 7:
+			b += k[1] & 0xffffff;
+			a += k[0];
+			break;
+		case 6:
+			b += k[1] & 0xffff;
+			a += k[0];
+			break;
+		case 5:
+			b += k[1] & 0xff;
+			a += k[0];
+			break;
+		case 4:
+			a += k[0];
+			break;
+		case 3:
+			a += k[0] & 0xffffff;
+			break;
+		case 2:
+			a += k[0] & 0xffff;
+			break;
+		case 1:
+			a += k[0] & 0xff;
+			break;
+		case 0:
+			*pc = c;
+			*pb = b;
+			return; /* zero length strings require no mixing */
 		}
 
-#else /* make valgrind happy */
+#else               /* make valgrind happy */
 
 		k8 = (const uint8_t *)k;
-		switch(length)
-		{
-		case 12: c+=k[2]; b+=k[1]; a+=k[0]; break;
-		case 11: c+=((uint32_t)k8[10])<<16;  /* fall through */
-		case 10: c+=((uint32_t)k8[9])<<8;    /* fall through */
-		case 9 : c+=k8[8];                   /* fall through */
-		case 8 : b+=k[1]; a+=k[0]; break;
-		case 7 : b+=((uint32_t)k8[6])<<16;   /* fall through */
-		case 6 : b+=((uint32_t)k8[5])<<8;    /* fall through */
-		case 5 : b+=k8[4];                   /* fall through */
-		case 4 : a+=k[0]; break;
-		case 3 : a+=((uint32_t)k8[2])<<16;   /* fall through */
-		case 2 : a+=((uint32_t)k8[1])<<8;    /* fall through */
-		case 1 : a+=k8[0]; break;
-		case 0 : *pc=c; *pb=b; return;  /* zero length strings require no mixing */
+		switch (length) {
+		case 12:
+			c += k[2];
+			b += k[1];
+			a += k[0];
+			break;
+		case 11:
+			c += ((uint32_t) k8[10]) << 16; /* fall through */
+		case 10:
+			c += ((uint32_t) k8[9]) << 8;   /* fall through */
+		case 9:
+			c += k8[8]; /* fall through */
+		case 8:
+			b += k[1];
+			a += k[0];
+			break;
+		case 7:
+			b += ((uint32_t) k8[6]) << 16;  /* fall through */
+		case 6:
+			b += ((uint32_t) k8[5]) << 8;   /* fall through */
+		case 5:
+			b += k8[4]; /* fall through */
+		case 4:
+			a += k[0];
+			break;
+		case 3:
+			a += ((uint32_t) k8[2]) << 16;  /* fall through */
+		case 2:
+			a += ((uint32_t) k8[1]) << 8;   /* fall through */
+		case 1:
+			a += k8[0];
+			break;
+		case 0:
+			*pc = c;
+			*pb = b;
+			return; /* zero length strings require no mixing */
 		}
 
-#endif /* !valgrind */
+#endif              /* !valgrind */
 
 	} else if ((u.i & 0x1) == 0) {
-		const uint16_t *k = (const uint16_t *)key;         /* read 16-bit chunks */
-		const uint8_t  *k8;
+		const uint16_t *k = (const uint16_t *)key;  /* read 16-bit chunks */
+		const uint8_t *k8;
 
 		/*--------------- all but last block: aligned reads and different mixing */
-		while (length > 12)
-		{
-			a += k[0] + (((uint32_t)k[1])<<16);
-			b += k[2] + (((uint32_t)k[3])<<16);
-			c += k[4] + (((uint32_t)k[5])<<16);
-			mix(a,b,c);
+		while (length > 12) {
+			a += k[0] + (((uint32_t) k[1]) << 16);
+			b += k[2] + (((uint32_t) k[3]) << 16);
+			c += k[4] + (((uint32_t) k[5]) << 16);
+			mix(a, b, c);
 			length -= 12;
 			k += 6;
 		}
 
 		/*----------------------------- handle the last (probably partial) block */
 		k8 = (const uint8_t *)k;
-		switch(length)
-		{
-		case 12: c+=k[4]+(((uint32_t)k[5])<<16);
-			b+=k[2]+(((uint32_t)k[3])<<16);
-			a+=k[0]+(((uint32_t)k[1])<<16);
+		switch (length) {
+		case 12:
+			c += k[4] + (((uint32_t) k[5]) << 16);
+			b += k[2] + (((uint32_t) k[3]) << 16);
+			a += k[0] + (((uint32_t) k[1]) << 16);
 			break;
-		case 11: c+=((uint32_t)k8[10])<<16;     /* fall through */
-		case 10: c+=k[4];
-			b+=k[2]+(((uint32_t)k[3])<<16);
-			a+=k[0]+(((uint32_t)k[1])<<16);
+		case 11:
+			c += ((uint32_t) k8[10]) << 16; /* fall through */
+		case 10:
+			c += k[4];
+			b += k[2] + (((uint32_t) k[3]) << 16);
+			a += k[0] + (((uint32_t) k[1]) << 16);
 			break;
-		case 9 : c+=k8[8];                      /* fall through */
-		case 8 : b+=k[2]+(((uint32_t)k[3])<<16);
-			a+=k[0]+(((uint32_t)k[1])<<16);
+		case 9:
+			c += k8[8]; /* fall through */
+		case 8:
+			b += k[2] + (((uint32_t) k[3]) << 16);
+			a += k[0] + (((uint32_t) k[1]) << 16);
 			break;
-		case 7 : b+=((uint32_t)k8[6])<<16;      /* fall through */
-		case 6 : b+=k[2];
-			a+=k[0]+(((uint32_t)k[1])<<16);
+		case 7:
+			b += ((uint32_t) k8[6]) << 16;  /* fall through */
+		case 6:
+			b += k[2];
+			a += k[0] + (((uint32_t) k[1]) << 16);
 			break;
-		case 5 : b+=k8[4];                      /* fall through */
-		case 4 : a+=k[0]+(((uint32_t)k[1])<<16);
+		case 5:
+			b += k8[4]; /* fall through */
+		case 4:
+			a += k[0] + (((uint32_t) k[1]) << 16);
 			break;
-		case 3 : a+=((uint32_t)k8[2])<<16;      /* fall through */
-		case 2 : a+=k[0];
+		case 3:
+			a += ((uint32_t) k8[2]) << 16;  /* fall through */
+		case 2:
+			a += k[0];
 			break;
-		case 1 : a+=k8[0];
+		case 1:
+			a += k8[0];
 			break;
-		case 0 : *pc=c; *pb=b; return;  /* zero length strings require no mixing */
+		case 0:
+			*pc = c;
+			*pb = b;
+			return; /* zero length strings require no mixing */
 		}
 
-	} else {                        /* need to read the key one byte at a time */
+	} else {        /* need to read the key one byte at a time */
 		const uint8_t *k = (const uint8_t *)key;
 
 		/*--------------- all but the last block: affect some 32 bits of (a,b,c) */
-		while (length > 12)
-		{
+		while (length > 12) {
 			a += k[0];
-			a += ((uint32_t)k[1])<<8;
-			a += ((uint32_t)k[2])<<16;
-			a += ((uint32_t)k[3])<<24;
+			a += ((uint32_t) k[1]) << 8;
+			a += ((uint32_t) k[2]) << 16;
+			a += ((uint32_t) k[3]) << 24;
 			b += k[4];
-			b += ((uint32_t)k[5])<<8;
-			b += ((uint32_t)k[6])<<16;
-			b += ((uint32_t)k[7])<<24;
+			b += ((uint32_t) k[5]) << 8;
+			b += ((uint32_t) k[6]) << 16;
+			b += ((uint32_t) k[7]) << 24;
 			c += k[8];
-			c += ((uint32_t)k[9])<<8;
-			c += ((uint32_t)k[10])<<16;
-			c += ((uint32_t)k[11])<<24;
-			mix(a,b,c);
+			c += ((uint32_t) k[9]) << 8;
+			c += ((uint32_t) k[10]) << 16;
+			c += ((uint32_t) k[11]) << 24;
+			mix(a, b, c);
 			length -= 12;
 			k += 12;
 		}
 
 		/*-------------------------------- last block: affect all 32 bits of (c) */
-		switch(length)                   /* all the case statements fall through */
-		{
-		case 12: c+=((uint32_t)k[11])<<24;
-		case 11: c+=((uint32_t)k[10])<<16;
-		case 10: c+=((uint32_t)k[9])<<8;
-		case 9 : c+=k[8];
-		case 8 : b+=((uint32_t)k[7])<<24;
-		case 7 : b+=((uint32_t)k[6])<<16;
-		case 6 : b+=((uint32_t)k[5])<<8;
-		case 5 : b+=k[4];
-		case 4 : a+=((uint32_t)k[3])<<24;
-		case 3 : a+=((uint32_t)k[2])<<16;
-		case 2 : a+=((uint32_t)k[1])<<8;
-		case 1 : a+=k[0];
+		switch (length) {   /* all the case statements fall through */
+		case 12:
+			c += ((uint32_t) k[11]) << 24;
+		case 11:
+			c += ((uint32_t) k[10]) << 16;
+		case 10:
+			c += ((uint32_t) k[9]) << 8;
+		case 9:
+			c += k[8];
+		case 8:
+			b += ((uint32_t) k[7]) << 24;
+		case 7:
+			b += ((uint32_t) k[6]) << 16;
+		case 6:
+			b += ((uint32_t) k[5]) << 8;
+		case 5:
+			b += k[4];
+		case 4:
+			a += ((uint32_t) k[3]) << 24;
+		case 3:
+			a += ((uint32_t) k[2]) << 16;
+		case 2:
+			a += ((uint32_t) k[1]) << 8;
+		case 1:
+			a += k[0];
 			break;
-		case 0 : *pc=c; *pb=b; return;  /* zero length strings require no mixing */
+		case 0:
+			*pc = c;
+			*pb = b;
+			return; /* zero length strings require no mixing */
 		}
 	}
 
-	final(a,b,c);
-	*pc=c; *pb=b;
+	final(a, b, c);
+	*pc = c;
+	*pb = b;
 }

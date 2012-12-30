@@ -32,14 +32,16 @@
 #include <ulib/regionlock.h>
 #include <ulib/chainhash.h>
 
-namespace ulib {
+namespace ulib
+{
 
-namespace mapreduce {
+namespace mapreduce
+{
 
 // store based on chain hash table
 template<class _Key, class _Val>
 class chain_hash_store : public ulib::chain_hash_map<_Key, _Val>,
-	      public ulib::region_lock
+	public ulib::region_lock
 {
 public:
 	typedef typename ulib::chain_hash_map<_Key,_Val>::size_type        size_type;
@@ -51,33 +53,35 @@ public:
 	typedef typename ulib::chain_hash_map<_Key,_Val>::const_iterator   const_iterator;
 
 	chain_hash_store(size_t min_bucket, size_t min_lock)
-	: ulib::chain_hash_map<_Key,_Val>(min_bucket),
-	  ulib::region_lock(min_lock)
-	{ assert(min_bucket >= min_lock); }
+		: ulib::chain_hash_map<_Key,_Val>(min_bucket),
+		  ulib::region_lock(min_lock) {
+		assert(min_bucket >= min_lock);
+	}
 
 	chain_hash_store(size_t min_bucket)
-	: ulib::chain_hash_map<_Key,_Val>(min_bucket),
-	  ulib::region_lock(min_bucket)
+		: ulib::chain_hash_map<_Key,_Val>(min_bucket),
+		  ulib::region_lock(min_bucket)
 	{ }
 
 	// DO NOT copy the elements
 	chain_hash_store(const chain_hash_store &other)
-	: ulib::chain_hash_map<_Key,_Val>(other),
-	  ulib::region_lock(((const ulib::region_lock *)&other)->bucket_count())
+		: ulib::chain_hash_map<_Key,_Val>(other),
+		  ulib::region_lock(((const ulib::region_lock *)&other)->bucket_count())
 	{ }
 
 	void
-	lock(size_t h)
-	{ acquire(h); }
+	lock(size_t h) {
+		acquire(h);
+	}
 
 	void
-	unlock(size_t h)
-	{ release(h); }
+	unlock(size_t h) {
+		release(h);
+	}
 
 	// again DO NOT copy the elements
 	chain_hash_store &
-	operator= (const chain_hash_store &other)
-	{
+	operator= (const chain_hash_store &other) {
 		*(ulib::chain_hash_map<_Key,_Val> *)this =
 			*(const ulib::chain_hash_map<_Key,_Val> *)&other;
 		*(ulib::region_lock *)this = *(const ulib::region_lock *)&other;
@@ -85,8 +89,9 @@ public:
 	}
 
 	size_type
-	bucket_count() const
-	{ return ((ulib::chain_hash_map<_Key,_Val> *)this)->bucket_count(); }
+	bucket_count() const {
+		return ((ulib::chain_hash_map<_Key,_Val> *)this)->bucket_count();
+	}
 };
 
 }  // namespace mapreduce

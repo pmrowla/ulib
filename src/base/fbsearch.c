@@ -31,8 +31,7 @@
 #include "strutils.h"
 #include "fbsearch.h"
 
-static inline char *
-__seekline(char *base, int len)
+static inline char *__seekline(char *base, int len)
 {
 	char *head = nextline(base, len);
 	char *end;
@@ -44,13 +43,13 @@ __seekline(char *base, int len)
 	return head;
 }
 
-static inline ssize_t 
-__findline(int fd, int (*comp) (const char *, void *), 
+static inline ssize_t
+__findline(int fd, int (*comp) (const char *, void *),
 	   void *param, size_t low, size_t high, int maxlen)
 {
-        size_t s, t, m;
-        ssize_t nb;
-        char buf[maxlen * 2];  /* including one extra byte for '\0' */
+	size_t s, t, m;
+	ssize_t nb;
+	char buf[maxlen * 2];   /* including one extra byte for '\0' */
 	char *line;
 	int len = 0;
 
@@ -59,7 +58,7 @@ __findline(int fd, int (*comp) (const char *, void *),
 
 	buf[0] = '\0';
 
-        for (s = low, t = high; s < t;) {
+	for (s = low, t = high; s < t;) {
 		m = (s + t) / 2;
 		/* the last byte of buf is reserved */
 		nb = pread(fd, buf, sizeof(buf) - 1, m);
@@ -69,7 +68,7 @@ __findline(int fd, int (*comp) (const char *, void *),
 		}
 
 		/* one extra byte is included to get nextline work */
-		len = (int) _min((ssize_t)(high - m), nb) + 1;
+		len = (int)_min((ssize_t) (high - m), nb) + 1;
 
 		line = __seekline(buf, len);
 		if (line == NULL) {
@@ -84,7 +83,7 @@ __findline(int fd, int (*comp) (const char *, void *),
 			s = m + 1;
 		else
 			t = m;
-        }
+	}
 
 	line = nextline(buf, len);
 	if (line && comp(buf, param) == 0)
@@ -96,31 +95,32 @@ __findline(int fd, int (*comp) (const char *, void *),
 ssize_t findline(int fd, int (*comp) (const char *, void *),
 		 void *param, int maxlen)
 {
-        struct stat state;
-                
-        if (fstat(fd, &state))
+	struct stat state;
+
+	if (fstat(fd, &state))
 		return -1;
 
-        return __findline(fd, comp, param, 0, state.st_size, maxlen);
+	return __findline(fd, comp, param, 0, state.st_size, maxlen);
 }
 
 ssize_t findfirstline(int fd, int (*comp) (const char *, void *),
 		      void *param, int maxlen)
 {
-        struct stat state;
+	struct stat state;
 	ssize_t pos;
-                
-        if (fstat(fd, &state))
+
+	if (fstat(fd, &state))
 		return -1;
 
-        ssize_t init_pos = __findline(fd, comp, param, 0, state.st_size, maxlen);
-                
-        while (init_pos > 0) {
+	ssize_t init_pos =
+		__findline(fd, comp, param, 0, state.st_size, maxlen);
+
+	while (init_pos > 0) {
 		pos = __findline(fd, comp, param, 0, init_pos, maxlen);
 		if (pos == -1)
 			break;
 		init_pos = pos;
-        }
+	}
 
-        return init_pos;
-}       
+	return init_pos;
+}

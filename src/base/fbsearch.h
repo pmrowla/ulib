@@ -32,27 +32,26 @@
 extern "C" {
 #endif
 
-/**
- * findline - find a match line
- * @fd:     file descriptor
- * @comp:   line compare function
- * @param:  parameter for @comp (e.g., target line)
- * @maxlen: max line length, including the '\n'
- * Note: lines in fd must be sorted in ascending order with respect to
- * @comp.
- *
- * return -1 if the line was not found, or offset to the line
- * otherwise.
- */
+	/**
+	 * findline - find a match line
+	 * @fd:     file descriptor
+	 * @comp:   line compare function
+	 * @param:  parameter for @comp (e.g., target line)
+	 * @maxlen: max line length, including the '\n'
+	 * Note: lines in fd must be sorted in ascending order with respect to
+	 * @comp.
+	 *
+	 * return -1 if the line was not found, or offset to the line
+	 * otherwise.
+	 */
 	ssize_t findline(int fd, int (*comp) (const char *, void *),
 			 void *param, int maxlen);
 
-/* find the first match line */
+	/* find the first match line */
 	ssize_t findfirstline(int fd, int (*comp) (const char *, void *),
 			      void *param, int maxlen);
 
 #ifdef __cplusplus
 }
 #endif
-
-#endif /* __ULIB_FBSEARCH_H */
+#endif              /* __ULIB_FBSEARCH_H */

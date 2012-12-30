@@ -46,11 +46,9 @@ extern "C" {
 
 	/* print each path of the tree */
 	void tree_print(struct tree_root *root,
-			void (*callback)(struct tree_root *));
-
+			void (*callback) (struct tree_root *));
 
 #ifdef __cplusplus
 }
 #endif
-
-#endif  /* __ULIB_TREEUTILS_H */
+#endif              /* __ULIB_TREEUTILS_H */

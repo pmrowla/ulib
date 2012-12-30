@@ -42,7 +42,7 @@ enum {
 extern "C" {
 #endif
 
-        /**
+	/**
 	 * hex_to_bin - convert a hex digit to its real value
 	 * @ch: ascii character represents hex digit
 	 *
@@ -51,15 +51,15 @@ extern "C" {
 	 */
 	int hex_to_bin(char ch);
 
-        /**
+	/**
 	 * hex2bin - convert an ascii hexadecimal string to its binary form
 	 * @dst: binary result
 	 * @src: ascii hexadecimal string
 	 * @count: result length
 	 */
-	void hex2bin(uint8_t *dst, const char *src, size_t count);
+	void hex2bin(uint8_t * dst, const char *src, size_t count);
 
-        /**
+	/**
 	 * hex_dump_to_buffer - convert a blob of data to "hex ASCII" in memory
 	 * @buf: data blob to dump
 	 * @len: number of bytes in the @buf
@@ -78,7 +78,7 @@ extern "C" {
 	 *
 	 * E.g.:
 	 *   hex_dump_to_buffer(frame->data, frame->len, 16, 1,
-	 *			linebuf, sizeof(linebuf), true);
+	 *                  linebuf, sizeof(linebuf), true);
 	 *
 	 * example output buffer:
 	 * 40 41 42 43 44 45 46 47 48 49 4a 4b 4c 4d 4e 4f  @ABCDEFGHIJKLMNO
@@ -87,7 +87,7 @@ extern "C" {
 				int groupsize, char *linebuf, size_t linebuflen,
 				int ascii);
 
-        /**
+	/**
 	 * print_hex_dump - print a text hex dump to stdout for a binary blob of data
 	 * @prefix_str: string to prefix each line with;
 	 *  caller supplies trailing spaces for alignment if desired
@@ -110,7 +110,7 @@ extern "C" {
 	 *
 	 * E.g.:
 	 *   print_hex_dump(KERN_DEBUG, "raw data: ", DUMP_PREFIX_ADDRESS,
-	 *		    16, 1, frame->data, frame->len, true);
+	 *              16, 1, frame->data, frame->len, true);
 	 *
 	 * Example output using %DUMP_PREFIX_OFFSET and 1-byte mode:
 	 * 0009ab42: 40 41 42 43 44 45 46 47 48 49 4a 4b 4c 4d 4e 4f  @ABCDEFGHIJKLMNO
@@ -121,7 +121,7 @@ extern "C" {
 			    int rowsize, int groupsize,
 			    const void *buf, size_t len, int ascii);
 
-        /**
+	/**
 	 * print_hex_dump_bytes - shorthand form of print_hex_dump() with default params
 	 * @prefix_str: string to prefix each line with;
 	 *  caller supplies trailing spaces for alignment if desired
@@ -139,5 +139,4 @@ extern "C" {
 #ifdef __cplusplus
 }
 #endif
-
-#endif  /* __ULIB_HEXDUMP_H */
+#endif              /* __ULIB_HEXDUMP_H */

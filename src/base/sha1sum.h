@@ -23,7 +23,7 @@
    SOFTWARE.
 */
 
-/* sha1sum.h - print SHA-1 Message-Digest Algorithm 
+/* sha1sum.h - print SHA-1 Message-Digest Algorithm
  * Copyright (C) 1998, 1999, 2000, 2001 Free Software Foundation, Inc.
  * Copyright (C) 2004 g10 Code GmbH
  *
@@ -42,7 +42,7 @@
  * Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-/* SHA-1 coden take from gnupg 1.3.92. 
+/* SHA-1 coden take from gnupg 1.3.92.
 
    Note, that this is a simple tool to be used for MS Windows.
 */
@@ -53,33 +53,33 @@
 #include <stdint.h>
 
 typedef struct {
-    uint32_t  h0, h1, h2, h3, h4;
-    uint32_t  nblocks;
-    unsigned char buf[64];
-    int  count;
+	uint32_t h0, h1, h2, h3, h4;
+	uint32_t nblocks;
+	unsigned char buf[64];
+	int count;
 } SHA1_CONTEXT;
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-	void SHA1Init(SHA1_CONTEXT *hd);
+	void SHA1Init(SHA1_CONTEXT * hd);
 
-/* Update the message digest with the contents
- * of INBUF with length INLEN.
- */
-	void SHA1Update(SHA1_CONTEXT *hd, const unsigned char *inbuf, size_t inlen);
+	/* Update the message digest with the contents
+	 * of INBUF with length INLEN.
+	 */
+	void SHA1Update(SHA1_CONTEXT * hd, const unsigned char *inbuf,
+			size_t inlen);
 
-/* The routine final terminates the computation and
- * returns the digest.
- * The handle is prepared for a new cycle, but adding bytes to the
- * handle will the destroy the returned buffer.
- * Returns: 20 bytes representing the digest.
- */
-	void SHA1Final(SHA1_CONTEXT *hd);
+	/* The routine final terminates the computation and
+	 * returns the digest.
+	 * The handle is prepared for a new cycle, but adding bytes to the
+	 * handle will the destroy the returned buffer.
+	 * Returns: 20 bytes representing the digest.
+	 */
+	void SHA1Final(SHA1_CONTEXT * hd);
 
 #ifdef __cplusplus
 }
 #endif
-
-#endif  /* __ULIB_SHA1SUM_H */
+#endif              /* __ULIB_SHA1SUM_H */

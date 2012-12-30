@@ -47,5 +47,4 @@ extern "C" {
 #ifdef __cplusplus
 }
 #endif
-
-#endif  /* __RC4_H */
+#endif              /* __RC4_H */

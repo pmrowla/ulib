@@ -30,12 +30,12 @@
 
 typedef struct timespec ulib_timer_t;
 
-static inline void timer_start(ulib_timer_t  *ts)
+static inline void timer_start(ulib_timer_t * ts)
 {
 	clock_gettime(CLOCK_MONOTONIC, ts);
 }
 
-static inline double timer_stop(const ulib_timer_t *ts)
+static inline double timer_stop(const ulib_timer_t * ts)
 {
 	ulib_timer_t tsnow;
 
@@ -45,4 +45,4 @@ static inline double timer_stop(const ulib_timer_t *ts)
 		(tsnow.tv_nsec - ts->tv_nsec) / 1000000000.0);
 }
 
-#endif  /* __ULIB_TIMER_H */
+#endif              /* __ULIB_TIMER_H */

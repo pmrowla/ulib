@@ -29,7 +29,7 @@
 unsigned long mpower(unsigned long a, unsigned long b, unsigned long m)
 {
 	unsigned long r = 1;
-	
+
 	while (b) {
 		if (b & 1)
 			r = r * a % m;

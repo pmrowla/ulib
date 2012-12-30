@@ -32,41 +32,41 @@ extern "C" {
 
 #include <stdint.h>
 
-	typedef uint64_t comb_t;
+    typedef uint64_t comb_t;
 
-	typedef struct {
-		comb_t max;
-		comb_t cur;
-	} combiter_t;
+    typedef struct {
+        comb_t max;
+        comb_t cur;
+    } combiter_t;
 
-	/**
-	 * comb_begin - begin the combination iteration by initializing @iter
-	 * @m:    total number of elements
-	 * @n:    number of elements to choose
-	 * @iter: generated combination iterator
-	 * Note:  the max @m supported is 64
-	 */
-	int comb_begin(int m, int n, combiter_t *iter);
-	
-	/**
-	 * comb_next - generate next iterator
-	 * @iter: combination iterator
-	 */
-	int comb_next(combiter_t *iter);
+    /**
+     * comb_begin - begin the combination iteration by initializing @iter
+     * @m:    total number of elements
+     * @n:    number of elements to choose
+     * @iter: generated combination iterator
+     * Note:  the max @m supported is 64
+     */
+    int comb_begin(int m, int n, combiter_t *iter);
+        
+    /**
+     * comb_next - generate next iterator
+     * @iter: combination iterator
+     */
+    int comb_next(combiter_t *iter);
 
-	/**
-	 * comb_get - get combination from iterator
-	 * @iter: iterator for the combination
-	 * @comb: output combination
-	 */
-	int comb_get(combiter_t *iter, comb_t *comb);
+    /**
+     * comb_get - get combination from iterator
+     * @iter: iterator for the combination
+     * @comb: output combination
+     */
+    int comb_get(combiter_t *iter, comb_t *comb);
 
-	/**
-	 * comb_elem - get and remove an element from the combination
-	 * @comb: input & output combination
-	 * Note: the elements are numbered starting from 1
-	 */
-	int comb_elem(comb_t *comb);
+    /**
+     * comb_elem - get and remove an element from the combination
+     * @comb: input & output combination
+     * Note: the elements are numbered starting from 1
+     */
+    int comb_elem(comb_t *comb);
 
 #ifdef __cplusplus
 }

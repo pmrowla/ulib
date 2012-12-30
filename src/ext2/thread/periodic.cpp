@@ -26,7 +26,8 @@
 #include <algorithm>
 #include "periodic.h"
 
-namespace ulib {
+namespace ulib
+{
 
 static bool timespec_less(const timespec &a, const timespec &b)
 {
@@ -81,7 +82,7 @@ inline periodic::taskid_t periodic::schedule_task(const task_t &task)
 	pthread_mutex_lock(&_mutex);
 
 	// NOTE: here use upper_bound instead of lower_bound to avoid starving.
-	std::list<task_t>::iterator it = 
+	std::list<task_t>::iterator it =
 		upper_bound(_tasks.begin(), _tasks.end(), task, task_less);
 	// If the new task become the next task, then wake up the timer thread to
 	// recalculate sleeping time.
@@ -111,7 +112,7 @@ periodic::taskid_t periodic::schedule(timespec run_time, task_func_t routine, vo
 }
 
 periodic::taskid_t periodic::schedule_repeated(timespec run_time, long interval,
-					       task_func_t routine, void *arg)
+		task_func_t routine, void *arg)
 {
 	task_t task;
 	task.next_run_time = run_time;

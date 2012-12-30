@@ -32,7 +32,7 @@ void rc4_set_key(const unsigned char *buf, size_t len, rc4_key_t * key)
 	unsigned char *state = key->state;
 	int i;
 
-	for (i = 0;  i < 256; ++i)
+	for (i = 0; i < 256; ++i)
 		state[i] = i;
 
 	key->x = 0;
@@ -49,7 +49,7 @@ void rc4_crypt(unsigned char *buf, size_t len, rc4_key_t * key)
 	unsigned char x;
 	unsigned char y;
 	unsigned char *state = key->state;
-	unsigned int  i;
+	unsigned int i;
 
 	x = key->x;
 	y = key->y;

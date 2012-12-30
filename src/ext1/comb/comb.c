@@ -29,48 +29,48 @@
 
 int comb_begin(int m, int n, combiter_t *iter)
 {
-	if (iter == NULL || n > m || n < 0 || m > 64)
-		return -1;
-	
-	iter->cur = (1ULL << n) - 1;
-	iter->max = iter->cur << (m - n);
+    if (iter == NULL || n > m || n < 0 || m > 64)
+        return -1;
+        
+    iter->cur = (1ULL << n) - 1;
+    iter->max = iter->cur << (m - n);
 
-	return 0;
+    return 0;
 }
-	
+        
 int comb_next(combiter_t *iter)
 {
-	if (iter == NULL)
-		return -1;
-	if (iter->cur == 0 || iter->cur >= iter->max)
-		return -1;
+    if (iter == NULL)
+        return -1;
+    if (iter->cur == 0 || iter->cur >= iter->max)
+        return -1;
 
-	iter->cur = hweight_next64(iter->cur);
+    iter->cur = hweight_next64(iter->cur);
 
-	return 0;
+    return 0;
 }
 
 int comb_get(combiter_t *iter, comb_t *comb)
 {
-	if (iter == NULL || comb == NULL)
-		return -1;
-	if (iter->cur == 0)
-		return -1;
-	*comb = iter->cur;
-	return 0;
+    if (iter == NULL || comb == NULL)
+        return -1;
+    if (iter->cur == 0)
+        return -1;
+    *comb = iter->cur;
+    return 0;
 }
 
 int comb_elem(comb_t *comb)
 {
-	int idx;
+    int idx;
 
-	if (comb == NULL)
-		return -1;
-	if (*comb == 0)
-		return -1;
+    if (comb == NULL)
+        return -1;
+    if (*comb == 0)
+        return -1;
 
-	idx = ffs64(*comb);
-	*comb &= *comb - 1;
+    idx = ffs64(*comb);
+    *comb &= *comb - 1;
 
-	return idx;
+    return idx;
 }

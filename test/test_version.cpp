@@ -3,9 +3,9 @@
 
 int main()
 {
-	printf("%s\n", ulib_version());
+    printf("%s\n", ulib_version());
 
-	printf("passed\n");
+    printf("passed\n");
 
-	return 0;
+    return 0;
 }

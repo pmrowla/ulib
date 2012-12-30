@@ -4,18 +4,18 @@
 
 int main()
 {
-	struct bloom_filter bf;
+    struct bloom_filter bf;
 
-	assert(bfilter_create(&bf, 1000, 100) == 0);
-	bfilter_zero(&bf);
+    assert(bfilter_create(&bf, 1000, 100) == 0);
+    bfilter_zero(&bf);
 
-	assert(bfilter_get(&bf, "xyz", 3) == 0);
-	bfilter_set(&bf, "xyz", 3);
-	assert(bfilter_get(&bf, "xyz", 3) == 1);	
+    assert(bfilter_get(&bf, "xyz", 3) == 0);
+    bfilter_set(&bf, "xyz", 3);
+    assert(bfilter_get(&bf, "xyz", 3) == 1);    
 
-	bfilter_destroy(&bf);
-	
-	printf("passed\n");
+    bfilter_destroy(&bf);
+        
+    printf("passed\n");
 
-	return 0;
+    return 0;
 }

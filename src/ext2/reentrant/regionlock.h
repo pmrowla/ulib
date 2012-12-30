@@ -31,69 +31,69 @@
 namespace ulib {
 
 class region_lock {
-public:
-	region_lock(size_t max)
-	{
-		--max;
-		max |= max >> 1;
-		max |= max >> 2;
-		max |= max >> 4;
-		max |= max >> 8;
-		max |= max >> 16;
-		if (sizeof(size_t) == 8)
-			max |= max >> 32;
-		_mask  = max;
-		_locks = new pthread_spinlock_t [max + 1];
-		for (size_t i = 0; i <= _mask; ++i)
-			pthread_spin_init(&_locks[i], 0);
-	}
+  public:
+    region_lock(size_t max)
+    {
+        --max;
+        max |= max >> 1;
+        max |= max >> 2;
+        max |= max >> 4;
+        max |= max >> 8;
+        max |= max >> 16;
+        if (sizeof(size_t) == 8)
+            max |= max >> 32;
+        _mask  = max;
+        _locks = new pthread_spinlock_t [max + 1];
+        for (size_t i = 0; i <= _mask; ++i)
+            pthread_spin_init(&_locks[i], 0);
+    }
 
-	region_lock(const region_lock &other)
-	{
-		_mask  = other.bucket_count() - 1;
-		_locks = new pthread_spinlock_t [_mask + 1];
-		for (size_t i = 0; i <= _mask; ++i)
-			pthread_spin_init(&_locks[i], 0);
-	}
+    region_lock(const region_lock &other)
+    {
+        _mask  = other.bucket_count() - 1;
+        _locks = new pthread_spinlock_t [_mask + 1];
+        for (size_t i = 0; i <= _mask; ++i)
+            pthread_spin_init(&_locks[i], 0);
+    }
 
-	virtual
-	~region_lock()
-	{
-		for (size_t i = 0; i <= _mask; ++i)
-			pthread_spin_destroy(_locks + i);
-		delete [] _locks;
-	}
+    virtual
+    ~region_lock()
+    {
+        for (size_t i = 0; i <= _mask; ++i)
+            pthread_spin_destroy(_locks + i);
+        delete [] _locks;
+    }
 
-	region_lock &
-	operator= (const region_lock &other)
-	{
-		if (bucket_count() != other.bucket_count()) {
-			for (size_t i = 0; i <= _mask; ++i)
-				pthread_spin_destroy(_locks + i);
-			delete [] _locks;
-			_mask  = other.bucket_count() - 1;
-			_locks = new pthread_spinlock_t [_mask + 1];
-			for (size_t i = 0; i <= _mask; ++i)
-				pthread_spin_init(&_locks[i], 0);
-		}
-		return *this;
-	}
+    region_lock &
+    operator= (const region_lock &other)
+    {
+        if (bucket_count() != other.bucket_count()) {
+            for (size_t i = 0; i <= _mask; ++i)
+                pthread_spin_destroy(_locks + i);
+            delete [] _locks;
+            _mask  = other.bucket_count() - 1;
+            _locks = new pthread_spinlock_t [_mask + 1];
+            for (size_t i = 0; i <= _mask; ++i)
+                pthread_spin_init(&_locks[i], 0);
+        }
+        return *this;
+    }
 
-	void
-	acquire(size_t h) const
-	{ pthread_spin_lock(_locks + (h & _mask)); }
+    void
+    acquire(size_t h) const
+    { pthread_spin_lock(_locks + (h & _mask)); }
 
-	void
-	release(size_t h) const
-	{ pthread_spin_unlock(_locks + (h & _mask)); }
+    void
+    release(size_t h) const
+    { pthread_spin_unlock(_locks + (h & _mask)); }
 
-	size_t
-	bucket_count() const
-	{ return _mask + 1; }
+    size_t
+    bucket_count() const
+    { return _mask + 1; }
 
-private:
-	size_t _mask;
-	pthread_spinlock_t *_locks;
+  private:
+    size_t _mask;
+    pthread_spinlock_t *_locks;
 };
 
 }  // namespace ulib
