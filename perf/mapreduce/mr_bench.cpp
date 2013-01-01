@@ -30,7 +30,6 @@
 #include <ulib/timer.h>
 #include <ulib/dataset.h>
 #include <ulib/mapreduce.h>
-#include <ulib/alignhash.h>
 #include <ulib/chainhash_r.h>
 
 static const char *usage =
@@ -39,10 +38,10 @@ static const char *usage =
         "usage: %s [options]\n"
         "options:\n"
         "  -t<ntask>   - number of tasks, default is 1\n"
-        "  -l<nlock>   - number of locks, default is 512\n"
-        "  -k<nslot>   - number of slots, default is 0x10000\n"
-        "  -n<size>    - dataset size in elements, default is 0x2000000\n"
-        "  -r<range>   - the range of value, default is 0x10000\n"
+        "  -l<nlock>   - number of locks, default is 256\n"
+        "  -k<nslot>   - number of slots, default is 10000000\n"
+        "  -n<size>    - dataset size in elements, default is 10000000\n"
+        "  -r<range>   - the range of value, default is 1000000\n"
         "  -s<exp>     - Zipf dataset parameter, default is 0\n"
         "  -w<file>    - output data set to file\n"
         "  -z          - correctness check\n"
@@ -63,11 +62,11 @@ int main(int argc, char *argv[])
 {
     int    oc;
     int    ntask = 1;
-    int    nlock = 512;
-    size_t nslot = 0x10000;
-    int    range = 0x10000;
+    int    nlock = 256;
+    size_t nslot = 10000000;
+    int    range = 1000000;
     float  s     = 0.0;
-    size_t size  = 0x2000000;
+    size_t size  = 10000000;
     bool   check = false;
     char  * file = NULL;
 
@@ -111,7 +110,7 @@ int main(int argc, char *argv[])
     typedef JOB::reducer_type REDUCER;
     typedef JOB::result_type  RESULT;
     // for verification
-    typedef align_hash_map<RESULT::key_type, RESULT::value_type> AMAP;
+    typedef chain_hash_map<RESULT::key_type, RESULT::value_type> CMAP;
 
     // three elements of a computation
     DS     dataset(size, range, s);
@@ -141,19 +140,21 @@ int main(int argc, char *argv[])
     }
 
     if (check) {
-        AMAP map;
+        CMAP map(nslot);
+        MAPPER m;
+        fprintf(stderr, "Preparing correctness check ...\t");
         timer_start(&timer);
         for (DS::const_iterator it = dataset.begin(); it != dataset.end(); ++it) {
-            MAPPER  m;
             m(*it);
             for (MAPPER::iterator mit = m.begin(); mit != m.end(); ++mit)
                 REDUCER(map[mit->first]) += mit->second;
+            m.reset();
         }
         elapsed = timer_stop(&timer);
-        fprintf(stderr, "checking with aligned hash OK: %f sec\n", elapsed);
+        fprintf(stderr, "%f sec\n", elapsed);
         // perform forward and backward checks to guarantee
         // that the result set is exactly the same as the
-        // AMAP.
+        // CMAP.
         for (RESULT::const_iterator it = result.begin(); it != result.end(); ++it) {
             if (it.value() != map[it.key()]) {
                 fprintf(stderr, "expect %lu, actual %lu for key %d\n",
@@ -161,15 +162,15 @@ int main(int argc, char *argv[])
                 exit(EXIT_FAILURE);
             }
         }
-        fprintf(stderr, "forward check OK\n");
-        for (AMAP::const_iterator it = map.begin(); it != map.end(); ++it) {
+        fprintf(stderr, "Forward check OK\n");
+        for (CMAP::const_iterator it = map.begin(); it != map.end(); ++it) {
             if (it.value() != result[it.key()]) {
                 fprintf(stderr, "expect %lu, actual %lu for key %d\n",
                         result[it.key()], it.value(), it.key().key());
                 exit(EXIT_FAILURE);
             }
         }
-        fprintf(stderr, "backward check OK\n");
+        fprintf(stderr, "Backward check OK\n");
     }
 
     return 0;

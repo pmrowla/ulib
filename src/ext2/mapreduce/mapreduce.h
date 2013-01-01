@@ -80,14 +80,17 @@ public:
 
 	typedef typename std::vector< std::pair<K, V> >::iterator       iterator;
 	typedef typename std::vector< std::pair<K, V> >::const_iterator const_iterator;
-
+    
 	mapper() : _pos(0) { }
+    
+	virtual
+	~mapper() { }
 
 	void
 	emit(const K &key, const V &value) {
 		if (_pos < _pairs.size()) {
-			_pairs[_pos].first  = key;
-			_pairs[_pos].second = value;
+                    _pairs[_pos].first  = key;
+                    _pairs[_pos].second = value;
 		} else
 			_pairs.push_back(std::pair<K,V>(key, value));
 		++_pos;
@@ -147,6 +150,8 @@ template<typename K>
 class partition
 {
 public:
+	typedef K key_type;
+
 	partition(const K &key) : _key(key) { }
 
 	// algthough the key itself needs to implement the hashing,
@@ -206,8 +211,8 @@ public:
 private:
 	int
 	run() { // make it private as only the thread can call the function
+		M m;
 		for (I i = _begin; i != _end; ++i) {
-			M m;
 			m(*i);  // produce intermediate key/value pairs
 			for (typename M::const_iterator it = m.begin(); it != m.end(); ++it) {
 				size_t h = P<typename M::key_type>(it->first);
@@ -215,6 +220,7 @@ private:
 				R(_store[it->first]) += it->second;
 				_store.unlock(h);
 			}
+			m.reset();
 		}
 		return 0;
 	}
