@@ -37,30 +37,30 @@
 typedef uint64_t ah_iter_t;
 typedef uint64_t ah_size_t;
 
-#define AH_ISDEL(flag, i)        ( ((flag)[(i) >> 5] >> (((i) & 0x1fU) << 1)) & 1      )
-#define AH_ISEMPTY(flag, i)      ( ((flag)[(i) >> 5] >> (((i) & 0x1fU) << 1)) & 2      )
-#define AH_ISEITHER(flag, i)     ( ((flag)[(i) >> 5] >> (((i) & 0x1fU) << 1)) & 3      )
-#define AH_CLEAR_DEL(flag, i)    (  (flag)[(i) >> 5] &= ~(1ul << (((i) & 0x1fU) << 1)) )
-#define AH_CLEAR_EMPTY(flag, i)  (  (flag)[(i) >> 5] &= ~(2ul << (((i) & 0x1fU) << 1)) )
-#define AH_CLEAR_BOTH(flag, i)   (  (flag)[(i) >> 5] &= ~(3ul << (((i) & 0x1fU) << 1)) )
-#define AH_SET_DEL(flag, i)      (  (flag)[(i) >> 5] |=  (1ul << (((i) & 0x1fU) << 1)) )
+#define AH_ISDEL(flag, i)	 ( ((flag)[(i) >> 5] >> (((i) & 0x1fU) << 1)) & 1      )
+#define AH_ISEMPTY(flag, i)	 ( ((flag)[(i) >> 5] >> (((i) & 0x1fU) << 1)) & 2      )
+#define AH_ISEITHER(flag, i)	 ( ((flag)[(i) >> 5] >> (((i) & 0x1fU) << 1)) & 3      )
+#define AH_CLEAR_DEL(flag, i)	 (  (flag)[(i) >> 5] &= ~(1ul << (((i) & 0x1fU) << 1)) )
+#define AH_CLEAR_EMPTY(flag, i)	 (  (flag)[(i) >> 5] &= ~(2ul << (((i) & 0x1fU) << 1)) )
+#define AH_CLEAR_BOTH(flag, i)	 (  (flag)[(i) >> 5] &= ~(3ul << (((i) & 0x1fU) << 1)) )
+#define AH_SET_DEL(flag, i)	 (  (flag)[(i) >> 5] |=	 (1ul << (((i) & 0x1fU) << 1)) )
 
-#define AH_FLAGS_BYTE(nb)        ( (nb) < 32? 8: (nb) >> 2 )
+#define AH_FLAGS_BYTE(nb)	 ( (nb) < 32? 8: (nb) >> 2 )
 
 #else
 
 typedef uint32_t ah_iter_t;
 typedef uint32_t ah_size_t;
 
-#define AH_ISDEL(flag, i)        ( ((flag)[(i) >> 4] >> (((i) & 0xfU) << 1)) & 1      )
-#define AH_ISEMPTY(flag, i)      ( ((flag)[(i) >> 4] >> (((i) & 0xfU) << 1)) & 2      )
-#define AH_ISEITHER(flag, i)     ( ((flag)[(i) >> 4] >> (((i) & 0xfU) << 1)) & 3      )
-#define AH_CLEAR_DEL(flag, i)    (  (flag)[(i) >> 4] &= ~(1ul << (((i) & 0xfU) << 1)) )
-#define AH_CLEAR_EMPTY(flag, i)  (  (flag)[(i) >> 4] &= ~(2ul << (((i) & 0xfU) << 1)) )
-#define AH_CLEAR_BOTH(flag, i)   (  (flag)[(i) >> 4] &= ~(3ul << (((i) & 0xfU) << 1)) )
-#define AH_SET_DEL(flag, i)      (  (flag)[(i) >> 4] |=  (1ul << (((i) & 0xfU) << 1)) )
+#define AH_ISDEL(flag, i)	 ( ((flag)[(i) >> 4] >> (((i) & 0xfU) << 1)) & 1      )
+#define AH_ISEMPTY(flag, i)	 ( ((flag)[(i) >> 4] >> (((i) & 0xfU) << 1)) & 2      )
+#define AH_ISEITHER(flag, i)	 ( ((flag)[(i) >> 4] >> (((i) & 0xfU) << 1)) & 3      )
+#define AH_CLEAR_DEL(flag, i)	 (  (flag)[(i) >> 4] &= ~(1ul << (((i) & 0xfU) << 1)) )
+#define AH_CLEAR_EMPTY(flag, i)	 (  (flag)[(i) >> 4] &= ~(2ul << (((i) & 0xfU) << 1)) )
+#define AH_CLEAR_BOTH(flag, i)	 (  (flag)[(i) >> 4] &= ~(3ul << (((i) & 0xfU) << 1)) )
+#define AH_SET_DEL(flag, i)	 (  (flag)[(i) >> 4] |=	 (1ul << (((i) & 0xfU) << 1)) )
 
-#define AH_FLAGS_BYTE(nb)        ( (nb) < 16? 4: (nb) >> 2 )
+#define AH_FLAGS_BYTE(nb)	 ( (nb) < 16? 4: (nb) >> 2 )
 
 #endif
 
@@ -71,229 +71,229 @@ enum {
 	AH_INS_NEW = 1,
 	/**< element was placed at a new bucket */
 	AH_INS_DEL = 2
-		     /**< element was placed at a deleted bucket */
+	/**< element was placed at a deleted bucket */
 };
 
 /* Users can optionally specify double hashing by defining
  * AH_DOUBLE_HASHING. Double hashing is preferable only when key is
  * not randomly distributed. */
 #ifdef AH_DOUBLE_HASHING
-#define AH_PROBING_STEP(h)       ( ((h) ^ (h) >> 3) | 1 )
+#define AH_PROBING_STEP(h)	 ( ((h) ^ (h) >> 3) | 1 )
 #else
-#define AH_PROBING_STEP(h)       ( 1 )
+#define AH_PROBING_STEP(h)	 ( 1 )
 #endif
 
-#define AH_LOAD_FACTOR           0.7
+#define AH_LOAD_FACTOR		 0.7
 
 #define DEFINE_ALIGNHASH(_name, _key_t, _val_t, _ismap, _hashfn, _hasheq) \
-    typedef struct {                                                    \
-        ah_size_t nbucket;                                              \
-        ah_size_t nelem;                                                \
-        ah_size_t noccupied;                                            \
-        ah_size_t bound;                                                \
-        ah_size_t *flags;                                               \
-        _key_t    *keys;                                                \
-        _val_t    *vals;                                                \
-    } alignhash_##_name##_t;                                            \
-                                                                        \
-    static inline alignhash_##_name##_t *                               \
-    alignhash_init_##_name()                                            \
-    {                                                                   \
-        return (alignhash_##_name##_t*)                                 \
-            calloc(1, sizeof(alignhash_##_name##_t));                   \
-    }                                                                   \
-                                                                        \
-    static inline void                                                  \
-    alignhash_destroy_##_name(alignhash_##_name##_t *h)                 \
-    {                                                                   \
-        if (h) {                                                        \
-            free(h->flags);                                             \
-            free(h->keys);                                              \
-            free(h->vals);                                              \
-            free(h);                                                    \
-        }                                                               \
-    }                                                                   \
-                                                                        \
-    static inline void                                                  \
-    alignhash_clear_##_name(alignhash_##_name##_t *h)                   \
-    {                                                                   \
-        if (h && h->flags) {                                            \
-            memset(h->flags, 0xaa, AH_FLAGS_BYTE(h->nbucket));          \
-            h->nelem  = 0;                                              \
-            h->noccupied = 0;                                           \
-        }                                                               \
-    }                                                                   \
-                                                                        \
-    static inline ah_iter_t                                             \
-    alignhash_get_##_name(const alignhash_##_name##_t *h, _key_t key)   \
-    {                                                                   \
-        if (h->nbucket) {                                               \
-            register ah_size_t i, step;                                 \
-            ah_size_t mask = h->nbucket - 1;                            \
-            ah_size_t k, last;                                          \
-            k = _hashfn(key);                                           \
-            i = k & mask;                                               \
-            step = AH_PROBING_STEP(k);                                  \
-            last = i;                                                   \
-            while (!AH_ISEMPTY(h->flags, i) &&                          \
-                   (AH_ISDEL(h->flags, i) || !_hasheq(h->keys[i], key))) { \
-                i = (i + step) & mask;                                  \
-                if (i == last)                                          \
-                    return h->nbucket;                                  \
-            }                                                           \
-            return AH_ISEMPTY(h->flags, i)? h->nbucket : i;             \
-        } else                                                          \
-            return 0;                                                   \
-    }                                                                   \
-                                                                        \
-    static inline int                                                   \
-    alignhash_resize_##_name(alignhash_##_name##_t *h, ah_size_t new_nbucket) \
-    {                                                                   \
-        ah_size_t *new_flags = 0;                                       \
-        _key_t    *new_keys  = 0;                                       \
-        _val_t    *new_vals  = 0;                                       \
-        ah_size_t  new_mask  = new_nbucket - 1;                         \
-        ah_size_t  j, flaglen;                                          \
-        if (h->nelem >= (ah_size_t)(new_nbucket * AH_LOAD_FACTOR + 0.5)) \
-            return -1;                                                  \
-        flaglen = AH_FLAGS_BYTE(new_nbucket);                           \
-        new_flags = (ah_size_t *) malloc(flaglen);                      \
-        if (new_flags == 0)                                             \
-            return -1;                                                  \
-        memset(new_flags, 0xaa, flaglen);                               \
-        if (h->nbucket < new_nbucket) {                                 \
-            new_keys = (_key_t*)                                        \
-                realloc(h->keys, new_nbucket * sizeof(_key_t));         \
-            if (new_keys == 0) {                                        \
-                free(new_flags);                                        \
-                return -1;                                              \
-            }                                                           \
-            h->keys = new_keys;                                         \
-            if (_ismap) {                                               \
-                new_vals = (_val_t*)                                    \
-                    realloc(h->vals, new_nbucket * sizeof(_val_t));     \
-                if (new_vals == 0) {                                    \
-                    free(new_flags);                                    \
-                    return -1;                                          \
-                }                                                       \
-                h->vals = new_vals;                                     \
-            }                                                           \
-        }                                                               \
-        for (j = 0; j != h->nbucket; ++j) {                             \
-            if (AH_ISEITHER(h->flags, j) == 0) {                        \
-                _key_t key = h->keys[j];                                \
-                _val_t val;                                             \
-                if (_ismap)                                             \
-                    val = h->vals[j];                                   \
-                AH_SET_DEL(h->flags, j);                                \
-                for (;;) {                                              \
-                    register ah_size_t i, step;                         \
-                    ah_size_t k;                                        \
-                    k = _hashfn(key);                                   \
-                    i = k & new_mask;                                   \
-                    step = AH_PROBING_STEP(k);                          \
-                    while (!AH_ISEMPTY(new_flags, i))                   \
-                        i = (i + step) & new_mask;                      \
-                    AH_CLEAR_EMPTY(new_flags, i);                       \
-                    if (i < h->nbucket && AH_ISEITHER(h->flags, i) == 0) { \
-                        _swap(h->keys[i], key);                         \
-                        if (_ismap)                                     \
-                            _swap(h->vals[i], val);                     \
-                        AH_SET_DEL(h->flags, i);                        \
-                    } else {                                            \
-                        h->keys[i] = key;                               \
-                        if (_ismap)                                     \
-                            h->vals[i] = val;                           \
-                        break;                                          \
-                    }                                                   \
-                }                                                       \
-            }                                                           \
-        }                                                               \
-        if (h->nbucket > new_nbucket) {                                 \
-            new_keys = (_key_t*)                                        \
-                realloc(h->keys, new_nbucket * sizeof(_key_t));         \
-            if (new_keys)                                               \
-                h->keys = new_keys;                                     \
-            if (_ismap) {                                               \
-                new_vals = (_val_t*)                                    \
-                    realloc(h->vals, new_nbucket * sizeof(_val_t));     \
-                if (new_vals)                                           \
-                    h->vals = new_vals;                                 \
-            }                                                           \
-        }                                                               \
-        free(h->flags);                                                 \
-        h->flags = new_flags;                                           \
-        h->nbucket = new_nbucket;                                       \
-        h->noccupied = h->nelem;                                        \
-        h->bound = (ah_size_t)(h->nbucket * AH_LOAD_FACTOR + 0.5);      \
-        return 0;                                                       \
-    }                                                                   \
-                                                                        \
-    static inline ah_iter_t                                             \
-    alignhash_set_##_name(alignhash_##_name##_t *h, _key_t key, int *ret) \
-    {                                                                   \
-        register ah_size_t i, step;                                     \
-        ah_size_t x, k, mask, site, last;                               \
-        if (h->noccupied >= h->bound) {                                 \
-            if (h->nbucket) {                                           \
-                if (alignhash_resize_##_name(h, h->nbucket * 2))        \
-                    return h->nbucket;                                  \
-            } else {                                                    \
-                if (alignhash_resize_##_name(h, 2))                     \
-                    return h->nbucket;                                  \
-            }                                                           \
-        }                                                               \
-        site = h->nbucket;                                              \
-        mask = h->nbucket - 1;                                          \
-        x = site;                                                       \
-        k = _hashfn(key);                                               \
-        i = k & mask;                                                   \
-        if (AH_ISEMPTY(h->flags, i))                                    \
-            x = i;                                                      \
-        else {                                                          \
-            step = AH_PROBING_STEP(k);                                  \
-            last = i;                                                   \
-            while (!AH_ISEMPTY(h->flags, i) &&                          \
-                   (AH_ISDEL(h->flags, i) || !_hasheq(h->keys[i], key))) { \
-                if (AH_ISDEL(h->flags, i))                              \
-                    site = i;                                           \
-                i = (i + step) & mask;                                  \
-                if (i == last) {                                        \
-                    x = site;                                           \
-                    break;                                              \
-                }                                                       \
-            }                                                           \
-            if (x == h->nbucket) {                                      \
-                if (AH_ISEMPTY(h->flags, i) && site != h->nbucket)      \
-                    x = site;                                           \
-                else                                                    \
-                    x = i;                                              \
-            }                                                           \
-        }                                                               \
-        if (AH_ISEMPTY(h->flags, x)) {                                  \
-            h->keys[x] = key;                                           \
-            AH_CLEAR_BOTH(h->flags, x);                                 \
-            ++h->nelem;                                                 \
-            ++h->noccupied;                                             \
-            *ret = AH_INS_NEW;                                          \
-        } else if (AH_ISDEL(h->flags, x)) {                             \
-            h->keys[x] = key;                                           \
-            AH_CLEAR_BOTH(h->flags, x);                                 \
-            ++h->nelem;                                                 \
-            *ret = AH_INS_DEL;                                          \
-        } else                                                          \
-            *ret = AH_INS_ERR;                                          \
-        return x;                                                       \
-    }                                                                   \
-                                                                        \
-    static inline void                                                  \
-    alignhash_del_##_name(alignhash_##_name##_t *h, ah_iter_t x)        \
-    {                                                                   \
-        if (x != h->nbucket && !AH_ISEITHER(h->flags, x)) {             \
-            AH_SET_DEL(h->flags, x);                                    \
-            --h->nelem;                                                 \
-        }                                                               \
-    }
+	typedef struct {						\
+		ah_size_t nbucket;					\
+		ah_size_t nelem;					\
+		ah_size_t noccupied;					\
+		ah_size_t bound;					\
+		ah_size_t *flags;					\
+		_key_t	  *keys;					\
+		_val_t	  *vals;					\
+	} alignhash_##_name##_t;					\
+									\
+	static inline alignhash_##_name##_t *				\
+	alignhash_init_##_name()					\
+	{								\
+		return (alignhash_##_name##_t*)				\
+			calloc(1, sizeof(alignhash_##_name##_t));	\
+	}								\
+									\
+	static inline void						\
+	alignhash_destroy_##_name(alignhash_##_name##_t *h)		\
+	{								\
+		if (h) {						\
+			free(h->flags);					\
+			free(h->keys);					\
+			free(h->vals);					\
+			free(h);					\
+		}							\
+	}								\
+									\
+	static inline void						\
+	alignhash_clear_##_name(alignhash_##_name##_t *h)		\
+	{								\
+		if (h && h->flags) {					\
+			memset(h->flags, 0xaa, AH_FLAGS_BYTE(h->nbucket)); \
+			h->nelem  = 0;					\
+			h->noccupied = 0;				\
+		}							\
+	}								\
+									\
+	static inline ah_iter_t						\
+	alignhash_get_##_name(const alignhash_##_name##_t *h, _key_t key) \
+	{								\
+		if (h->nbucket) {					\
+			register ah_size_t i, step;			\
+			ah_size_t mask = h->nbucket - 1;		\
+			ah_size_t k, last;				\
+			k = _hashfn(key);				\
+			i = k & mask;					\
+			step = AH_PROBING_STEP(k);			\
+			last = i;					\
+			while (!AH_ISEMPTY(h->flags, i) &&		\
+			       (AH_ISDEL(h->flags, i) || !_hasheq(h->keys[i], key))) { \
+				i = (i + step) & mask;			\
+				if (i == last)				\
+					return h->nbucket;		\
+			}						\
+			return AH_ISEMPTY(h->flags, i)? h->nbucket : i;	\
+		} else							\
+			return 0;					\
+	}								\
+									\
+	static inline int						\
+	alignhash_resize_##_name(alignhash_##_name##_t *h, ah_size_t new_nbucket) \
+	{								\
+		ah_size_t *new_flags = 0;				\
+		_key_t	  *new_keys  = 0;				\
+		_val_t	  *new_vals  = 0;				\
+		ah_size_t  new_mask  = new_nbucket - 1;			\
+		ah_size_t  j, flaglen;					\
+		if (h->nelem >= (ah_size_t)(new_nbucket * AH_LOAD_FACTOR + 0.5)) \
+			return -1;					\
+		flaglen = AH_FLAGS_BYTE(new_nbucket);			\
+		new_flags = (ah_size_t *) malloc(flaglen);		\
+		if (new_flags == 0)					\
+			return -1;					\
+		memset(new_flags, 0xaa, flaglen);			\
+		if (h->nbucket < new_nbucket) {				\
+			new_keys = (_key_t*)				\
+				realloc(h->keys, new_nbucket * sizeof(_key_t));	\
+			if (new_keys == 0) {				\
+				free(new_flags);			\
+				return -1;				\
+			}						\
+			h->keys = new_keys;				\
+			if (_ismap) {					\
+				new_vals = (_val_t*)			\
+					realloc(h->vals, new_nbucket * sizeof(_val_t));	\
+				if (new_vals == 0) {			\
+					free(new_flags);		\
+					return -1;			\
+				}					\
+				h->vals = new_vals;			\
+			}						\
+		}							\
+		for (j = 0; j != h->nbucket; ++j) {			\
+			if (AH_ISEITHER(h->flags, j) == 0) {		\
+				_key_t key = h->keys[j];		\
+				_val_t val;				\
+				if (_ismap)				\
+					val = h->vals[j];		\
+				AH_SET_DEL(h->flags, j);		\
+				for (;;) {				\
+					register ah_size_t i, step;	\
+					ah_size_t k;			\
+					k = _hashfn(key);		\
+					i = k & new_mask;		\
+					step = AH_PROBING_STEP(k);	\
+					while (!AH_ISEMPTY(new_flags, i)) \
+						i = (i + step) & new_mask; \
+					AH_CLEAR_EMPTY(new_flags, i);	\
+					if (i < h->nbucket && AH_ISEITHER(h->flags, i) == 0) { \
+						_swap(h->keys[i], key);	\
+						if (_ismap)		\
+							_swap(h->vals[i], val);	\
+						AH_SET_DEL(h->flags, i); \
+					} else {			\
+						h->keys[i] = key;	\
+						if (_ismap)		\
+							h->vals[i] = val; \
+						break;			\
+					}				\
+				}					\
+			}						\
+		}							\
+		if (h->nbucket > new_nbucket) {				\
+			new_keys = (_key_t*)				\
+				realloc(h->keys, new_nbucket * sizeof(_key_t));	\
+			if (new_keys)					\
+				h->keys = new_keys;			\
+			if (_ismap) {					\
+				new_vals = (_val_t*)			\
+					realloc(h->vals, new_nbucket * sizeof(_val_t));	\
+				if (new_vals)				\
+					h->vals = new_vals;		\
+			}						\
+		}							\
+		free(h->flags);						\
+		h->flags = new_flags;					\
+		h->nbucket = new_nbucket;				\
+		h->noccupied = h->nelem;				\
+		h->bound = (ah_size_t)(h->nbucket * AH_LOAD_FACTOR + 0.5); \
+		return 0;						\
+	}								\
+									\
+	static inline ah_iter_t						\
+	alignhash_set_##_name(alignhash_##_name##_t *h, _key_t key, int *ret) \
+	{								\
+		register ah_size_t i, step;				\
+		ah_size_t x, k, mask, site, last;			\
+		if (h->noccupied >= h->bound) {				\
+			if (h->nbucket) {				\
+				if (alignhash_resize_##_name(h, h->nbucket * 2)) \
+					return h->nbucket;		\
+			} else {					\
+				if (alignhash_resize_##_name(h, 2))	\
+					return h->nbucket;		\
+			}						\
+		}							\
+		site = h->nbucket;					\
+		mask = h->nbucket - 1;					\
+		x = site;						\
+		k = _hashfn(key);					\
+		i = k & mask;						\
+		if (AH_ISEMPTY(h->flags, i))				\
+			x = i;						\
+		else {							\
+			step = AH_PROBING_STEP(k);			\
+			last = i;					\
+			while (!AH_ISEMPTY(h->flags, i) &&		\
+			       (AH_ISDEL(h->flags, i) || !_hasheq(h->keys[i], key))) { \
+				if (AH_ISDEL(h->flags, i))		\
+					site = i;			\
+				i = (i + step) & mask;			\
+				if (i == last) {			\
+					x = site;			\
+					break;				\
+				}					\
+			}						\
+			if (x == h->nbucket) {				\
+				if (AH_ISEMPTY(h->flags, i) && site != h->nbucket) \
+					x = site;			\
+				else					\
+					x = i;				\
+			}						\
+		}							\
+		if (AH_ISEMPTY(h->flags, x)) {				\
+			h->keys[x] = key;				\
+			AH_CLEAR_BOTH(h->flags, x);			\
+			++h->nelem;					\
+			++h->noccupied;					\
+			*ret = AH_INS_NEW;				\
+		} else if (AH_ISDEL(h->flags, x)) {			\
+			h->keys[x] = key;				\
+			AH_CLEAR_BOTH(h->flags, x);			\
+			++h->nelem;					\
+			*ret = AH_INS_DEL;				\
+		} else							\
+			*ret = AH_INS_ERR;				\
+		return x;						\
+	}								\
+									\
+	static inline void						\
+	alignhash_del_##_name(alignhash_##_name##_t *h, ah_iter_t x)	\
+	{								\
+		if (x != h->nbucket && !AH_ISEITHER(h->flags, x)) {	\
+			AH_SET_DEL(h->flags, x);			\
+			--h->nelem;					\
+		}							\
+	}
 
 /*------------------------- Human Interface -------------------------*/
 
@@ -351,4 +351,4 @@ enum {
 /* return the capacity of an alignhash */
 #define alignhash_nbucket(h) ((h)->nbucket)
 
-#endif              /* __ULIB_ALIGNHASH_H */
+#endif		    /* __ULIB_ALIGNHASH_H */

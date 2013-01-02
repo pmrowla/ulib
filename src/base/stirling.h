@@ -52,8 +52,8 @@ static inline double st_comb_ln(unsigned int n, unsigned int r)
 	if (r == n || r == 0)
 		return 0;
 	return (n - r) * log((double)n / (n - r)) + r * log((double)n / r) -
-	       0.5 * log(2 * PI * r * (n - r) / n) +
-	       1.0 / 12 * (1.0 / n - 1.0 / (n - r) - 1.0 / r);
+		0.5 * log(2 * PI * r * (n - r) / n) +
+		1.0 / 12 * (1.0 / n - 1.0 / (n - r) - 1.0 / r);
 }
 
 static inline double st_comb(unsigned int n, unsigned int r)
@@ -66,4 +66,4 @@ static inline double st_comb(unsigned int n, unsigned int r)
 	return exp(st_comb_ln(n, r));
 }
 
-#endif              /* __ULIB_STIRLING_H */
+#endif		    /* __ULIB_STIRLING_H */

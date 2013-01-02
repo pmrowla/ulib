@@ -65,85 +65,85 @@ struct avl_root {
 	} while (0)
 
 /* emptiness tests */
-#define TREE_EMPTY(ptr)   ((ptr) == NIL)
+#define TREE_EMPTY(ptr)	  ((ptr) == NIL)
 #define SPLAY_EMPTY(ptr)  TREE_EMPTY(ptr)
-#define AVL_EMPTY(ptr)    TREE_EMPTY(ptr)
+#define AVL_EMPTY(ptr)	  TREE_EMPTY(ptr)
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-	/* applies to other trees derived from BST also */
-	struct tree_root *
-	tree_search(struct tree_root *entry,
-		    int (*compare) (const void *, const void *),
-		    struct tree_root *root);
+/* applies to other trees derived from BST also */
+struct tree_root *
+tree_search(struct tree_root *entry,
+	    int (*compare) (const void *, const void *),
+	    struct tree_root *root);
 
-	struct tree_root *
-	tree_min(struct tree_root *root);
+struct tree_root *
+tree_min(struct tree_root *root);
 
-	struct tree_root *
-	tree_max(struct tree_root *root);
+struct tree_root *
+tree_max(struct tree_root *root);
 
-	struct tree_root *
-	tree_successor(struct tree_root *root);
+struct tree_root *
+tree_successor(struct tree_root *root);
 
-	struct tree_root *
-	tree_predecessor(struct tree_root *root);
+struct tree_root *
+tree_predecessor(struct tree_root *root);
 
-	/* add a new entry regardless of any duplicates */
-	void tree_add(struct tree_root *new,
-		      int (*compare) (const void *, const void *),
-		      struct tree_root **root);
+/* add a new entry regardless of any duplicates */
+void tree_add(struct tree_root *new,
+	      int (*compare) (const void *, const void *),
+	      struct tree_root **root);
 
-	/* add a unique entry
-	   if the entry already exists, return the old one. Otherwise
-	   the new entry will be returned. */
-	struct tree_root *
-	tree_map(struct tree_root *new,
-		 int (*compare) (const void *, const void *),
-		 struct tree_root **root);
+/* add a unique entry
+   if the entry already exists, return the old one. Otherwise
+   the new entry will be returned. */
+struct tree_root *
+tree_map(struct tree_root *new,
+	 int (*compare) (const void *, const void *),
+	 struct tree_root **root);
 
-	void tree_del(struct tree_root *entry, struct tree_root **root);
+void tree_del(struct tree_root *entry, struct tree_root **root);
 
-	/* similar to tree_map, but it involves an additional splay
-	   operation */
-	struct tree_root *
-	splay_map(struct tree_root *new,
+/* similar to tree_map, but it involves an additional splay
+   operation */
+struct tree_root *
+splay_map(struct tree_root *new,
+	  int (*compare) (const void *, const void *),
+	  struct tree_root **root);
+
+/* accelerate splay_map at the expense of invalidating parent
+   pointers */
+struct tree_root *
+splay_map_nparent(struct tree_root *new,
 		  int (*compare) (const void *, const void *),
 		  struct tree_root **root);
 
-	/* accelerate splay_map at the expense of invalidating parent
-	   pointers */
-	struct tree_root *
-	splay_map_nparent(struct tree_root *new,
-			  int (*compare) (const void *, const void *),
-			  struct tree_root **root);
+/* similar to tree_search, but it involves an additional splay
+   operation */
+struct tree_root *
+splay_search(struct tree_root *entry,
+	     int (*compare) (const void *, const void *),
+	     struct tree_root **root);
 
-	/* similar to tree_search, but it involves an additional splay
-	   operation */
-	struct tree_root *
-	splay_search(struct tree_root *entry,
+/* accelerate splay_search at the expense of invalidating
+   parent pointers */
+struct tree_root *
+splay_search_nparent(struct tree_root *entry,
 		     int (*compare) (const void *, const void *),
 		     struct tree_root **root);
 
-	/* accelerate splay_search at the expense of invalidating
-	   parent pointers */
-	struct tree_root *
-	splay_search_nparent(struct tree_root *entry,
-			     int (*compare) (const void *, const void *),
-			     struct tree_root **root);
+void avl_add(struct avl_root *new,
+	     int (*compare) (const void *, const void *),
+	     struct avl_root **root);
 
-	void avl_add(struct avl_root *new,
-		     int (*compare) (const void *, const void *),
-		     struct avl_root **root);
+struct avl_root *
+avl_map(struct avl_root *new,
+	int (*compare) (const void *, const void *),
+	struct avl_root **root);
 
-	struct avl_root *
-	avl_map(struct avl_root *new,
-		int (*compare) (const void *, const void *),
-		struct avl_root **root);
-
-	void avl_del(struct avl_root *entry, struct avl_root **root);
+void avl_del(struct avl_root *entry, struct avl_root **root);
 
 #ifdef __cplusplus
 }
@@ -175,12 +175,12 @@ extern "C" {
 
 /* traverse the host struct instead of node */
 #define tree_for_each_entry(pos, root, member)				\
-	for (pos = tree_entry(tree_min(root), typeof(*pos), member);    \
+	for (pos = tree_entry(tree_min(root), typeof(*pos), member);	\
 	     &pos->member != NIL;					\
 	     pos = tree_entry(tree_successor(&pos->member), typeof(*pos), member))
 
 #define tree_for_each_entry_safe(pos, n, root, member)			\
-	for (pos = tree_entry(tree_min(root), typeof(*pos), member),    \
+	for (pos = tree_entry(tree_min(root), typeof(*pos), member),	\
 		     n = tree_entry(tree_successor(&pos->member), typeof(*pos), member); \
 	     &pos->member != NIL; pos = n,				\
 		     n = tree_entry(&n->member != NIL? tree_successor(&n->member): NIL, typeof(*n), member))
@@ -205,14 +205,14 @@ extern "C" {
 	     pos = tree_entry(tree_successor((struct tree_root *)&pos->member), typeof(*pos), member))
 
 #define avl_for_each_entry_safe(pos, n, root, member)			\
-	for (pos = tree_entry(tree_min((struct tree_root *)root), typeof(*pos), member), \
-		     n = tree_entry(tree_successor((struct tree_root *)&pos->member), typeof(*pos), member); \
-	     &pos->member != NIL;					\
-	     pos = n,							\
-		     n = tree_entry(&n->member != NIL? tree_successor((struct tree_root *)&n->member): NIL, typeof(*n), member))
+			 for (pos = tree_entry(tree_min((struct tree_root *)root), typeof(*pos), member), \
+				      n = tree_entry(tree_successor((struct tree_root *)&pos->member), typeof(*pos), member); \
+			      &pos->member != NIL;			\
+			      pos = n,					\
+				      n = tree_entry(&n->member != NIL? tree_successor((struct tree_root *)&n->member): NIL, typeof(*n), member))
 
 #ifdef __cplusplus
 #undef new
 #endif
 
-#endif  /* __ULIB_TREE_H */
+#endif	/* __ULIB_TREE_H */

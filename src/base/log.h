@@ -28,21 +28,21 @@
 
 #include <stdio.h>
 
-#define ULIB_LOG(level, fmt, ...)                                       \
-    fprintf(level, "[%s:%d] " fmt "\n", __FUNCTION__, __LINE__,  ##__VA_ARGS__)
+#define ULIB_LOG(level, fmt, ...)					\
+	fprintf(level, "[%s:%d] " fmt "\n", __FUNCTION__, __LINE__,  ##__VA_ARGS__)
 
 #ifdef UNDEBUG
 #define ULIB_DEBUG(fmt, ...)
 #else
-#define ULIB_DEBUG(fmt, ...)                        \
-    ULIB_LOG(stdout, "DEBUG  " fmt, ##__VA_ARGS__)
+#define ULIB_DEBUG(fmt, ...)				\
+	ULIB_LOG(stdout, "DEBUG	 " fmt, ##__VA_ARGS__)
 #endif
 
-#define ULIB_NOTICE(fmt, ...)                       \
-    ULIB_LOG(stdout, "NOTICE " fmt, ##__VA_ARGS__)
-#define ULIB_WARNING(fmt, ...)                      \
-    ULIB_LOG(stderr, "WARN   " fmt, ##__VA_ARGS__)
-#define ULIB_FATAL(fmt, ...)                        \
-    ULIB_LOG(stderr, "FATAL  " fmt, ##__VA_ARGS__)
+#define ULIB_NOTICE(fmt, ...)				\
+	ULIB_LOG(stdout, "NOTICE " fmt, ##__VA_ARGS__)
+#define ULIB_WARNING(fmt, ...)				\
+	ULIB_LOG(stderr, "WARN	 " fmt, ##__VA_ARGS__)
+#define ULIB_FATAL(fmt, ...)				\
+	ULIB_LOG(stderr, "FATAL	 " fmt, ##__VA_ARGS__)
 
 #endif

@@ -30,74 +30,74 @@
 #define HEAP_RIGHT(i)  ((i) * 2 + 2)
 #define HEAP_PARENT(i) (((i) - 1) / 2)
 
-#define DEFINE_HEAP(name, type, lt)                                     \
-    static inline void                                                  \
-    heap_push_##name(type *base, size_t hole, size_t top, type val)     \
-    {                                                                   \
-        register size_t parent = HEAP_PARENT(hole);                     \
-                                                                        \
-        while (hole > top && lt(base[parent], val)) {                   \
-            base[hole] = base[parent];                                  \
-            hole = parent;                                              \
-            parent = HEAP_PARENT(parent);                               \
-        }                                                               \
-        base[hole] = val;                                               \
-    }                                                                   \
-                                                                        \
-    static inline void                                                  \
-    heap_adjust_##name(type *base, size_t size, size_t hole, type val)  \
-    {                                                                   \
-        register size_t large = HEAP_RIGHT(hole);                       \
-        register size_t top = hole;                                     \
-                                                                        \
-        while (large < size) {                                          \
-            if (lt(base[large], base[large - 1]))                       \
-                large--;                                                \
-            base[hole] = base[large];                                   \
-            hole  = large;                                              \
-            large = HEAP_RIGHT(large);                                  \
-        }                                                               \
-        if (large == size) {                                            \
-            base[hole] = base[large - 1];                               \
-            hole = large - 1;                                           \
-        }                                                               \
-        heap_push_##name(base, hole, top, val);                         \
-    }                                                                   \
-                                                                        \
-    static inline void                                                  \
-    heap_init_##name(type *base, type *last)                            \
-    {                                                                   \
-        register size_t size   = last - base;                           \
-        register size_t parent = size / 2 - 1;                          \
-                                                                        \
-        if (size < 2)                                                   \
-            return;                                                     \
-        for (;;) {                                                      \
-            heap_adjust_##name(base, size, parent, base[parent]);       \
-                if (parent == 0)                                        \
-                    break;                                              \
-                parent--;                                               \
-        }                                                               \
-    }                                                                   \
-                                                                        \
-    static inline void                                                  \
-    heap_pop_##name(type *base, type *rear, type *res, type val)        \
-    {                                                                   \
-        *res = base[0];                                                 \
-        heap_adjust_##name(base, rear - base, 0, val);                  \
-    }                                                                   \
-                                                                        \
-    static inline void                                                  \
-    heap_pop_to_rear_##name(type *base, type *last)                     \
-    {                                                                   \
-        heap_pop_##name(base, last - 1, last - 1, *(last - 1));         \
-    }                                                                   \
-                                                                        \
-    static inline void                                                  \
-    heap_sort_##name(type *base, type *last)                            \
-    {                                                                   \
-        while (last - base > 1)                                         \
-            heap_pop_to_rear_##name(base, last--);                      \
-    }                                                                   \
- 
-#endif              /* __ULIB_HEAP_TPL_H */
+#define DEFINE_HEAP(name, type, lt)					\
+	static inline void						\
+	heap_push_##name(type *base, size_t hole, size_t top, type val)	\
+	{								\
+		register size_t parent = HEAP_PARENT(hole);		\
+									\
+		while (hole > top && lt(base[parent], val)) {		\
+			base[hole] = base[parent];			\
+			hole = parent;					\
+			parent = HEAP_PARENT(parent);			\
+		}							\
+		base[hole] = val;					\
+	}								\
+									\
+	static inline void						\
+	heap_adjust_##name(type *base, size_t size, size_t hole, type val) \
+	{								\
+		register size_t large = HEAP_RIGHT(hole);		\
+		register size_t top = hole;				\
+									\
+		while (large < size) {					\
+			if (lt(base[large], base[large - 1]))		\
+				large--;				\
+			base[hole] = base[large];			\
+			hole  = large;					\
+			large = HEAP_RIGHT(large);			\
+		}							\
+		if (large == size) {					\
+			base[hole] = base[large - 1];			\
+			hole = large - 1;				\
+		}							\
+		heap_push_##name(base, hole, top, val);			\
+	}								\
+									\
+	static inline void						\
+	heap_init_##name(type *base, type *last)			\
+	{								\
+		register size_t size   = last - base;			\
+		register size_t parent = size / 2 - 1;			\
+									\
+		if (size < 2)						\
+			return;						\
+		for (;;) {						\
+			heap_adjust_##name(base, size, parent, base[parent]); \
+				if (parent == 0)			\
+					break;				\
+				parent--;				\
+		}							\
+	}								\
+									\
+	static inline void						\
+	heap_pop_##name(type *base, type *rear, type *res, type val)	\
+	{								\
+		*res = base[0];						\
+		heap_adjust_##name(base, rear - base, 0, val);		\
+	}								\
+									\
+	static inline void						\
+	heap_pop_to_rear_##name(type *base, type *last)			\
+	{								\
+		heap_pop_##name(base, last - 1, last - 1, *(last - 1));	\
+	}								\
+									\
+	static inline void						\
+	heap_sort_##name(type *base, type *last)			\
+	{								\
+		while (last - base > 1)					\
+			heap_pop_to_rear_##name(base, last--);		\
+	}								\
+
+#endif		    /* __ULIB_HEAP_TPL_H */

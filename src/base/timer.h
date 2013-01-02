@@ -45,4 +45,4 @@ static inline double timer_stop(const ulib_timer_t * ts)
 		(tsnow.tv_nsec - ts->tv_nsec) / 1000000000.0);
 }
 
-#endif              /* __ULIB_TIMER_H */
+#endif		    /* __ULIB_TIMER_H */

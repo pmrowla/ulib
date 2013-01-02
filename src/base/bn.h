@@ -30,10 +30,10 @@
 extern "C" {
 #endif
 
-	/* Compute a^b % m */
-	unsigned long mpower(unsigned long a, unsigned long b, unsigned long m);
+/* Compute a^b % m */
+unsigned long mpower(unsigned long a, unsigned long b, unsigned long m);
 
 #ifdef __cplusplus
 }
 #endif
-#endif              /* __ULIB_BN_H */
+#endif		    /* __ULIB_BN_H */

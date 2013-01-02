@@ -45,11 +45,11 @@ typedef unsigned long ulong_t;
  *
  * There are 5 pieces of information stored for each node in an AVL tree
  *
- * 	pointer to less than child
- * 	pointer to greater than child
- * 	a pointer to the parent of this node
+ *	pointer to less than child
+ *	pointer to greater than child
+ *	a pointer to the parent of this node
  *	an indication  [0/1]  of which child I am of my parent
- * 	a "balance" (-1, 0, +1)  indicating which child tree is taller
+ *	a "balance" (-1, 0, +1)	 indicating which child tree is taller
  *
  * Since they only need 3 bits, the last two fields are packed into the
  * bottom bits of the parent pointer on 64 bit machines to save on space.
@@ -79,10 +79,10 @@ struct avl_node {
  * for 64 bit machines, avl_pcb contains parent pointer, balance and child_index
  * values packed in the following manner:
  *
- * |63                                  3|        2        |1          0 |
+ * |63					3|	  2	   |1	       0 |
  * |-------------------------------------|-----------------|-------------|
- * |      avl_parent hi order bits       | avl_child_index | avl_balance |
- * |                                     |                 |     + 1     |
+ * |	  avl_parent hi order bits	 | avl_child_index | avl_balance |
+ * |					 |		   |	 + 1	 |
  * |-------------------------------------|-----------------|-------------|
  *
  */
@@ -97,7 +97,7 @@ struct avl_node {
  * pointer to the parent of the current node is the high order bits
  */
 #define	AVL_XPARENT(n)		((struct avl_node *)((n)->avl_pcb & ~7))
-#define	AVL_SETPARENT(n, p)						\
+#define	AVL_SETPARENT(n, p)					\
 	((n)->avl_pcb = (((n)->avl_pcb & 7) | (uintptr_t)(p)))
 
 /*
@@ -139,7 +139,7 @@ struct avl_node {
 
 /*
  * The tree structure. The fields avl_root, avl_compar, and avl_offset come
- * first since they are needed for avl_find().  We want them to fit into
+ * first since they are needed for avl_find().	We want them to fit into
  * a single 64 byte cache line to make avl_find() as fast as possible.
  */
 struct avl_tree {

@@ -91,7 +91,7 @@ public:
 	// This method is thread-safe, it can be called before/after start()
 	// params:
 	//   run_time: the specified run time, system will guarantee to run the
-	//             routine after this time.
+	//	       routine after this time.
 	taskid_t
 	schedule(timespec run_time, task_func_t routine, void *arg);
 
@@ -111,9 +111,9 @@ private:
 	struct task_t {
 		taskid_t    id;
 		timespec    next_run_time;
-		long        interval;  // less or equal than zero means run once
+		long	    interval;  // less or equal than zero means run once
 		task_func_t routine;
-		void *      arg;
+		void *	    arg;
 	};
 
 	static void *
@@ -132,14 +132,14 @@ private:
 	bool _stop;
 
 	std::list<task_t> _tasks;  // list of tasks to be run
-	pthread_t         _thread; // all scheduled task will be run on this thread
-	pthread_cond_t    _cond;   // used to wake up the timer thread.
-	pthread_mutex_t   _mutex;  // protect the _tasks list
+	pthread_t	  _thread; // all scheduled task will be run on this thread
+	pthread_cond_t	  _cond;   // used to wake up the timer thread.
+	pthread_mutex_t	  _mutex;  // protect the _tasks list
 
-	taskid_t          _next_id;
+	taskid_t	  _next_id;
 	taskid_t volatile _running_task_id;
 };
 
 }  // namespace ulib
 
-#endif  /* __ULIB_PERIODIC_H */
+#endif	/* __ULIB_PERIODIC_H */

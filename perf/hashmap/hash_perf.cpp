@@ -47,72 +47,72 @@ using __gnu_cxx::hash_map;
 using ulib::align_hash_map;
 
 struct nullhash {
-    uint64_t
-    operator()(uint64_t v) const
-    { return v; }
+	uint64_t
+	operator()(uint64_t v) const
+	{ return v; }
 };
 
 // EASTL expects us to define these, see allocator.h line 194
 void* operator new[](size_t size, const char* pName, int flags,
-                     unsigned debugFlags, const char* file, int line)
+		     unsigned debugFlags, const char* file, int line)
 {
-    return malloc(size);
+	return malloc(size);
 }
 void* operator new[](size_t size, size_t alignment, size_t alignmentOffset,
-                     const char* pName, int flags, unsigned debugFlags, const char* file, int line)
+		     const char* pName, int flags, unsigned debugFlags, const char* file, int line)
 {
-    // this allocator doesn't support alignment
-    EASTL_ASSERT(alignment <= 8);
-    return malloc(size);
+	// this allocator doesn't support alignment
+	EASTL_ASSERT(alignment <= 8);
+	return malloc(size);
 }
 
 class key_generator {
-  public:
-    virtual size_t
-    operator()() = 0;
+public:
+	virtual size_t
+	operator()() = 0;
 };
 
 // We use a high quality RNG which is documented in Numeric Recipies.
 class random_key_generator : public key_generator {
-  public:
-    virtual size_t
-    operator()()
-    { return RAND_NR_NEXT(_u, _v, _w); }
+public:
+	virtual size_t
+	operator()()
+	{ return RAND_NR_NEXT(_u, _v, _w); }
 
-    random_key_generator(uint64_t seed = 0)
-    {
-        _seed = time(NULL) ^ seed;
-        RAND_NR_INIT(_u, _v, _w, _seed);
-    }
+	random_key_generator(uint64_t seed = 0)
+	{
+		_seed = time(NULL) ^ seed;
+		RAND_NR_INIT(_u, _v, _w, _seed);
+	}
 
-  private:
-    // RNG context
-    uint64_t _u, _v, _w;
-    uint64_t _seed;
+private:
+	// RNG context
+	uint64_t _u, _v, _w;
+	uint64_t _seed;
 };
 
 class sequential_key_generator : public key_generator {
-  public:
-    virtual size_t
-    operator()()
-    { return _counter++; }
+public:
+	virtual size_t
+	operator()()
+	{ return _counter++; }
 
-    sequential_key_generator(uint64_t seed = 0)
-    { _counter = seed; }
+	sequential_key_generator(uint64_t seed = 0)
+	{ _counter = seed; }
 
-  private:
-    uint64_t _counter;
+private:
+	uint64_t _counter;
 };
 
 // The method is provided by time_hash_map.cc in sparsehash, requires gperftools
 static size_t current_mem_usage() {
-    size_t result;
-    if (MallocExtension::instance()->GetNumericProperty(
-            "generic.current_allocated_bytes",
-            &result)) {
-        return result;
-    }
-    return 0;
+	size_t result;
+	if (MallocExtension::instance()->GetNumericProperty(
+		    "generic.current_allocated_bytes",
+		    &result)) {
+		return result;
+	}
+	return 0;
 }
 
 // measure time used for each find() operation
@@ -120,19 +120,19 @@ template<class T>
 static double
 measure_find_time(size_t capacity, size_t loop, key_generator *kg, size_t *mem)
 {
-    T map;
-    struct timespec timer;
+	T map;
+	struct timespec timer;
 
-    while (capacity-- > 0)
-        map[(*kg)()] = 0;
+	while (capacity-- > 0)
+		map[(*kg)()] = 0;
 
-    timer_start(&timer);
-    for (size_t i = 0; i < loop; ++i) 
-        map.find((*kg)());
+	timer_start(&timer);
+	for (size_t i = 0; i < loop; ++i)
+		map.find((*kg)());
 
-    *mem = current_mem_usage();
+	*mem = current_mem_usage();
 
-    return timer_stop(&timer) / loop * 1000000000;
+	return timer_stop(&timer) / loop * 1000000000;
 }
 
 // measure time used for each insert() operation
@@ -140,79 +140,79 @@ template<class T>
 static double
 measure_insert_time(size_t capacity, key_generator *kg, size_t *mem)
 {
-    T map;
-    struct timespec timer;
+	T map;
+	struct timespec timer;
 
-    timer_start(&timer);
-    for (size_t i = 0; i < capacity; ++i)
-        map[(*kg)()] = 0;
+	timer_start(&timer);
+	for (size_t i = 0; i < capacity; ++i)
+		map[(*kg)()] = 0;
 
-    *mem = current_mem_usage();
+	*mem = current_mem_usage();
 
-    return timer_stop(&timer) / capacity * 1000000000;
+	return timer_stop(&timer) / capacity * 1000000000;
 }
 
 template<class Key, class Val, class Fcn>
 class EasyUseDenseHashMap : public dense_hash_map<Key, Val, Fcn> {
-  public:
-    EasyUseDenseHashMap()
-    { this->set_empty_key(0); }
+public:
+	EasyUseDenseHashMap()
+	{ this->set_empty_key(0); }
 };
 
 int main(int argc, char *argv[])
 {
-    size_t mem;
-    size_t capacity = 50000;
-    size_t loop     = 10000;
+	size_t mem;
+	size_t capacity = 50000;
+	size_t loop	= 10000;
 
-    sequential_key_generator skg;
-    random_key_generator rkg;
+	sequential_key_generator skg;
+	random_key_generator rkg;
 
-    if (argc > 1)
-        capacity = strtoul(argv[1], 0, 10);
-    if (argc > 2)
-        loop = strtoul(argv[2], 0, 10);
+	if (argc > 1)
+		capacity = strtoul(argv[1], 0, 10);
+	if (argc > 2)
+		loop = strtoul(argv[2], 0, 10);
 
-    printf("Running with CAPACITY=%lu, LOOP=%lu\n", capacity, loop);
-    printf("\n>>>>>>>>>> Insertion:\n\n");
-    printf("[Sparse Hash Map] Sequential:%.2f ns\tRandom:%.2f ns\tMemory:%lu\n",
-           measure_insert_time<sparse_hash_map<uint64_t,uint64_t,nullhash> >(capacity, &skg, &mem),
-           measure_insert_time<sparse_hash_map<uint64_t,uint64_t,nullhash> >(capacity, &rkg, &mem), mem);
-    printf("[STL Hash Map]    Sequential:%.2f ns\tRandom:%.2f ns\tMemory:%lu\n",
-           measure_insert_time<hash_map<uint64_t,uint64_t,nullhash> >(capacity, &skg, &mem),
-           measure_insert_time<hash_map<uint64_t,uint64_t,nullhash> >(capacity, &rkg, &mem), mem);
-    printf("[Dense Hash Map]  Sequential:%.2f ns\tRandom:%.2f ns\tMemory:%lu\n",
-           measure_insert_time<EasyUseDenseHashMap<uint64_t,uint64_t,nullhash> >(capacity, &skg, &mem),
-           measure_insert_time<EasyUseDenseHashMap<uint64_t,uint64_t,nullhash> >(capacity, &rkg, &mem), mem);
-    printf("[Align Hash Map]  Sequential:%.2f ns\tRandom:%.2f ns\tMemory:%lu\n",
-           measure_insert_time<align_hash_map<uint64_t,uint64_t> >(capacity, &skg, &mem),
-           measure_insert_time<align_hash_map<uint64_t,uint64_t> >(capacity, &rkg, &mem), mem);
-    printf("[RDE Hash Map]    Sequential:%.2f ns\tRandom:%.2f ns\tMemory:%lu\n",
-           measure_insert_time<rde::hash_map<uint64_t,uint64_t,nullhash> >(capacity, &skg, &mem),
-           measure_insert_time<rde::hash_map<uint64_t,uint64_t,nullhash> >(capacity, &rkg, &mem), mem);
-    printf("[EASTL Hash Map]  Sequential:%.2f ns\tRandom:%.2f ns\tMemory:%lu\n",
-           measure_insert_time<eastl::hash_map<uint64_t,uint64_t,nullhash> >(capacity, &skg, &mem),
-           measure_insert_time<eastl::hash_map<uint64_t,uint64_t,nullhash> >(capacity, &rkg, &mem), mem);
+	printf("Running with CAPACITY=%lu, LOOP=%lu\n", capacity, loop);
+	printf("\n>>>>>>>>>> Insertion:\n\n");
+	printf("[Sparse Hash Map] Sequential:%.2f ns\tRandom:%.2f ns\tMemory:%lu\n",
+	       measure_insert_time<sparse_hash_map<uint64_t,uint64_t,nullhash> >(capacity, &skg, &mem),
+	       measure_insert_time<sparse_hash_map<uint64_t,uint64_t,nullhash> >(capacity, &rkg, &mem), mem);
+	printf("[STL Hash Map]	  Sequential:%.2f ns\tRandom:%.2f ns\tMemory:%lu\n",
+	       measure_insert_time<hash_map<uint64_t,uint64_t,nullhash> >(capacity, &skg, &mem),
+	       measure_insert_time<hash_map<uint64_t,uint64_t,nullhash> >(capacity, &rkg, &mem), mem);
+	printf("[Dense Hash Map]  Sequential:%.2f ns\tRandom:%.2f ns\tMemory:%lu\n",
+	       measure_insert_time<EasyUseDenseHashMap<uint64_t,uint64_t,nullhash> >(capacity, &skg, &mem),
+	       measure_insert_time<EasyUseDenseHashMap<uint64_t,uint64_t,nullhash> >(capacity, &rkg, &mem), mem);
+	printf("[Align Hash Map]  Sequential:%.2f ns\tRandom:%.2f ns\tMemory:%lu\n",
+	       measure_insert_time<align_hash_map<uint64_t,uint64_t> >(capacity, &skg, &mem),
+	       measure_insert_time<align_hash_map<uint64_t,uint64_t> >(capacity, &rkg, &mem), mem);
+	printf("[RDE Hash Map]	  Sequential:%.2f ns\tRandom:%.2f ns\tMemory:%lu\n",
+	       measure_insert_time<rde::hash_map<uint64_t,uint64_t,nullhash> >(capacity, &skg, &mem),
+	       measure_insert_time<rde::hash_map<uint64_t,uint64_t,nullhash> >(capacity, &rkg, &mem), mem);
+	printf("[EASTL Hash Map]  Sequential:%.2f ns\tRandom:%.2f ns\tMemory:%lu\n",
+	       measure_insert_time<eastl::hash_map<uint64_t,uint64_t,nullhash> >(capacity, &skg, &mem),
+	       measure_insert_time<eastl::hash_map<uint64_t,uint64_t,nullhash> >(capacity, &rkg, &mem), mem);
 
-    printf("\n>>>>>>>>>> Search:\n\n");
-    printf("[Sparse Hash Map] Sequential:%.2f ns\tRandom:%.2f ns\tMemory:%lu\n",
-           measure_find_time<sparse_hash_map<uint64_t,uint64_t,nullhash> >(capacity, loop, &skg, &mem),
-           measure_find_time<sparse_hash_map<uint64_t,uint64_t,nullhash> >(capacity, loop, &rkg, &mem), mem);
-    printf("[STL Hash Map]    Sequential:%.2f ns\tRandom:%.2f ns\tMemory:%lu\n",
-           measure_find_time<hash_map<uint64_t,uint64_t,nullhash> >(capacity, loop, &skg, &mem),
-           measure_find_time<hash_map<uint64_t,uint64_t,nullhash> >(capacity, loop, &rkg, &mem), mem);
-    printf("[Dense Hash Map]  Sequential:%.2f ns\tRandom:%.2f ns\tMemory:%lu\n",
-           measure_find_time<EasyUseDenseHashMap<uint64_t,uint64_t,nullhash> >(capacity, loop, &skg, &mem),
-           measure_find_time<EasyUseDenseHashMap<uint64_t,uint64_t,nullhash> >(capacity, loop, &rkg, &mem), mem);
-    printf("[Align Hash Map]  Sequential:%.2f ns\tRandom:%.2f ns\tMemory:%lu\n",
-           measure_find_time<align_hash_map<uint64_t,uint64_t> >(capacity, loop, &skg, &mem),
-           measure_find_time<align_hash_map<uint64_t,uint64_t> >(capacity, loop, &rkg, &mem), mem);
-    printf("[RDE Hash Map]    Sequential:%.2f ns\tRandom:%.2f ns\tMemory:%lu\n",
-           measure_find_time<rde::hash_map<uint64_t,uint64_t,nullhash> >(capacity, loop, &skg, &mem),
-           measure_find_time<rde::hash_map<uint64_t,uint64_t,nullhash> >(capacity, loop, &rkg, &mem), mem);
-    printf("[EASTL Hash Map]  Sequential:%.2f ns\tRandom:%.2f ns\tMemory:%lu\n",
-           measure_find_time<eastl::hash_map<uint64_t,uint64_t,nullhash> >(capacity, loop, &skg, &mem),
-           measure_find_time<eastl::hash_map<uint64_t,uint64_t,nullhash> >(capacity, loop, &rkg, &mem), mem);
+	printf("\n>>>>>>>>>> Search:\n\n");
+	printf("[Sparse Hash Map] Sequential:%.2f ns\tRandom:%.2f ns\tMemory:%lu\n",
+	       measure_find_time<sparse_hash_map<uint64_t,uint64_t,nullhash> >(capacity, loop, &skg, &mem),
+	       measure_find_time<sparse_hash_map<uint64_t,uint64_t,nullhash> >(capacity, loop, &rkg, &mem), mem);
+	printf("[STL Hash Map]	  Sequential:%.2f ns\tRandom:%.2f ns\tMemory:%lu\n",
+	       measure_find_time<hash_map<uint64_t,uint64_t,nullhash> >(capacity, loop, &skg, &mem),
+	       measure_find_time<hash_map<uint64_t,uint64_t,nullhash> >(capacity, loop, &rkg, &mem), mem);
+	printf("[Dense Hash Map]  Sequential:%.2f ns\tRandom:%.2f ns\tMemory:%lu\n",
+	       measure_find_time<EasyUseDenseHashMap<uint64_t,uint64_t,nullhash> >(capacity, loop, &skg, &mem),
+	       measure_find_time<EasyUseDenseHashMap<uint64_t,uint64_t,nullhash> >(capacity, loop, &rkg, &mem), mem);
+	printf("[Align Hash Map]  Sequential:%.2f ns\tRandom:%.2f ns\tMemory:%lu\n",
+	       measure_find_time<align_hash_map<uint64_t,uint64_t> >(capacity, loop, &skg, &mem),
+	       measure_find_time<align_hash_map<uint64_t,uint64_t> >(capacity, loop, &rkg, &mem), mem);
+	printf("[RDE Hash Map]	  Sequential:%.2f ns\tRandom:%.2f ns\tMemory:%lu\n",
+	       measure_find_time<rde::hash_map<uint64_t,uint64_t,nullhash> >(capacity, loop, &skg, &mem),
+	       measure_find_time<rde::hash_map<uint64_t,uint64_t,nullhash> >(capacity, loop, &rkg, &mem), mem);
+	printf("[EASTL Hash Map]  Sequential:%.2f ns\tRandom:%.2f ns\tMemory:%lu\n",
+	       measure_find_time<eastl::hash_map<uint64_t,uint64_t,nullhash> >(capacity, loop, &skg, &mem),
+	       measure_find_time<eastl::hash_map<uint64_t,uint64_t,nullhash> >(capacity, loop, &rkg, &mem), mem);
 
-    return 0;
+	return 0;
 }

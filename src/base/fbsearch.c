@@ -49,7 +49,7 @@ __findline(int fd, int (*comp) (const char *, void *),
 {
 	size_t s, t, m;
 	ssize_t nb;
-	char buf[maxlen * 2];   /* including one extra byte for '\0' */
+	char buf[maxlen * 2];	/* including one extra byte for '\0' */
 	char *line;
 	int len = 0;
 

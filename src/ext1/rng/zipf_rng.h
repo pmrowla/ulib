@@ -29,33 +29,33 @@
 #include <stdint.h>
 
 struct zipf_rng {
-    int   range;
-    float sum;
-    float s;
-    uint64_t u, v, w;  /* int rng context */
+	int   range;
+	float sum;
+	float s;
+	uint64_t u, v, w;  /* int rng context */
 };
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-    /**
-     * zipf_rng_init - create a zipf rng with density function:
-     *                 p(x) = 1/x^s, where x = 1,2,...,range.
-     * @rng:   rng context
-     * @range: random integer range
-     * @s:     zipf distribution parameter
-     */
-    void zipf_rng_init(struct zipf_rng *rng, int range, float s);
+/**
+ * zipf_rng_init - create a zipf rng with density function:
+ *		   p(x) = 1/x^s, where x = 1,2,...,range.
+ * @rng:   rng context
+ * @range: random integer range
+ * @s:	   zipf distribution parameter
+ */
+void zipf_rng_init(struct zipf_rng *rng, int range, float s);
 
-    /**
-     * zipf_rng_next - generate a random integer
-     * @rng: rng context
-     */
-    int  zipf_rng_next(struct zipf_rng *rng);
+/**
+ * zipf_rng_next - generate a random integer
+ * @rng: rng context
+ */
+int  zipf_rng_next(struct zipf_rng *rng);
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif  /* __ULIB_ZIPF_RNG_H */
+#endif	/* __ULIB_ZIPF_RNG_H */

@@ -28,14 +28,14 @@
 
 #include "heap_tpl.h"
 
-#define DEFINE_HEAPSORT(name, type, lt)         \
-    DEFINE_HEAP(name, type, lt)                 \
-                                                \
-    static inline void                          \
-    heapsort_##name(type *base, type *last)     \
-    {                                           \
-        heap_init_##name(base, last);           \
-            heap_sort_##name(base, last);       \
-    }
+#define DEFINE_HEAPSORT(name, type, lt)			\
+	DEFINE_HEAP(name, type, lt)			\
+							\
+	static inline void				\
+	heapsort_##name(type *base, type *last)		\
+	{						\
+		heap_init_##name(base, last);		\
+			heap_sort_##name(base, last);	\
+	}
 
-#endif              /* __ULIB_HEAPSORT_TPL_H */
+#endif		    /* __ULIB_HEAPSORT_TPL_H */

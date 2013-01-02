@@ -18,119 +18,119 @@ pid_t gettid()
 { return syscall( __NR_gettid ); }
 
 class writer : public thread {
-  public:
-    int
-    run()
-    {
-        while (is_running()) {
-            uint64_t r = _seed++;
-            (*map)[RAND_INT4_MIX64(r) >> 48] = r;
-            ++_cnt;
-        }
-        return 0;
-    }
+public:
+	int
+	run()
+	{
+		while (is_running()) {
+			uint64_t r = _seed++;
+			(*map)[RAND_INT4_MIX64(r) >> 48] = r;
+			++_cnt;
+		}
+		return 0;
+	}
 
-    writer()
-            : _cnt(0)
-    {
-        _seed = gettid();
-        RAND_INT4_MIX64(_seed);
-        _seed += time(NULL);
-        map = new chain_hash_map<int,int>(0x20000);
-    }
+	writer()
+		: _cnt(0)
+	{
+		_seed = gettid();
+		RAND_INT4_MIX64(_seed);
+		_seed += time(NULL);
+		map = new chain_hash_map<int,int>(0x20000);
+	}
 
-    ~writer()
-    {
-        stop_and_join();
-        delete map;
-    }
+	~writer()
+	{
+		stop_and_join();
+		delete map;
+	}
 
-    uint64_t
-    count() const
-    { return _cnt; }
+	uint64_t
+	count() const
+	{ return _cnt; }
 
-  private:
-    chain_hash_map<int,int> *map;
-    uint64_t _cnt;
-    uint64_t _seed;
+private:
+	chain_hash_map<int,int> *map;
+	uint64_t _cnt;
+	uint64_t _seed;
 };
 
 class reader : public thread {
-  public:
-    int
-    run()
-    {
-        while (is_running()) {
-            uint64_t r = _seed++;
-            map->find(RAND_INT4_MIX64(r));
-            ++_cnt;
-        }
-        return 0;
-    }
+public:
+	int
+	run()
+	{
+		while (is_running()) {
+			uint64_t r = _seed++;
+			map->find(RAND_INT4_MIX64(r));
+			++_cnt;
+		}
+		return 0;
+	}
 
-    reader()
-            : _cnt(0)
-    {
-        _seed = gettid();
-        RAND_INT4_MIX64(_seed);
-        _seed += time(NULL);
-        map = new chain_hash_map<int,int>(0x20000);
-        for (int i = 0; i < 0xffff; ++i) {
-            ++_seed;
-            (*map)[RAND_INT4_MIX64(_seed)] = _seed;
-        }
-    }
+	reader()
+		: _cnt(0)
+	{
+		_seed = gettid();
+		RAND_INT4_MIX64(_seed);
+		_seed += time(NULL);
+		map = new chain_hash_map<int,int>(0x20000);
+		for (int i = 0; i < 0xffff; ++i) {
+			++_seed;
+			(*map)[RAND_INT4_MIX64(_seed)] = _seed;
+		}
+	}
 
-    ~reader()
-    {
-        stop_and_join();
-        delete map; 
-    }
+	~reader()
+	{
+		stop_and_join();
+		delete map;
+	}
 
-    uint64_t
-    count() const
-    { return _cnt; }
+	uint64_t
+	count() const
+	{ return _cnt; }
 
-  private:
-    chain_hash_map<int,int> *map;
-    uint64_t _cnt;
-    uint64_t _seed;
+private:
+	chain_hash_map<int,int> *map;
+	uint64_t _cnt;
+	uint64_t _seed;
 };
 
 int main()
 {
-    reader r[R_TH_NUM];
-    writer w[W_TH_NUM];
-        
-    for (int i = 0; i < R_TH_NUM; ++i)
-        r[i].start();
-    for (int i = 0; i < W_TH_NUM; ++i)
-        w[i].start();
+	reader r[R_TH_NUM];
+	writer w[W_TH_NUM];
 
-    uint64_t start = rdtsc();
-    sleep(5);
+	for (int i = 0; i < R_TH_NUM; ++i)
+		r[i].start();
+	for (int i = 0; i < W_TH_NUM; ++i)
+		w[i].start();
 
-    for (int i = 0; i < R_TH_NUM; ++i)
-        r[i].stop_and_join();
-    for (int i = 0; i < W_TH_NUM; ++i)
-        w[i].stop_and_join();
-    uint64_t elapse = rdtsc() - start;
-        
-    uint64_t r_cnt = 0;
-    uint64_t w_cnt = 0; 
-    for (int i = 0; i < R_TH_NUM; ++i)
-        r_cnt += r[i].count();
-    for (int i = 0; i < W_TH_NUM; ++i)
-        w_cnt += w[i].count();
+	uint64_t start = rdtsc();
+	sleep(5);
 
-    uint64_t ns_per_read  = elapse / r_cnt;
-    uint64_t ns_per_write = elapse / w_cnt;
+	for (int i = 0; i < R_TH_NUM; ++i)
+		r[i].stop_and_join();
+	for (int i = 0; i < W_TH_NUM; ++i)
+		w[i].stop_and_join();
+	uint64_t elapse = rdtsc() - start;
 
-    printf("total ops   :%lu read, %lu write\n", r_cnt, w_cnt);
-    printf("ns_per_read :%-6lu%10lu op/s\n", ns_per_read,  1000000000ul / ns_per_read);
-    printf("ns_per_write:%-6lu%10lu op/s\n", ns_per_write, 1000000000ul / ns_per_write);
+	uint64_t r_cnt = 0;
+	uint64_t w_cnt = 0;
+	for (int i = 0; i < R_TH_NUM; ++i)
+		r_cnt += r[i].count();
+	for (int i = 0; i < W_TH_NUM; ++i)
+		w_cnt += w[i].count();
 
-    printf("passed\n");
+	uint64_t ns_per_read  = elapse / r_cnt;
+	uint64_t ns_per_write = elapse / w_cnt;
 
-    return 0;
+	printf("total ops   :%lu read, %lu write\n", r_cnt, w_cnt);
+	printf("ns_per_read :%-6lu%10lu op/s\n", ns_per_read,  1000000000ul / ns_per_read);
+	printf("ns_per_write:%-6lu%10lu op/s\n", ns_per_write, 1000000000ul / ns_per_write);
+
+	printf("passed\n");
+
+	return 0;
 }

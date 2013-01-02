@@ -31,79 +31,79 @@
 
 static const char *skip_arg(const char *cp)
 {
-    while (*cp && !isspace(*cp))
-        cp++;
+	while (*cp && !isspace(*cp))
+		cp++;
 
-    return cp;
+	return cp;
 }
 
 static const char *skip_spaces(const char *cp)
 {
-    while (isspace(*cp))
-        cp++;
+	while (isspace(*cp))
+		cp++;
 
-    return cp;
+	return cp;
 }
 
 static int count_argc(const char *str)
 {
-    int count = 0;
+	int count = 0;
 
-    while (*str) {
-        str = skip_spaces(str);
-        if (*str) {
-            count++;
-            str = skip_arg(str);
-        }
-    }
+	while (*str) {
+		str = skip_spaces(str);
+		if (*str) {
+			count++;
+			str = skip_arg(str);
+		}
+	}
 
-    return count;
+	return count;
 }
 
 void argv_free(char **argv)
 {
-    char **p;
-    for (p = argv; *p; p++)
-        free(*p);
+	char **p;
+	for (p = argv; *p; p++)
+		free(*p);
 
-    free(argv);
+	free(argv);
 }
 
 char **argv_split(const char *str, int *argcp)
 {
-    int argc = count_argc(str);
-    char **argv = malloc(sizeof(*argv) * (argc+1));
-    char **argvp;
+	int argc = count_argc(str);
+	char **argv = malloc(sizeof(*argv) * (argc+1));
+	char **argvp;
 
-    if (argv == NULL)
-        goto out;
+	if (argv == NULL)
+		goto out;
 
-    if (argcp)
-        *argcp = argc;
+	if (argcp)
+		*argcp = argc;
 
-    argvp = argv;
+	argvp = argv;
 
-    while (*str) {
-        str = skip_spaces(str);
+	while (*str) {
+		str = skip_spaces(str);
 
-        if (*str) {
-            const char *p = str;
-            char *t;
+		if (*str) {
+			const char *p = str;
+			char *t;
 
-            str = skip_arg(str);
+			str = skip_arg(str);
 
-            t = strndup(p, str-p);
-            if (t == NULL)
-                goto fail;
-            *argvp++ = t;
-        }
-    }
-    *argvp = NULL;
+			t = strndup(p, str-p);
+			if (t == NULL)
+				goto fail;
+			*argvp++ = t;
+		}
+	}
+	*argvp = NULL;
 
 out:
-    return argv;
+	return argv;
 
 fail:
-    argv_free(argv);
-    return NULL;
+	argv_free(argv);
+	return NULL;
 }

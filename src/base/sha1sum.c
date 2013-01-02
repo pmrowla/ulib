@@ -34,7 +34,7 @@
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.	 See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
@@ -59,7 +59,7 @@
 static inline uint32_t rol(uint32_t x, int n)
 {
 	__asm__("roll %%cl,%0":"=r"(x)
-		:       "0"(x), "c"(n));
+		:	"0"(x), "c"(n));
 	return x;
 }
 #else
@@ -116,16 +116,16 @@ static void transform(SHA1_CONTEXT * hd, const unsigned char *data)
 #define F3(x,y,z)   ( ( x & y ) | ( z & ( x | y ) ) )
 #define F4(x,y,z)   ( x ^ y ^ z )
 
-#define M(i) ( tm =   x[i&0x0f] ^ x[(i-14)&0x0f]    \
-               ^ x[(i-8)&0x0f] ^ x[(i-3)&0x0f]      \
-               , (x[i&0x0f] = rol(tm,1)) )
+#define M(i) ( tm =   x[i&0x0f] ^ x[(i-14)&0x0f]	\
+	       ^ x[(i-8)&0x0f] ^ x[(i-3)&0x0f]		\
+	       , (x[i&0x0f] = rol(tm,1)) )
 
-#define R(a,b,c,d,e,f,k,m)  do { e += rol( a, 5 )   \
-            + f( b, c, d )                          \
-            + k                                     \
-            + m;                                    \
-        b = rol( b, 30 );                           \
-    } while(0)
+#define R(a,b,c,d,e,f,k,m)  do { e += rol( a, 5 )	\
+			+ f( b, c, d )			\
+			+ k				\
+			+ m;				\
+		b = rol( b, 30 );			\
+	} while(0)
 	R(a, b, c, d, e, F1, K1, x[0]);
 	R(e, a, b, c, d, F1, K1, x[1]);
 	R(d, e, a, b, c, F1, K1, x[2]);
@@ -220,7 +220,7 @@ static void transform(SHA1_CONTEXT * hd, const unsigned char *data)
  */
 void SHA1Update(SHA1_CONTEXT * hd, const unsigned char *inbuf, size_t inlen)
 {
-	if (hd->count == 64) {  /* flush the buffer */
+	if (hd->count == 64) {	/* flush the buffer */
 		transform(hd, hd->buf);
 		hd->count = 0;
 		hd->nblocks++;
@@ -274,12 +274,12 @@ void SHA1Final(SHA1_CONTEXT * hd)
 	msb <<= 3;
 	msb |= t >> 29;
 
-	if (hd->count < 56) {   /* enough room */
-		hd->buf[hd->count++] = 0x80;    /* pad */
+	if (hd->count < 56) {	/* enough room */
+		hd->buf[hd->count++] = 0x80;	/* pad */
 		while (hd->count < 56)
 			hd->buf[hd->count++] = 0;   /* pad */
-	} else {        /* need one extra block */
-		hd->buf[hd->count++] = 0x80;    /* pad character */
+	} else {	/* need one extra block */
+		hd->buf[hd->count++] = 0x80;	/* pad character */
 		while (hd->count < 64)
 			hd->buf[hd->count++] = 0;
 		SHA1Update(hd, NULL, 0); /* flush */ ;
@@ -299,9 +299,9 @@ void SHA1Final(SHA1_CONTEXT * hd)
 	p = hd->buf;
 #ifdef BIG_ENDIAN_HOST
 #define X(a) do { *(uint32_t*)p = hd->h##a ; p += 4; } while(0)
-#else               /* little endian */
-#define X(a) do { *p++ = hd->h##a >> 24; *p++ = hd->h##a >> 16; \
-        *p++ = hd->h##a >> 8; *p++ = hd->h##a; } while(0)
+#else		    /* little endian */
+#define X(a) do { *p++ = hd->h##a >> 24; *p++ = hd->h##a >> 16;		\
+		*p++ = hd->h##a >> 8; *p++ = hd->h##a; } while(0)
 #endif
 	X(0);
 	X(1);

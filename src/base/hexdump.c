@@ -27,8 +27,8 @@
 #include "common.h"
 #include "hexdump.h"
 
-#define hex_asc_lo(x)   hex_asc[((x) & 0x0f)]
-#define hex_asc_hi(x)   hex_asc[((x) & 0xf0) >> 4]
+#define hex_asc_lo(x)	hex_asc[((x) & 0x0f)]
+#define hex_asc_hi(x)	hex_asc[((x) & 0xf0) >> 4]
 
 const char hex_asc[] = "0123456789abcdef";
 

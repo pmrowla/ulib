@@ -38,13 +38,13 @@ typedef struct rc4_key_t {
 extern "C" {
 #endif
 
-	void rc4_set_key(const unsigned char *key_data, size_t key_data_len,
-			 rc4_key_t * key);
+void rc4_set_key(const unsigned char *key_data, size_t key_data_len,
+		 rc4_key_t * key);
 
-	void rc4_crypt(unsigned char *buffer, size_t buffer_len,
-		       rc4_key_t * key);
+void rc4_crypt(unsigned char *buffer, size_t buffer_len,
+	       rc4_key_t * key);
 
 #ifdef __cplusplus
 }
 #endif
-#endif              /* __RC4_H */
+#endif		    /* __RC4_H */

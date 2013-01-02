@@ -42,18 +42,18 @@
 #define sigma0(x) (ROTR((x), 7) ^ ROTR((x), 18) ^ ((x) >> 3))
 #define sigma1(x) (ROTR((x), 17) ^ ROTR((x), 19) ^ ((x) >> 10))
 
-#define DO_ROUND() {                                            \
-        t1 = h + SIGMA1(e) + Ch(e, f, g) + *(Kp++) + *(W++);    \
-        t2 = SIGMA0(a) + Maj(a, b, c);                          \
-        h = g;                                                  \
-        g = f;                                                  \
-        f = e;                                                  \
-        e = d + t1;                                             \
-        d = c;                                                  \
-        c = b;                                                  \
-        b = a;                                                  \
-        a = t1 + t2;                                            \
-    }
+#define DO_ROUND() {							\
+		t1 = h + SIGMA1(e) + Ch(e, f, g) + *(Kp++) + *(W++);	\
+		t2 = SIGMA0(a) + Maj(a, b, c);				\
+		h = g;							\
+		g = f;							\
+		f = e;							\
+		e = d + t1;						\
+		d = c;							\
+		c = b;							\
+		b = a;							\
+		a = t1 + t2;						\
+	}
 
 static const uint32_t K[64] = {
 	0x428a2f98L, 0x71374491L, 0xb5c0fbcfL, 0xe9b5dba5L,
@@ -81,10 +81,10 @@ static const uint32_t K[64] = {
 #define BYTESWAP(x) (x)
 #define BYTESWAP64(x) (x)
 
-#else               /* WORDS_BIGENDIAN */
+#else		    /* WORDS_BIGENDIAN */
 
-#define BYTESWAP(x) ((ROTR((x), 8) & 0xff00ff00L) | \
-                     (ROTL((x), 8) & 0x00ff00ffL))
+#define BYTESWAP(x) ((ROTR((x), 8) & 0xff00ff00L) |	\
+		     (ROTL((x), 8) & 0x00ff00ffL))
 #define BYTESWAP64(x) _byteswap64(x)
 
 static inline uint64_t _byteswap64(uint64_t x)
@@ -94,17 +94,17 @@ static inline uint64_t _byteswap64(uint64_t x)
 	return ((uint64_t) BYTESWAP(b) << 32) | (uint64_t) BYTESWAP(a);
 }
 
-#endif              /* WORDS_BIGENDIAN */
+#endif		    /* WORDS_BIGENDIAN */
 
-#else               /* !RUNTIME_ENDIAN */
+#else		    /* !RUNTIME_ENDIAN */
 
 static int littleEndian;
 
 #define BYTESWAP(x) _byteswap(x)
 #define BYTESWAP64(x) _byteswap64(x)
 
-#define _BYTESWAP(x) ((ROTR((x), 8) & 0xff00ff00L) |    \
-                      (ROTL((x), 8) & 0x00ff00ffL))
+#define _BYTESWAP(x) ((ROTR((x), 8) & 0xff00ff00L) |	\
+		      (ROTL((x), 8) & 0x00ff00ffL))
 #define _BYTESWAP64(x) __byteswap64(x)
 
 static inline uint64_t __byteswap64(uint64_t x)
@@ -141,7 +141,7 @@ static inline void setEndian(void)
 	littleEndian = endian.b[0] != 0;
 }
 
-#endif              /* !RUNTIME_ENDIAN */
+#endif		    /* !RUNTIME_ENDIAN */
 
 static const uint8_t padding[64] = {
 	0x80, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
@@ -158,7 +158,7 @@ void SHA256Init(SHA256Context * sc)
 {
 #ifdef RUNTIME_ENDIAN
 	setEndian();
-#endif              /* RUNTIME_ENDIAN */
+#endif		    /* RUNTIME_ENDIAN */
 
 	sc->totalLength = 0LL;
 	sc->hash[0] = 0x6a09e667L;
@@ -223,7 +223,7 @@ static void SHA256Guts(SHA256Context * sc, const uint32_t * cbuf)
 
 #ifndef SHA256_UNROLL
 #define SHA256_UNROLL 1
-#endif              /* !SHA256_UNROLL */
+#endif		    /* !SHA256_UNROLL */
 
 #if SHA256_UNROLL == 1
 	for (i = 63; i >= 0; i--)

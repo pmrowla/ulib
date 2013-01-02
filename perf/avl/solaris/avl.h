@@ -41,7 +41,7 @@ extern "C" {
 
 typedef enum {
 	B_FALSE = 0,
-	B_TRUE  = 1
+	B_TRUE	= 1
 } boolean_t;
 
 /*
@@ -90,7 +90,7 @@ typedef enum {
  *	 AVL_NEXT() - given a node go to next higher one
  *	 AVL_PREV() - given a node go to previous lower one
  *
- * 2c.  Find the node with the closest value either less than or greater
+ * 2c.	Find the node with the closest value either less than or greater
  *	than a given value with avl_nearest().
  *
  * 2d. Remove individual nodes from the list/tree with avl_remove().
@@ -149,14 +149,14 @@ typedef uintptr_t avl_index_t;
 /*
  * Initialize an AVL tree. Arguments are:
  *
- * tree   - the tree to be initialized
+ * tree	  - the tree to be initialized
  * compar - function to compare two nodes, it must return exactly: -1, 0, or +1
- *          -1 for <, 0 for ==, and +1 for >
- * size   - the value of sizeof(struct my_type)
+ *	    -1 for <, 0 for ==, and +1 for >
+ * size	  - the value of sizeof(struct my_type)
  * offset - the value of OFFSETOF(struct my_type, my_link)
  */
 extern void avl_create(avl_tree_t *tree,
-	int (*compar) (const void *, const void *), size_t size, size_t offset);
+		       int (*compar) (const void *, const void *), size_t size, size_t offset);
 
 
 /*
@@ -164,7 +164,7 @@ extern void avl_create(avl_tree_t *tree,
  * found. If not found, it returns NULL and then if "where" is not NULL it sets
  * "where" for use with avl_insert() or avl_nearest().
  *
- * node   - node that has the value being looked for
+ * node	  - node that has the value being looked for
  * where  - position for use with avl_nearest() or avl_insert(), may be NULL
  */
 extern void *avl_find(avl_tree_t *tree, const void *node, avl_index_t *where);
@@ -172,7 +172,7 @@ extern void *avl_find(avl_tree_t *tree, const void *node, avl_index_t *where);
 /*
  * Insert a node into the tree.
  *
- * node   - the node to insert
+ * node	  - the node to insert
  * where  - position as returned from avl_find()
  */
 extern void avl_insert(avl_tree_t *tree, void *node, avl_index_t where);
@@ -189,7 +189,7 @@ extern void avl_insert(avl_tree_t *tree, void *node, avl_index_t where);
  * direction	- either AVL_AFTER or AVL_BEFORE the data "here".
  */
 extern void avl_insert_here(avl_tree_t *tree, void *new_data, void *here,
-    int direction);
+			    int direction);
 
 
 /*
@@ -206,7 +206,7 @@ extern void *avl_last(avl_tree_t *tree);
  * AVL_NEXT() will return NULL if at the last node.
  * AVL_PREV() will return NULL if at the first node.
  *
- * node   - the node from which the next or previous node is found
+ * node	  - the node from which the next or previous node is found
  */
 #define	AVL_NEXT(tree, node)	avl_walk(tree, node, AVL_AFTER)
 #define	AVL_PREV(tree, node)	avl_walk(tree, node, AVL_BEFORE)
@@ -242,15 +242,15 @@ extern void *avl_nearest(avl_tree_t *tree, avl_index_t where, int direction);
  * The node must not be in the tree, and it must not
  * compare equal to any other node already in the tree.
  *
- * node   - the node to add
+ * node	  - the node to add
  */
 extern void avl_add(avl_tree_t *tree, void *node);
 
 
 /*
- * Remove a single node from the tree.  The node must be in the tree.
+ * Remove a single node from the tree.	The node must be in the tree.
  *
- * node   - the node to remove
+ * node	  - the node to remove
  */
 extern void avl_remove(avl_tree_t *tree, void *node);
 
@@ -302,7 +302,7 @@ extern void *avl_destroy_nodes(avl_tree_t *tree, void **cookie);
 /*
  * Final destroy of an AVL tree. Arguments are:
  *
- * tree   - the empty tree to destroy
+ * tree	  - the empty tree to destroy
  */
 extern void avl_destroy(avl_tree_t *tree);
 

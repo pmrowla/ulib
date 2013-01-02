@@ -112,7 +112,7 @@ periodic::taskid_t periodic::schedule(timespec run_time, task_func_t routine, vo
 }
 
 periodic::taskid_t periodic::schedule_repeated(timespec run_time, long interval,
-		task_func_t routine, void *arg)
+					       task_func_t routine, void *arg)
 {
 	task_t task;
 	task.next_run_time = run_time;

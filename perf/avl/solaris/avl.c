@@ -53,15 +53,15 @@
  *	  avl_insert()/_add()/_remove()/avl_insert_here() require some kind of
  *	  exclusive write lock. Other operations require a read lock.
  *
- *      - The implementation uses iteration instead of explicit recursion,
+ *	- The implementation uses iteration instead of explicit recursion,
  *	  since it is intended to run on limited size kernel stacks. Since
  *	  there is no recursion stack present to move "up" in the tree,
  *	  there is an explicit "parent" link in the avl_node_t.
  *
- *      - The left/right children pointers of a node are in an array.
+ *	- The left/right children pointers of a node are in an array.
  *	  In the code, variables (instead of constants) are used to represent
  *	  left and right indices.  The implementation is written as if it only
- *	  dealt with left handed manipulations.  By changing the value assigned
+ *	  dealt with left handed manipulations.	 By changing the value assigned
  *	  to "left", the code also works for right handed trees.  The
  *	  following variables/terms are frequently used:
  *
@@ -74,7 +74,7 @@
  *		int right;	// will be the opposite of left (0 or 1)
  *		int right_heavy;// will be the opposite of left_heavy (-1 or 1)
  *
- *		int direction;  // 0 for "<" (ie. left child); 1 for ">" (right)
+ *		int direction;	// 0 for "<" (ie. left child); 1 for ">" (right)
  *
  *	  Though it is a little more confusing to read the code, the approach
  *	  allows using half as much code (and hence cache footprint) for tree
@@ -82,7 +82,7 @@
  *
  *	- The avl_index_t is an opaque "cookie" used to find nodes at or
  *	  adjacent to where a new value would be inserted in the tree. The value
- *	  is a modified "avl_node_t *".  The bottom bit (normally 0 for a
+ *	  is a modified "avl_node_t *".	 The bottom bit (normally 0 for a
  *	  pointer) is set to indicate if that the new node has a value greater
  *	  than the value of the indicated "avl_node_t *".
  */
@@ -142,12 +142,12 @@ avl_walk(avl_tree_t *tree, void	*oldnode, int left)
 	 */
 	if (node->avl_child[left] != NULL) {
 		for (node = node->avl_child[left];
-		    node->avl_child[right] != NULL;
-		    node = node->avl_child[right])
+		     node->avl_child[right] != NULL;
+		     node = node->avl_child[right])
 			;
-	/*
-	 * Otherwise, return thru left children as far as we can.
-	 */
+		/*
+		 * Otherwise, return thru left children as far as we can.
+		 */
 	} else {
 		for (;;) {
 			was_child = AVL_XCHILD(node);
@@ -230,7 +230,7 @@ avl_nearest(avl_tree_t *tree, avl_index_t where, int direction)
 
 
 /*
- * Search for the node which contains "value".  The algorithm is a
+ * Search for the node which contains "value".	The algorithm is a
  * simple binary tree search.
  *
  * return value:
@@ -248,7 +248,7 @@ avl_find(avl_tree_t *tree, const void *value, avl_index_t *where)
 	size_t off = tree->avl_offset;
 
 	for (node = tree->avl_root; node != NULL;
-	    node = node->avl_child[child]) {
+	     node = node->avl_child[child]) {
 
 		prev = node;
 
@@ -307,23 +307,23 @@ avl_rotation(avl_tree_t *tree, avl_node_t *node, int balance)
 	 * case 1 : node is overly left heavy, the left child is balanced or
 	 * also left heavy. This requires the following rotation.
 	 *
-	 *                   (node bal:-2)
-	 *                    /           \
-	 *                   /             \
-	 *              (child bal:0 or -1)
-	 *              /    \
-	 *             /      \
-	 *                     cright
+	 *		     (node bal:-2)
+	 *		      /		  \
+	 *		     /		   \
+	 *		(child bal:0 or -1)
+	 *		/    \
+	 *	       /      \
+	 *		       cright
 	 *
 	 * becomes:
 	 *
-	 *              (child bal:1 or 0)
-	 *              /        \
-	 *             /          \
-	 *                        (node bal:-1 or 0)
-	 *                         /     \
-	 *                        /       \
-	 *                     cright
+	 *		(child bal:1 or 0)
+	 *		/	 \
+	 *	       /	  \
+	 *			  (node bal:-1 or 0)
+	 *			   /	 \
+	 *			  /	  \
+	 *		       cright
 	 *
 	 * we detect this situation by noting that child's balance is not
 	 * right_heavy.
@@ -376,28 +376,28 @@ avl_rotation(avl_tree_t *tree, avl_node_t *node, int balance)
 	 * case 2 : When node is left heavy, but child is right heavy we use
 	 * a different rotation.
 	 *
-	 *                   (node b:-2)
-	 *                    /   \
-	 *                   /     \
-	 *                  /       \
-	 *             (child b:+1)
-	 *              /     \
-	 *             /       \
-	 *                   (gchild b: != 0)
-	 *                     /  \
-	 *                    /    \
-	 *                 gleft   gright
+	 *		     (node b:-2)
+	 *		      /	  \
+	 *		     /	   \
+	 *		    /	    \
+	 *	       (child b:+1)
+	 *		/     \
+	 *	       /       \
+	 *		     (gchild b: != 0)
+	 *		       /  \
+	 *		      /	   \
+	 *		   gleft   gright
 	 *
 	 * becomes:
 	 *
-	 *              (gchild b:0)
-	 *              /       \
-	 *             /         \
-	 *            /           \
-	 *        (child b:?)   (node b:?)
-	 *         /  \          /   \
-	 *        /    \        /     \
-	 *            gleft   gright
+	 *		(gchild b:0)
+	 *		/	\
+	 *	       /	 \
+	 *	      /		  \
+	 *	  (child b:?)	(node b:?)
+	 *	   /  \		 /   \
+	 *	  /    \	/     \
+	 *	      gleft   gright
 	 *
 	 * computing the new balances is more complicated. As an example:
 	 *	 if gchild was right_heavy, then child is now left heavy
@@ -459,7 +459,7 @@ avl_rotation(avl_tree_t *tree, avl_node_t *node, int balance)
  * Insert a new node into an AVL tree at the specified (from avl_find()) place.
  *
  * Newly inserted nodes are always leaf nodes in the tree, since avl_find()
- * searches out to the leaf positions.  The avl_index_t indicates the node
+ * searches out to the leaf positions.	The avl_index_t indicates the node
  * which will be the parent of the new node.
  *
  * After the node is inserted, a single rotation further up the tree may
@@ -592,7 +592,7 @@ avl_insert_here(
 		while (node->avl_child[child] != NULL) {
 #ifdef DEBUG
 			diff = tree->avl_compar(new_data,
-			    AVL_NODE2DATA(node, tree->avl_offset));
+						AVL_NODE2DATA(node, tree->avl_offset));
 			assert(-1 <= diff && diff <= 1);
 			assert(diff != 0);
 			assert(diff > 0 ? child == 1 : child == 0);
@@ -601,7 +601,7 @@ avl_insert_here(
 		}
 #ifdef DEBUG
 		diff = tree->avl_compar(new_data,
-		    AVL_NODE2DATA(node, tree->avl_offset));
+					AVL_NODE2DATA(node, tree->avl_offset));
 		assert(-1 <= diff && diff <= 1);
 		assert(diff != 0);
 		assert(diff > 0 ? child == 1 : child == 0);
@@ -621,7 +621,7 @@ avl_add(avl_tree_t *tree, void *new_node)
 	avl_index_t where;
 
 	/*
-	 * This is unfortunate.  We want to call panic() here, even for
+	 * This is unfortunate.	 We want to call panic() here, even for
 	 * non-DEBUG kernels.  In userland, however, we can't depend on anything
 	 * in libc or else the rtld build process gets confused.  So, all we can
 	 * do in userland is resort to a normal assert().
@@ -630,7 +630,7 @@ avl_add(avl_tree_t *tree, void *new_node)
 #ifdef _KERNEL
 		panic("avl_find() succeeded inside avl_add()");
 #else
-		assert(0);
+	assert(0);
 #endif
 	avl_insert(tree, new_node, where);
 }
@@ -641,11 +641,11 @@ avl_add(avl_tree_t *tree, void *new_node)
  *
  * First, we may be deleting an interior node. Consider the following subtree:
  *
- *     d           c            c
- *    / \         / \          / \
- *   b   e       b   e        b   e
- *  / \	        / \          /
- * a   c       a            a
+ *     d	   c		c
+ *    / \	  / \	       / \
+ *   b	 e	 b   e	      b	  e
+ *  / \		/ \	     /
+ * a   c       a	    a
  *
  * When we are deleting node (d), we find and bring up an adjacent valued leaf
  * node, say (c), to take the interior node's place. In the code this is
@@ -700,8 +700,8 @@ avl_remove(avl_tree_t *tree, void *data)
 		 * (down 1 left, as far as possible right)
 		 */
 		for (node = delete->avl_child[left];
-		    node->avl_child[right] != NULL;
-		    node = node->avl_child[right])
+		     node->avl_child[right] != NULL;
+		     node = node->avl_child[right])
 			;
 
 		/*
@@ -804,8 +804,8 @@ avl_remove(avl_tree_t *tree, void *data)
 	} while (parent != NULL);
 }
 
-#define	AVL_REINSERT(tree, obj)		\
-	avl_remove((tree), (obj));	\
+#define	AVL_REINSERT(tree, obj)			\
+	avl_remove((tree), (obj));		\
 	avl_add((tree), (obj))
 
 boolean_t
@@ -814,7 +814,7 @@ avl_update_lt(avl_tree_t *t, void *obj)
 	void *neighbor;
 
 	assert(((neighbor = AVL_NEXT(t, obj)) == NULL) ||
-	    (t->avl_compar(obj, neighbor) <= 0));
+	       (t->avl_compar(obj, neighbor) <= 0));
 
 	neighbor = AVL_PREV(t, obj);
 	if ((neighbor != NULL) && (t->avl_compar(obj, neighbor) < 0)) {
@@ -831,7 +831,7 @@ avl_update_gt(avl_tree_t *t, void *obj)
 	void *neighbor;
 
 	assert(((neighbor = AVL_PREV(t, obj)) == NULL) ||
-	    (t->avl_compar(obj, neighbor) >= 0));
+	       (t->avl_compar(obj, neighbor) >= 0));
 
 	neighbor = AVL_NEXT(t, obj);
 	if ((neighbor != NULL) && (t->avl_compar(obj, neighbor) > 0)) {
@@ -867,7 +867,7 @@ avl_update(avl_tree_t *t, void *obj)
  */
 void
 avl_create(avl_tree_t *tree, int (*compar) (const void *, const void *),
-    size_t size, size_t offset)
+	   size_t size, size_t offset)
 {
 	assert(tree);
 	assert(compar);
@@ -1012,7 +1012,7 @@ check_right_side:
 		parent = node;
 		node = node->avl_child[1];
 		assert(node->avl_child[0] == NULL &&
-		    node->avl_child[1] == NULL);
+		       node->avl_child[1] == NULL);
 	} else {
 		assert(AVL_XBALANCE(node) <= 0);
 	}

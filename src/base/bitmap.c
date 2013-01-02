@@ -334,10 +334,10 @@ void bitmap_clear(unsigned long *map, int start, int nr)
  * power of 2. A @align_mask of 0 means no alignment is required.
  */
 unsigned long bitmap_find_next_zero_area(unsigned long *map,
-		unsigned long size,
-		unsigned long start,
-		unsigned int nr,
-		unsigned long align_mask)
+					 unsigned long size,
+					 unsigned long start,
+					 unsigned int nr,
+					 unsigned long align_mask)
 {
 	unsigned long index, end, i;
 again:
@@ -362,9 +362,9 @@ again:
  * second version by Paul Jackson, third by Joe Korty.
  */
 
-#define CHUNKSZ                         32
-#define nbits_to_hold_value(val)        fls32(val)
-#define BASEDEC 10      /* fancier cpuset lists input in decimal */
+#define CHUNKSZ				32
+#define nbits_to_hold_value(val)	fls32(val)
+#define BASEDEC 10	/* fancier cpuset lists input in decimal */
 
 /**
  * bitmap_snprintf - convert bitmap to an ASCII hex string.
@@ -411,7 +411,7 @@ int bitmap_snprintf(char *buf, unsigned int buflen,
  * @maskp: pointer to bitmap array that will contain result.
  * @nmaskbits: size of bitmap, in bits.
  *
- * Commas group hex digits into chunks.  Each chunk defines exactly 32
+ * Commas group hex digits into chunks.	 Each chunk defines exactly 32
  * bits of the resultant bitmask.  No chunk may specify a value larger
  * than 32 bits (%-EOVERFLOW), and if a chunk specifies a smaller value
  * then leading 0-bits are prepended.  %-EINVAL is returned for illegal
@@ -589,9 +589,9 @@ int bitmap_parselist(const char *bp, unsigned long *maskp,
 
 /**
  * bitmap_pos_to_ord - find ordinal of set bit at given position in bitmap
- *      @buf: pointer to a bitmap
- *      @pos: a bit position in @buf (0 <= @pos < @bits)
- *      @bits: number of valid bit positions in @buf
+ *	@buf: pointer to a bitmap
+ *	@pos: a bit position in @buf (0 <= @pos < @bits)
+ *	@bits: number of valid bit positions in @buf
  *
  * Map the bit at position @pos in @buf (of length @bits) to the
  * ordinal of which set bit it is.  If it is not set or if @pos
@@ -599,7 +599,7 @@ int bitmap_parselist(const char *bp, unsigned long *maskp,
  *
  * If for example, just bits 4 through 7 are set in @buf, then @pos
  * values 4 through 7 will get mapped to 0 through 3, respectively,
- * and other @pos values will get mapped to 0.  When @pos value 7
+ * and other @pos values will get mapped to 0.	When @pos value 7
  * gets mapped to (returns) @ord value 3 in this example, that means
  * that bit 7 is the 3rd (starting with 0th) set bit in @buf.
  *
@@ -624,9 +624,9 @@ static int bitmap_pos_to_ord(const unsigned long *buf, int pos, int bits)
 
 /**
  * bitmap_ord_to_pos - find position of n-th set bit in bitmap
- *      @buf: pointer to bitmap
- *      @ord: ordinal bit position (n-th set bit, n >= 0)
- *      @bits: number of valid bit positions in @buf
+ *	@buf: pointer to bitmap
+ *	@ord: ordinal bit position (n-th set bit, n >= 0)
+ *	@bits: number of valid bit positions in @buf
  *
  * Map the ordinal offset of bit @ord in @buf to its position in @buf.
  * Value of @ord should be in range 0 <= @ord < weight(buf), else
@@ -659,15 +659,15 @@ static int bitmap_ord_to_pos(const unsigned long *buf, int ord, int bits)
 
 /**
  * bitmap_remap - Apply map defined by a pair of bitmaps to another bitmap
- *      @dst: remapped result
- *      @src: subset to be remapped
- *      @old: defines domain of map
- *      @new: defines range of map
- *      @bits: number of bits in each of these bitmaps
+ *	@dst: remapped result
+ *	@src: subset to be remapped
+ *	@old: defines domain of map
+ *	@new: defines range of map
+ *	@bits: number of bits in each of these bitmaps
  *
  * Let @old and @new define a mapping of bit positions, such that
  * whatever position is held by the n-th set bit in @old is mapped
- * to the n-th set bit in @new.  In the more general case, allowing
+ * to the n-th set bit in @new.	 In the more general case, allowing
  * for the possibility that the weight 'w' of @new is less than the
  * weight of @old, map the position of the n-th set bit in @old to
  * the position of the m-th set bit in @new, where m == n % w.
@@ -694,7 +694,7 @@ void bitmap_remap(unsigned long *dst, const unsigned long *src,
 {
 	int oldbit, w;
 
-	if (dst == src)     /* following doesn't handle inplace remaps */
+	if (dst == src)	    /* following doesn't handle inplace remaps */
 		return;
 	bitmap_zero(dst, bits);
 
@@ -703,7 +703,7 @@ void bitmap_remap(unsigned long *dst, const unsigned long *src,
 		int n = bitmap_pos_to_ord(old, oldbit, bits);
 
 		if (n < 0 || w == 0)
-			set_bit(oldbit, dst);   /* identity map */
+			set_bit(oldbit, dst);	/* identity map */
 		else
 			set_bit(bitmap_ord_to_pos(new, n % w, bits), dst);
 	}
@@ -711,14 +711,14 @@ void bitmap_remap(unsigned long *dst, const unsigned long *src,
 
 /**
  * bitmap_bitremap - Apply map defined by a pair of bitmaps to a single bit
- *      @oldbit: bit position to be mapped
- *      @old: defines domain of map
- *      @new: defines range of map
- *      @bits: number of bits in each of these bitmaps
+ *	@oldbit: bit position to be mapped
+ *	@old: defines domain of map
+ *	@new: defines range of map
+ *	@bits: number of bits in each of these bitmaps
  *
  * Let @old and @new define a mapping of bit positions, such that
  * whatever position is held by the n-th set bit in @old is mapped
- * to the n-th set bit in @new.  In the more general case, allowing
+ * to the n-th set bit in @new.	 In the more general case, allowing
  * for the possibility that the weight 'w' of @new is less than the
  * weight of @old, map the position of the n-th set bit in @old to
  * the position of the m-th set bit in @new, where m == n % w.
@@ -748,10 +748,10 @@ int bitmap_bitremap(int oldbit, const unsigned long *old,
 
 /**
  * bitmap_onto - translate one bitmap relative to another
- *      @dst: resulting translated bitmap
- *      @orig: original untranslated bitmap
- *      @relmap: bitmap relative to which translated
- *      @bits: number of bits in each of these bitmaps
+ *	@dst: resulting translated bitmap
+ *	@orig: original untranslated bitmap
+ *	@relmap: bitmap relative to which translated
+ *	@bits: number of bits in each of these bitmaps
  *
  * Set the n-th bit of @dst iff there exists some m such that the
  * n-th bit of @relmap is set, the m-th bit of @orig is set, and
@@ -802,7 +802,7 @@ int bitmap_bitremap(int oldbit, const unsigned long *old,
  *
  * Example [2] for bitmap_fold() + bitmap_onto():
  *  Let's say @relmap has these ten bits set:
- *              40 41 42 43 45 48 53 61 74 95
+ *		40 41 42 43 45 48 53 61 74 95
  *  (for the curious, that's 40 plus the first ten terms of the
  *  Fibonacci sequence.)
  *
@@ -810,10 +810,10 @@ int bitmap_bitremap(int oldbit, const unsigned long *old,
  *  bitmap_fold() then bitmap_onto, as suggested above to
  *  avoid the possitility of an empty @dst result:
  *
- *      unsigned long *tmp;     // a temporary bitmap's bits
+ *	unsigned long *tmp;	// a temporary bitmap's bits
  *
- *      bitmap_fold(tmp, orig, bitmap_weight(relmap, bits), bits);
- *      bitmap_onto(dst, tmp, relmap, bits);
+ *	bitmap_fold(tmp, orig, bitmap_weight(relmap, bits), bits);
+ *	bitmap_onto(dst, tmp, relmap, bits);
  *
  *  Then this table shows what various values of @dst would be, for
  *  various @orig's.  I list the zero-based positions of each set bit.
@@ -821,18 +821,18 @@ int bitmap_bitremap(int oldbit, const unsigned long *old,
  *  using bitmap_fold() to fold the @orig bitmap modulo ten
  *  (the weight of @relmap).
  *
- *      @orig           tmp            @dst
- *      0                0             40
- *      1                1             41
- *      9                9             95
- *      10               0             40 (*)
- *      1 3 5 7          1 3 5 7       41 43 48 61
- *      0 1 2 3 4        0 1 2 3 4     40 41 42 43 45
- *      0 9 18 27        0 9 8 7       40 61 74 95
- *      0 10 20 30       0             40
- *      0 11 22 33       0 1 2 3       40 41 42 43
- *      0 12 24 36       0 2 4 6       40 42 45 53
- *      78 102 211       1 2 8         41 42 74 (*)
+ *	@orig		tmp	       @dst
+ *	0		 0	       40
+ *	1		 1	       41
+ *	9		 9	       95
+ *	10		 0	       40 (*)
+ *	1 3 5 7		 1 3 5 7       41 43 48 61
+ *	0 1 2 3 4	 0 1 2 3 4     40 41 42 43 45
+ *	0 9 18 27	 0 9 8 7       40 61 74 95
+ *	0 10 20 30	 0	       40
+ *	0 11 22 33	 0 1 2 3       40 41 42 43
+ *	0 12 24 36	 0 2 4 6       40 42 45 53
+ *	78 102 211	 1 2 8	       41 42 74 (*)
  *
  * (*) For these marked lines, if we hadn't first done bitmap_fold()
  *     into tmp, then the @dst result would have been empty.
@@ -849,7 +849,7 @@ int bitmap_bitremap(int oldbit, const unsigned long *old,
 void bitmap_onto(unsigned long *dst, const unsigned long *orig,
 		 const unsigned long *relmap, int bits)
 {
-	int n, m;       /* same meaning as in above comment */
+	int n, m;	/* same meaning as in above comment */
 
 	if (dst == orig)    /* following doesn't handle inplace mappings */
 		return;
@@ -859,9 +859,9 @@ void bitmap_onto(unsigned long *dst, const unsigned long *orig,
 	 * The following code is a more efficient, but less
 	 * obvious, equivalent to the loop:
 	 *  for (m = 0; m < bitmap_weight(relmap, bits); m++) {
-	 *          n = bitmap_ord_to_pos(orig, m, bits);
-	 *          if (test_bit(m, orig))
-	 *                  set_bit(n, dst);
+	 *	    n = bitmap_ord_to_pos(orig, m, bits);
+	 *	    if (test_bit(m, orig))
+	 *		    set_bit(n, dst);
 	 *  }
 	 */
 
@@ -876,10 +876,10 @@ void bitmap_onto(unsigned long *dst, const unsigned long *orig,
 
 /**
  * bitmap_fold - fold larger bitmap into smaller, modulo specified size
- *      @dst: resulting smaller bitmap
- *      @orig: original larger bitmap
- *      @sz: specified size
- *      @bits: number of bits in each of these bitmaps
+ *	@dst: resulting smaller bitmap
+ *	@orig: original larger bitmap
+ *	@sz: specified size
+ *	@bits: number of bits in each of these bitmaps
  *
  * For each bit oldbit in @orig, set bit oldbit mod @sz in @dst.
  * Clear all other bits in @dst.  See further the comment and
@@ -902,10 +902,10 @@ void bitmap_fold(unsigned long *dst, const unsigned long *orig,
 
 /*
  * Common code for bitmap_*_region() routines.
- *      bitmap: array of unsigned longs corresponding to the bitmap
- *      pos: the beginning of the region
- *      order: region size (log base 2 of number of bits)
- *      reg_op: operation(s) to perform on that region of bitmap
+ *	bitmap: array of unsigned longs corresponding to the bitmap
+ *	pos: the beginning of the region
+ *	order: region size (log base 2 of number of bits)
+ *	reg_op: operation(s) to perform on that region of bitmap
  *
  * Can set, verify and/or release a region of bits in a bitmap,
  * depending on which combination of REG_OP_* flag bits is set.
@@ -919,21 +919,21 @@ void bitmap_fold(unsigned long *dst, const unsigned long *orig,
  */
 
 enum {
-	REG_OP_ISFREE,      /* true if region is all zero bits */
-	REG_OP_ALLOC,       /* set all bits in region */
-	REG_OP_RELEASE,     /* clear all bits in region */
+	REG_OP_ISFREE,	    /* true if region is all zero bits */
+	REG_OP_ALLOC,	    /* set all bits in region */
+	REG_OP_RELEASE,	    /* clear all bits in region */
 };
 
 static int __reg_op(unsigned long *bitmap, int pos, int order, int reg_op)
 {
-	int nbits_reg;      /* number of bits in region */
-	int index;      /* index first long of region in bitmap */
-	int offset;     /* bit offset region in bitmap[index] */
-	int nlongs_reg;     /* num longs spanned by region in bitmap */
+	int nbits_reg;	    /* number of bits in region */
+	int index;	/* index first long of region in bitmap */
+	int offset;	/* bit offset region in bitmap[index] */
+	int nlongs_reg;	    /* num longs spanned by region in bitmap */
 	int nbitsinlong;    /* num bits of region in each spanned long */
 	unsigned long mask; /* bitmask for one long of region */
-	int i;          /* scans bitmap by longs */
-	int ret = 0;        /* return value */
+	int i;		/* scans bitmap by longs */
+	int ret = 0;	    /* return value */
 
 	/*
 	 * Either nlongs_reg == 1 (for small orders that fit in one long)
@@ -978,9 +978,9 @@ done:
 
 /**
  * bitmap_find_free_region - find a contiguous aligned mem region
- *      @bitmap: array of unsigned longs corresponding to the bitmap
- *      @bits: number of bits in the bitmap
- *      @order: region size (log base 2 of number of bits) to find
+ *	@bitmap: array of unsigned longs corresponding to the bitmap
+ *	@bits: number of bits in the bitmap
+ *	@order: region size (log base 2 of number of bits) to find
  *
  * Find a region of free (zero) bits in a @bitmap of @bits bits and
  * allocate them (set them to one).  Only consider regions of length
@@ -992,7 +992,7 @@ done:
  */
 int bitmap_find_free_region(unsigned long *bitmap, int bits, int order)
 {
-	int pos, end;       /* scans bitmap by regions of size order */
+	int pos, end;	    /* scans bitmap by regions of size order */
 
 	for (pos = 0; (end = pos + (1 << order)) <= bits; pos = end) {
 		if (!__reg_op(bitmap, pos, order, REG_OP_ISFREE))
@@ -1005,9 +1005,9 @@ int bitmap_find_free_region(unsigned long *bitmap, int bits, int order)
 
 /**
  * bitmap_release_region - release allocated bitmap region
- *      @bitmap: array of unsigned longs corresponding to the bitmap
- *      @pos: beginning of bit region to release
- *      @order: region size (log base 2 of number of bits) to release
+ *	@bitmap: array of unsigned longs corresponding to the bitmap
+ *	@pos: beginning of bit region to release
+ *	@order: region size (log base 2 of number of bits) to release
  *
  * This is the complement to __bitmap_find_free_region() and releases
  * the found region (by clearing it in the bitmap).
@@ -1021,9 +1021,9 @@ void bitmap_release_region(unsigned long *bitmap, int pos, int order)
 
 /**
  * bitmap_allocate_region - allocate bitmap region
- *      @bitmap: array of unsigned longs corresponding to the bitmap
- *      @pos: beginning of bit region to allocate
- *      @order: region size (log base 2 of number of bits) to allocate
+ *	@bitmap: array of unsigned longs corresponding to the bitmap
+ *	@pos: beginning of bit region to allocate
+ *	@order: region size (log base 2 of number of bits) to allocate
  *
  * Allocate (set bits in) a specified region of a bitmap.
  *

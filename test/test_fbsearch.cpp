@@ -8,21 +8,21 @@
 
 int comp_line(const char *line, void *param)
 {
-    return strcmp(line, (const char *)param);
+	return strcmp(line, (const char *)param);
 }
 
 int main()
 {
-    int fd = open("./test_fbsearch.data", O_RDONLY);
+	int fd = open("./test_fbsearch.data", O_RDONLY);
 
-    assert(fd != -1);
-    assert(findfirstline(fd, comp_line, (void *)"world", 1024) == 18);
-    // can't find
-    assert(findfirstline(fd, comp_line, (void *)"world hello", 1024) == -1);
+	assert(fd != -1);
+	assert(findfirstline(fd, comp_line, (void *)"world", 1024) == 18);
+	// can't find
+	assert(findfirstline(fd, comp_line, (void *)"world hello", 1024) == -1);
 
-    close(fd);
-        
-    printf("passed\n");
-        
-    return 0;
+	close(fd);
+
+	printf("passed\n");
+
+	return 0;
 }

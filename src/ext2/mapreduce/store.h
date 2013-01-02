@@ -41,15 +41,15 @@ namespace mapreduce
 // store based on chain hash table
 template<class _Key, class _Val>
 class chain_hash_store : public ulib::chain_hash_map<_Key, _Val>,
-	public ulib::region_lock
+			 public ulib::region_lock
 {
 public:
-	typedef typename ulib::chain_hash_map<_Key,_Val>::size_type        size_type;
-	typedef typename ulib::chain_hash_map<_Key,_Val>::pointer          pointer;
-	typedef typename ulib::chain_hash_map<_Key,_Val>::const_pointer    const_pointer;
-	typedef typename ulib::chain_hash_map<_Key,_Val>::reference        reference;
+	typedef typename ulib::chain_hash_map<_Key,_Val>::size_type	   size_type;
+	typedef typename ulib::chain_hash_map<_Key,_Val>::pointer	   pointer;
+	typedef typename ulib::chain_hash_map<_Key,_Val>::const_pointer	   const_pointer;
+	typedef typename ulib::chain_hash_map<_Key,_Val>::reference	   reference;
 	typedef typename ulib::chain_hash_map<_Key,_Val>::const_reference  const_reference;
-	typedef typename ulib::chain_hash_map<_Key,_Val>::iterator         iterator;
+	typedef typename ulib::chain_hash_map<_Key,_Val>::iterator	   iterator;
 	typedef typename ulib::chain_hash_map<_Key,_Val>::const_iterator   const_iterator;
 
 	chain_hash_store(size_t min_bucket, size_t min_lock)
@@ -98,4 +98,4 @@ public:
 
 }  // namespace ulib
 
-#endif  /* __ULIB_STORE_H */
+#endif	/* __ULIB_STORE_H */

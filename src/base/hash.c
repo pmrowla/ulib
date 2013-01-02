@@ -107,9 +107,9 @@ uint32_t hash_fast32(const void *buf, size_t len, uint32_t seed)
 
   Some k values for my "a-=c; a^=rot(c,k); c+=b;" arrangement that
   satisfy this are
-  4  6  8 16 19  4
-  9 15  3 18 27 15
-  14  9  3  7 17  3
+  4  6	8 16 19	 4
+  9 15	3 18 27 15
+  14  9	 3  7 17  3
   Well, "9 15 3 18 27 15" didn't quite get 32 bits diffing
   for "differ" defined as + with a one-bit base and a two-bit delta.  I
   used http://burtleburtle.net/bob/hash/avalanche.html to choose
@@ -120,23 +120,23 @@ uint32_t hash_fast32(const void *buf, size_t len, uint32_t seed)
   most thoroughly mixed value is c, but it doesn't really even achieve
   avalanche in c.
 
-  This allows some parallelism.  Read-after-writes are good at doubling
+  This allows some parallelism.	 Read-after-writes are good at doubling
   the number of bits affected, so the goal of mixing pulls in the opposite
-  direction as the goal of parallelism.  I did what I could.  Rotates
+  direction as the goal of parallelism.	 I did what I could.  Rotates
   seem to cost as much as shifts on every machine I could lay my hands
   on, and rotates are much kinder to the top and bottom bits, so I used
   rotates.
   -------------------------------------------------------------------------------
 */
-#define mix(a,b,c)                              \
-    {                                           \
-        a -= c;  a ^= rot(c, 4);  c += b;       \
-        b -= a;  b ^= rot(a, 6);  a += c;       \
-        c -= b;  c ^= rot(b, 8);  b += a;       \
-        a -= c;  a ^= rot(c,16);  c += b;       \
-        b -= a;  b ^= rot(a,19);  a += c;       \
-        c -= b;  c ^= rot(b, 4);  b += a;       \
-    }
+#define mix(a,b,c)					\
+	{						\
+		a -= c;	 a ^= rot(c, 4);  c += b;	\
+		b -= a;	 b ^= rot(a, 6);  a += c;	\
+		c -= b;	 c ^= rot(b, 8);  b += a;	\
+		a -= c;	 a ^= rot(c,16);  c += b;	\
+		b -= a;	 b ^= rot(a,19);  a += c;	\
+		c -= b;	 c ^= rot(b, 4);  b += a;	\
+	}
 
 /*
   -------------------------------------------------------------------------------
@@ -163,16 +163,16 @@ uint32_t hash_fast32(const void *buf, size_t len, uint32_t seed)
   11  8 15 26 3 22 24
   -------------------------------------------------------------------------------
 */
-#define final(a,b,c)                            \
-    {                                           \
-        c ^= b; c -= rot(b,14);                 \
-        a ^= c; a -= rot(c,11);                 \
-        b ^= a; b -= rot(a,25);                 \
-        c ^= b; c -= rot(b,16);                 \
-        a ^= c; a -= rot(c,4);                  \
-        b ^= a; b -= rot(a,14);                 \
-        c ^= b; c -= rot(b,24);                 \
-    }
+#define final(a,b,c)				\
+	{					\
+		c ^= b; c -= rot(b,14);		\
+		a ^= c; a -= rot(c,11);		\
+		b ^= a; b -= rot(a,25);		\
+		c ^= b; c -= rot(b,16);		\
+		a ^= c; a -= rot(c,4);		\
+		b ^= a; b -= rot(a,14);		\
+		c ^= b; c -= rot(b,24);		\
+	}
 
 #define hashsize(n) ((uint32_t)1<<(n))
 #define hashmask(n) (hashsize(n)-1)
@@ -181,7 +181,7 @@ uint32_t hash_fast32(const void *buf, size_t len, uint32_t seed)
 /*
   -------------------------------------------------------------------------------
   hash_jenkins() -- hash a variable-length key into a 32-bit value
-  k       : the key (the unaligned variable-length array of bytes)
+  k	  : the key (the unaligned variable-length array of bytes)
   length  : the length of the key, counting by bytes
   initval : can be any 4-byte value
   Returns a 32-bit value.  Every bit of the key affects every bit of
@@ -197,7 +197,7 @@ uint32_t hash_fast32(const void *buf, size_t len, uint32_t seed)
   If you are hashing n strings (uint8_t **)k, do it like this:
   for (i=0, h=0; i<n; ++i) h = hash_jenkins( k[i], len[i], h);
 
-  By Bob Jenkins, 2006.  bob_jenkins@burtleburtle.net.  You may use this
+  By Bob Jenkins, 2006.	 bob_jenkins@burtleburtle.net.	You may use this
   code any way you wish, private, educational, or commercial.  It's free.
 
   Use for hash table lookup, or anything where one collision in 2^^32 is
@@ -211,7 +211,7 @@ uint32_t hash_jenkins(const void *key, size_t length, uint32_t initval)
 	union {
 		const void *ptr;
 		size_t i;
-	} u;            /* needed for Mac Powerbook G4 */
+	} u;		/* needed for Mac Powerbook G4 */
 
 	/* Set up the internal state */
 	a = b = c = 0xdeadbeef + ((uint32_t) length) + initval;
@@ -236,9 +236,9 @@ uint32_t hash_jenkins(const void *key, size_t length, uint32_t initval)
 		 * "k[2]&0xffffff" actually reads beyond the end of the string, but
 		 * then masks off the part it's not allowed to read.  Because the
 		 * string is aligned, the masked-off tail is in the same word as the
-		 * rest of the string.  Every machine with memory protection I've seen
+		 * rest of the string.	Every machine with memory protection I've seen
 		 * does it on word boundaries, so is OK with this.  But VALGRIND will
-		 * still catch it and complain.  The masking trick does make the hash
+		 * still catch it and complain.	 The masking trick does make the hash
 		 * noticably faster for short strings (like English words).
 		 */
 #ifndef VALGRIND
@@ -296,7 +296,7 @@ uint32_t hash_jenkins(const void *key, size_t length, uint32_t initval)
 			return c;   /* zero length strings require no mixing */
 		}
 
-#else               /* make valgrind happy */
+#else		    /* make valgrind happy */
 
 		k8 = (const uint8_t *)k;
 		switch (length) {
@@ -308,7 +308,7 @@ uint32_t hash_jenkins(const void *key, size_t length, uint32_t initval)
 		case 11:
 			c += ((uint32_t) k8[10]) << 16; /* fall through */
 		case 10:
-			c += ((uint32_t) k8[9]) << 8;   /* fall through */
+			c += ((uint32_t) k8[9]) << 8;	/* fall through */
 		case 9:
 			c += k8[8]; /* fall through */
 		case 8:
@@ -316,18 +316,18 @@ uint32_t hash_jenkins(const void *key, size_t length, uint32_t initval)
 			a += k[0];
 			break;
 		case 7:
-			b += ((uint32_t) k8[6]) << 16;  /* fall through */
+			b += ((uint32_t) k8[6]) << 16;	/* fall through */
 		case 6:
-			b += ((uint32_t) k8[5]) << 8;   /* fall through */
+			b += ((uint32_t) k8[5]) << 8;	/* fall through */
 		case 5:
 			b += k8[4]; /* fall through */
 		case 4:
 			a += k[0];
 			break;
 		case 3:
-			a += ((uint32_t) k8[2]) << 16;  /* fall through */
+			a += ((uint32_t) k8[2]) << 16;	/* fall through */
 		case 2:
-			a += ((uint32_t) k8[1]) << 8;   /* fall through */
+			a += ((uint32_t) k8[1]) << 8;	/* fall through */
 		case 1:
 			a += k8[0];
 			break;
@@ -335,7 +335,7 @@ uint32_t hash_jenkins(const void *key, size_t length, uint32_t initval)
 			return c;
 		}
 
-#endif              /* !valgrind */
+#endif		    /* !valgrind */
 
 	} else if ((u.i & 0x1) == 0) {
 		const uint16_t *k = (const uint16_t *)key;  /* read 16-bit chunks */
@@ -373,7 +373,7 @@ uint32_t hash_jenkins(const void *key, size_t length, uint32_t initval)
 			a += k[0] + (((uint32_t) k[1]) << 16);
 			break;
 		case 7:
-			b += ((uint32_t) k8[6]) << 16;  /* fall through */
+			b += ((uint32_t) k8[6]) << 16;	/* fall through */
 		case 6:
 			b += k[2];
 			a += k[0] + (((uint32_t) k[1]) << 16);
@@ -384,7 +384,7 @@ uint32_t hash_jenkins(const void *key, size_t length, uint32_t initval)
 			a += k[0] + (((uint32_t) k[1]) << 16);
 			break;
 		case 3:
-			a += ((uint32_t) k8[2]) << 16;  /* fall through */
+			a += ((uint32_t) k8[2]) << 16;	/* fall through */
 		case 2:
 			a += k[0];
 			break;
@@ -395,7 +395,7 @@ uint32_t hash_jenkins(const void *key, size_t length, uint32_t initval)
 			return c;   /* zero length requires no mixing */
 		}
 
-	} else {        /* need to read the key one byte at a time */
+	} else {	/* need to read the key one byte at a time */
 		const uint8_t *k = (const uint8_t *)key;
 
 		/*--------------- all but the last block: affect some 32 bits of (a,b,c) */
@@ -457,7 +457,7 @@ uint32_t hash_jenkins(const void *key, size_t length, uint32_t initval)
  * hash_jenkins2 - return 2 32-bit hash values
  *
  * This is identical to hash_jenkins(), except it returns two 32-bit hash
- * values instead of just one.  This is good enough for hash table
+ * values instead of just one.	This is good enough for hash table
  * lookup with 2^^64 buckets, or if you want a second hash if you're not
  * happy with the first, or if you want a probably-unique 64-bit ID for
  * the key.  *pc is better mixed than *pb, so use *pc first.  If you want
@@ -469,7 +469,7 @@ void hash_jenkins2(const void *key, size_t length, uint32_t * pc, uint32_t * pb)
 	union {
 		const void *ptr;
 		size_t i;
-	} u;            /* needed for Mac Powerbook G4 */
+	} u;		/* needed for Mac Powerbook G4 */
 
 	/* Set up the internal state */
 	a = b = c = 0xdeadbeef + ((uint32_t) length) + *pc;
@@ -495,9 +495,9 @@ void hash_jenkins2(const void *key, size_t length, uint32_t * pc, uint32_t * pb)
 		 * "k[2]&0xffffff" actually reads beyond the end of the string, but
 		 * then masks off the part it's not allowed to read.  Because the
 		 * string is aligned, the masked-off tail is in the same word as the
-		 * rest of the string.  Every machine with memory protection I've seen
+		 * rest of the string.	Every machine with memory protection I've seen
 		 * does it on word boundaries, so is OK with this.  But VALGRIND will
-		 * still catch it and complain.  The masking trick does make the hash
+		 * still catch it and complain.	 The masking trick does make the hash
 		 * noticably faster for short strings (like English words).
 		 */
 #ifndef VALGRIND
@@ -557,7 +557,7 @@ void hash_jenkins2(const void *key, size_t length, uint32_t * pc, uint32_t * pb)
 			return; /* zero length strings require no mixing */
 		}
 
-#else               /* make valgrind happy */
+#else		    /* make valgrind happy */
 
 		k8 = (const uint8_t *)k;
 		switch (length) {
@@ -569,7 +569,7 @@ void hash_jenkins2(const void *key, size_t length, uint32_t * pc, uint32_t * pb)
 		case 11:
 			c += ((uint32_t) k8[10]) << 16; /* fall through */
 		case 10:
-			c += ((uint32_t) k8[9]) << 8;   /* fall through */
+			c += ((uint32_t) k8[9]) << 8;	/* fall through */
 		case 9:
 			c += k8[8]; /* fall through */
 		case 8:
@@ -577,18 +577,18 @@ void hash_jenkins2(const void *key, size_t length, uint32_t * pc, uint32_t * pb)
 			a += k[0];
 			break;
 		case 7:
-			b += ((uint32_t) k8[6]) << 16;  /* fall through */
+			b += ((uint32_t) k8[6]) << 16;	/* fall through */
 		case 6:
-			b += ((uint32_t) k8[5]) << 8;   /* fall through */
+			b += ((uint32_t) k8[5]) << 8;	/* fall through */
 		case 5:
 			b += k8[4]; /* fall through */
 		case 4:
 			a += k[0];
 			break;
 		case 3:
-			a += ((uint32_t) k8[2]) << 16;  /* fall through */
+			a += ((uint32_t) k8[2]) << 16;	/* fall through */
 		case 2:
-			a += ((uint32_t) k8[1]) << 8;   /* fall through */
+			a += ((uint32_t) k8[1]) << 8;	/* fall through */
 		case 1:
 			a += k8[0];
 			break;
@@ -598,7 +598,7 @@ void hash_jenkins2(const void *key, size_t length, uint32_t * pc, uint32_t * pb)
 			return; /* zero length strings require no mixing */
 		}
 
-#endif              /* !valgrind */
+#endif		    /* !valgrind */
 
 	} else if ((u.i & 0x1) == 0) {
 		const uint16_t *k = (const uint16_t *)key;  /* read 16-bit chunks */
@@ -636,7 +636,7 @@ void hash_jenkins2(const void *key, size_t length, uint32_t * pc, uint32_t * pb)
 			a += k[0] + (((uint32_t) k[1]) << 16);
 			break;
 		case 7:
-			b += ((uint32_t) k8[6]) << 16;  /* fall through */
+			b += ((uint32_t) k8[6]) << 16;	/* fall through */
 		case 6:
 			b += k[2];
 			a += k[0] + (((uint32_t) k[1]) << 16);
@@ -647,7 +647,7 @@ void hash_jenkins2(const void *key, size_t length, uint32_t * pc, uint32_t * pb)
 			a += k[0] + (((uint32_t) k[1]) << 16);
 			break;
 		case 3:
-			a += ((uint32_t) k8[2]) << 16;  /* fall through */
+			a += ((uint32_t) k8[2]) << 16;	/* fall through */
 		case 2:
 			a += k[0];
 			break;
@@ -660,7 +660,7 @@ void hash_jenkins2(const void *key, size_t length, uint32_t * pc, uint32_t * pb)
 			return; /* zero length strings require no mixing */
 		}
 
-	} else {        /* need to read the key one byte at a time */
+	} else {	/* need to read the key one byte at a time */
 		const uint8_t *k = (const uint8_t *)key;
 
 		/*--------------- all but the last block: affect some 32 bits of (a,b,c) */

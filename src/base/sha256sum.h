@@ -46,13 +46,13 @@ typedef struct _SHA256Context SHA256Context;
 extern "C" {
 #endif
 
-	void SHA256Init(SHA256Context * sc);
+void SHA256Init(SHA256Context * sc);
 
-	void SHA256Update(SHA256Context * sc, const void *data, uint32_t len);
+void SHA256Update(SHA256Context * sc, const void *data, uint32_t len);
 
-	void SHA256Final(SHA256Context * sc, uint8_t hash[SHA256_HASH_SIZE]);
+void SHA256Final(SHA256Context * sc, uint8_t hash[SHA256_HASH_SIZE]);
 
 #ifdef __cplusplus
 }
 #endif
-#endif              /* __ULIB_SHA256_H */
+#endif		    /* __ULIB_SHA256_H */

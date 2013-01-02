@@ -62,12 +62,12 @@ class align_hash_map
 public:
 	DEFINE_ALIGNHASH(inclass, _Key, _Val, 1, alignhash_hashfn, alignhash_equalfn);
 
-	typedef _Key        key_type;
-	typedef _Val        value_type;
+	typedef _Key	    key_type;
+	typedef _Val	    value_type;
 	typedef ah_iter_t   size_type;
-	typedef _Val *      pointer;
+	typedef _Val *	    pointer;
 	typedef const _Val* const_pointer;
-	typedef _Val &      reference;
+	typedef _Val &	    reference;
 	typedef const _Val& const_reference;
 	typedef ah_iter_t   hashing_iterator;
 	typedef alignhash_t(inclass) * hashing;
@@ -79,7 +79,7 @@ public:
 		typedef alignhash_t(inclass) * hashing;
 		typedef ah_iter_t hashing_iterator;
 
-		hashing          _hashing;
+		hashing		 _hashing;
 		hashing_iterator _cur;
 
 		iterator(hashing h, hashing_iterator itr)
@@ -141,7 +141,7 @@ public:
 		typedef const alignhash_t(inclass) * hashing;
 		typedef ah_iter_t hashing_iterator;
 
-		hashing          _hashing;
+		hashing		 _hashing;
 		hashing_iterator _cur;
 
 		const_iterator(const hashing h, hashing_iterator itr)
@@ -338,7 +338,7 @@ class align_hash_set
 public:
 	DEFINE_ALIGNHASH(inclass, _Key, int, 0, alignhash_hashfn, alignhash_equalfn);
 
-	typedef _Key      key_type;
+	typedef _Key	  key_type;
 	typedef ah_iter_t size_type;
 	typedef ah_iter_t hashing_iterator;
 	typedef alignhash_t(inclass) * hashing;
@@ -348,7 +348,7 @@ public:
 		typedef alignhash_t(inclass) * hashing;
 		typedef ah_iter_t hashing_iterator;
 
-		hashing          _hashing;
+		hashing		 _hashing;
 		hashing_iterator _cur;
 
 		iterator(hashing h, hashing_iterator itr)
@@ -403,7 +403,7 @@ public:
 		typedef const alignhash_t(inclass) * hashing;
 		typedef ah_iter_t hashing_iterator;
 
-		hashing          _hashing;
+		hashing		 _hashing;
 		hashing_iterator _cur;
 
 		const_iterator(const hashing h, hashing_iterator itr)
@@ -578,4 +578,4 @@ private:
 
 }  // namespace ulib
 
-#endif  /* _ALIGN_HASH_H */
+#endif	/* _ALIGN_HASH_H */

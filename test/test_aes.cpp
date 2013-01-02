@@ -4,7 +4,7 @@
 #include <string.h>
 #include <assert.h>
 
-const unsigned char test_key1[16] = 
+const unsigned char test_key1[16] =
 { 0x80 };
 const unsigned char test_vec1[16] =
 { 0x0e, 0xdd, 0x33, 0xd3, 0xc6, 0x21, 0xe5, 0x46, 0x45, 0x5b, 0xd8, 0xba, 0x14, 0x18, 0xbe, 0xc8 };
@@ -30,65 +30,65 @@ const unsigned char test_vec5[16] =
 
 int main()
 {
-    AES_KEY key;
+	AES_KEY key;
 
-    AES_set_encrypt_key(test_key1, 128, &key);
-    unsigned char output1[16] = { 0 };
-    print_hex_dump_bytes("KEY\t", DUMP_PREFIX_OFFSET, test_key1, sizeof(test_key1));
-    AES_encrypt(output1, output1, &key);
-    print_hex_dump_bytes("VEC\t", DUMP_PREFIX_OFFSET, output1, sizeof(output1));
-    assert(memcmp(test_vec1, output1, sizeof(test_vec1)) == 0);
+	AES_set_encrypt_key(test_key1, 128, &key);
+	unsigned char output1[16] = { 0 };
+	print_hex_dump_bytes("KEY\t", DUMP_PREFIX_OFFSET, test_key1, sizeof(test_key1));
+	AES_encrypt(output1, output1, &key);
+	print_hex_dump_bytes("VEC\t", DUMP_PREFIX_OFFSET, output1, sizeof(output1));
+	assert(memcmp(test_vec1, output1, sizeof(test_vec1)) == 0);
 
-    AES_set_encrypt_key(test_key2, 128, &key);
-    unsigned char output2[16] = { 0 };
-    print_hex_dump_bytes("KEY\t", DUMP_PREFIX_OFFSET, test_key2, sizeof(test_key2));
-    AES_encrypt(output2, output2, &key);
-    print_hex_dump_bytes("VEC\t", DUMP_PREFIX_OFFSET, output2, sizeof(output2));
-    assert(memcmp(test_vec2, output2, sizeof(test_vec2)) == 0);
+	AES_set_encrypt_key(test_key2, 128, &key);
+	unsigned char output2[16] = { 0 };
+	print_hex_dump_bytes("KEY\t", DUMP_PREFIX_OFFSET, test_key2, sizeof(test_key2));
+	AES_encrypt(output2, output2, &key);
+	print_hex_dump_bytes("VEC\t", DUMP_PREFIX_OFFSET, output2, sizeof(output2));
+	assert(memcmp(test_vec2, output2, sizeof(test_vec2)) == 0);
 
-    const unsigned char zeros[16] = { 0 };
+	const unsigned char zeros[16] = { 0 };
 
-    AES_set_decrypt_key(test_key1, 128, &key);
-    unsigned char output3[16] = { 0 };
-    AES_decrypt(test_vec1, output3, &key);
-    assert(memcmp(output3, zeros, sizeof(output3)) == 0);
+	AES_set_decrypt_key(test_key1, 128, &key);
+	unsigned char output3[16] = { 0 };
+	AES_decrypt(test_vec1, output3, &key);
+	assert(memcmp(output3, zeros, sizeof(output3)) == 0);
 
-    AES_set_decrypt_key(test_key2, 128, &key);
-    unsigned char output4[16] = { 0 };
-    AES_decrypt(test_vec2, output4, &key);
-    assert(memcmp(output4, zeros, sizeof(output4)) == 0);
+	AES_set_decrypt_key(test_key2, 128, &key);
+	unsigned char output4[16] = { 0 };
+	AES_decrypt(test_vec2, output4, &key);
+	assert(memcmp(output4, zeros, sizeof(output4)) == 0);
 
-    AES_set_encrypt_key(test_key3, 192, &key);
-    unsigned char output5[16] = { 0 };
-    print_hex_dump_bytes("KEY\t", DUMP_PREFIX_OFFSET, test_key3, sizeof(test_key3));
-    unsigned char ivec1[16];
-    memcpy(ivec1, test_vec3, sizeof(ivec1));
-    AES_cbc_encrypt(test_vec4, output5, ivec1, 1, &key);
-    print_hex_dump_bytes("VEC\t", DUMP_PREFIX_OFFSET, test_vec3, sizeof(test_vec3));
-    print_hex_dump_bytes("VEC\t", DUMP_PREFIX_OFFSET, test_vec4, sizeof(test_vec4));
-    print_hex_dump_bytes("VEC\t", DUMP_PREFIX_OFFSET, output5, sizeof(output5));
-    assert(memcmp(test_vec5, output5, sizeof(test_vec5)) == 0);
-    unsigned char output6[16] = { 0 };
-    AES_set_decrypt_key(test_key3, 192, &key);
-    memcpy(ivec1, test_vec3, sizeof(ivec1));
-    AES_cbc_decrypt(test_vec5, output6, ivec1, 1, &key);
-    assert(memcmp(test_vec4, output6, sizeof(test_vec4)) == 0); 
+	AES_set_encrypt_key(test_key3, 192, &key);
+	unsigned char output5[16] = { 0 };
+	print_hex_dump_bytes("KEY\t", DUMP_PREFIX_OFFSET, test_key3, sizeof(test_key3));
+	unsigned char ivec1[16];
+	memcpy(ivec1, test_vec3, sizeof(ivec1));
+	AES_cbc_encrypt(test_vec4, output5, ivec1, 1, &key);
+	print_hex_dump_bytes("VEC\t", DUMP_PREFIX_OFFSET, test_vec3, sizeof(test_vec3));
+	print_hex_dump_bytes("VEC\t", DUMP_PREFIX_OFFSET, test_vec4, sizeof(test_vec4));
+	print_hex_dump_bytes("VEC\t", DUMP_PREFIX_OFFSET, output5, sizeof(output5));
+	assert(memcmp(test_vec5, output5, sizeof(test_vec5)) == 0);
+	unsigned char output6[16] = { 0 };
+	AES_set_decrypt_key(test_key3, 192, &key);
+	memcpy(ivec1, test_vec3, sizeof(ivec1));
+	AES_cbc_decrypt(test_vec5, output6, ivec1, 1, &key);
+	assert(memcmp(test_vec4, output6, sizeof(test_vec4)) == 0);
 
-    const unsigned char str[128] = 
-            "this is a long string for AES cbc mode testing. Padding..................END";
-    AES_set_encrypt_key(test_key3, 192, &key);
-    unsigned char output7[128];
-    memcpy(ivec1, test_vec3, sizeof(ivec1));
-    AES_cbc_encrypt(str, output7, ivec1, sizeof(str)/AES_BLOCK_SIZE, &key);
-    print_hex_dump_bytes("STR\t", DUMP_PREFIX_OFFSET, output7, sizeof(output7));
-    AES_set_decrypt_key(test_key3, 192, &key);  
-    memcpy(ivec1, test_vec3, sizeof(ivec1));
-    unsigned char output8[128];
-    AES_cbc_decrypt(output7, output8, ivec1, sizeof(output7)/AES_BLOCK_SIZE, &key);
-    print_hex_dump_bytes("STR\t", DUMP_PREFIX_OFFSET, output8, sizeof(output8));
-    assert(memcmp(str, output8, sizeof(str)) == 0);
+	const unsigned char str[128] =
+		"this is a long string for AES cbc mode testing. Padding..................END";
+	AES_set_encrypt_key(test_key3, 192, &key);
+	unsigned char output7[128];
+	memcpy(ivec1, test_vec3, sizeof(ivec1));
+	AES_cbc_encrypt(str, output7, ivec1, sizeof(str)/AES_BLOCK_SIZE, &key);
+	print_hex_dump_bytes("STR\t", DUMP_PREFIX_OFFSET, output7, sizeof(output7));
+	AES_set_decrypt_key(test_key3, 192, &key);
+	memcpy(ivec1, test_vec3, sizeof(ivec1));
+	unsigned char output8[128];
+	AES_cbc_decrypt(output7, output8, ivec1, sizeof(output7)/AES_BLOCK_SIZE, &key);
+	print_hex_dump_bytes("STR\t", DUMP_PREFIX_OFFSET, output8, sizeof(output8));
+	assert(memcmp(str, output8, sizeof(str)) == 0);
 
-    printf("passed\n");
+	printf("passed\n");
 
-    return 0;
+	return 0;
 }

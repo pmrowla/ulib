@@ -52,12 +52,12 @@ class chain_hash_map
 public:
 	DEFINE_CHAINHASH(inclass, _Key, _Val, chainhash_hashfn, chainhash_cmpfn);
 
-	typedef _Key        key_type;
-	typedef _Val        value_type;
-	typedef size_t      size_type;
-	typedef _Val *      pointer;
+	typedef _Key	    key_type;
+	typedef _Val	    value_type;
+	typedef size_t	    size_type;
+	typedef _Val *	    pointer;
 	typedef const _Val* const_pointer;
-	typedef _Val &      reference;
+	typedef _Val &	    reference;
 	typedef const _Val& const_reference;
 	typedef chainhash_t(inclass)   * hashing;
 	typedef chainhash_itr_t(inclass) hashing_iterator;
@@ -307,4 +307,4 @@ private:
 
 }  // namespace ulib
 
-#endif  /* _CHAIN_HASH_H */
+#endif	/* _CHAIN_HASH_H */

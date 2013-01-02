@@ -34,7 +34,7 @@
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.	 See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
@@ -63,23 +63,23 @@ typedef struct {
 extern "C" {
 #endif
 
-	void SHA1Init(SHA1_CONTEXT * hd);
+void SHA1Init(SHA1_CONTEXT * hd);
 
-	/* Update the message digest with the contents
-	 * of INBUF with length INLEN.
-	 */
-	void SHA1Update(SHA1_CONTEXT * hd, const unsigned char *inbuf,
-			size_t inlen);
+/* Update the message digest with the contents
+ * of INBUF with length INLEN.
+ */
+void SHA1Update(SHA1_CONTEXT * hd, const unsigned char *inbuf,
+		size_t inlen);
 
-	/* The routine final terminates the computation and
-	 * returns the digest.
-	 * The handle is prepared for a new cycle, but adding bytes to the
-	 * handle will the destroy the returned buffer.
-	 * Returns: 20 bytes representing the digest.
-	 */
-	void SHA1Final(SHA1_CONTEXT * hd);
+/* The routine final terminates the computation and
+ * returns the digest.
+ * The handle is prepared for a new cycle, but adding bytes to the
+ * handle will the destroy the returned buffer.
+ * Returns: 20 bytes representing the digest.
+ */
+void SHA1Final(SHA1_CONTEXT * hd);
 
 #ifdef __cplusplus
 }
 #endif
-#endif              /* __ULIB_SHA1SUM_H */
+#endif		    /* __ULIB_SHA1SUM_H */

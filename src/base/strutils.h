@@ -30,43 +30,43 @@
 extern "C" {
 #endif
 
-	/**
-	 * nextline - extracts the next line from memory
-	 * returns the start of next line or NULL
-	 * @buf:  buffer
-	 * @size: buffer size
-	 * Note:  the end of current line will be set to '\0', quite
-	 * useful especially for concurrent line parsing.
-	 */
-	char *nextline(char *buf, long size);
+/**
+ * nextline - extracts the next line from memory
+ * returns the start of next line or NULL
+ * @buf:  buffer
+ * @size: buffer size
+ * Note:  the end of current line will be set to '\0', quite
+ * useful especially for concurrent line parsing.
+ */
+char *nextline(char *buf, long size);
 
-	/**
-	 * getfield - retrieves a field from arbitrary string
-	 * @line:         line buffer
-	 * @line_size:    line buffer size
-	 * @field:        field buffer
-	 * @field_size:   field buffer size
-	 * @fid:          id of field to retrieve
-	 * @delim:        delimiter character
-	 * @Note:  '\0' is also a delimiter character
-	 */
-	const char *getfield(const char *line, long line_size, char *field,
-			     long field_size, int fid, char delim);
+/**
+ * getfield - retrieves a field from arbitrary string
+ * @line:	  line buffer
+ * @line_size:	  line buffer size
+ * @field:	  field buffer
+ * @field_size:	  field buffer size
+ * @fid:	  id of field to retrieve
+ * @delim:	  delimiter character
+ * @Note:  '\0' is also a delimiter character
+ */
+const char *getfield(const char *line, long line_size, char *field,
+		     long field_size, int fid, char delim);
 
-	/**
-	 * getlinefield - retrieves a field from line
-	 * @line:         line buffer
-	 * @line_size:    line buffer size
-	 * @field:        field buffer
-	 * @field_size:   field buffer size
-	 * @fid:          id of field to retrieve
-	 * @delim:        delimiter character
-	 * @Note:  '\0' and '\n' are also delimiter characters
-	 */
-	const char *getlinefield(const char *line, long line_size, char *field,
-				 long field_size, int fid, char delim);
+/**
+ * getlinefield - retrieves a field from line
+ * @line:	  line buffer
+ * @line_size:	  line buffer size
+ * @field:	  field buffer
+ * @field_size:	  field buffer size
+ * @fid:	  id of field to retrieve
+ * @delim:	  delimiter character
+ * @Note:  '\0' and '\n' are also delimiter characters
+ */
+const char *getlinefield(const char *line, long line_size, char *field,
+			 long field_size, int fid, char delim);
 
 #ifdef __cplusplus
 }
 #endif
-#endif              /* __ULIB_STRUTILS_H */
+#endif		    /* __ULIB_STRUTILS_H */

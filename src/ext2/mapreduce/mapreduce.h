@@ -50,7 +50,7 @@ public:
 	combiner(V &val)
 		: _value(val) { }
 
-	virtual     combiner &
+	virtual	    combiner &
 	operator+=(const V &other) = 0;
 
 	operator V() {
@@ -78,19 +78,19 @@ public:
 	typedef K key_type;
 	typedef V value_type;
 
-	typedef typename std::vector< std::pair<K, V> >::iterator       iterator;
+	typedef typename std::vector< std::pair<K, V> >::iterator	iterator;
 	typedef typename std::vector< std::pair<K, V> >::const_iterator const_iterator;
-    
+
 	mapper() : _pos(0) { }
-    
+
 	virtual
 	~mapper() { }
 
 	void
 	emit(const K &key, const V &value) {
 		if (_pos < _pairs.size()) {
-                    _pairs[_pos].first  = key;
-                    _pairs[_pos].second = value;
+			_pairs[_pos].first  = key;
+			_pairs[_pos].second = value;
 		} else
 			_pairs.push_back(std::pair<K,V>(key, value));
 		++_pos;
@@ -191,11 +191,11 @@ protected:
 // input and output. By contrast, in this task abstraction the
 // intermediate storage is shared among all mappers.
 template<
-typename S,  // concurrent intermediate storage
-	 typename M,  // mapper class
-	 typename R,  // reducer class
-	 template<typename K> class P, // partition template
-	 typename I>  // dataset iterator
+	typename S,  // concurrent intermediate storage
+	typename M,  // mapper class
+	typename R,  // reducer class
+	template<typename K> class P, // partition template
+	typename I>  // dataset iterator
 class task : public ulib::thread
 {
 public:
@@ -213,7 +213,7 @@ private:
 	run() { // make it private as only the thread can call the function
 		M m;
 		for (I i = _begin; i != _end; ++i) {
-			m(*i);  // produce intermediate key/value pairs
+			m(*i);	// produce intermediate key/value pairs
 			for (typename M::const_iterator it = m.begin(); it != m.end(); ++it) {
 				size_t h = P<typename M::key_type>(it->first);
 				_store.lock(h);
@@ -235,11 +235,11 @@ private:
 // key/value pairs evenly to slots, and a reducer that combine the
 // values associated with the same key.
 template<
-template<typename K, typename V> class S, // intermediate storage template
-	 class M,  // mapper class
-	 class R,  // reducer class
-	 template<typename K> class P,  // partition template
-	 class D>  // dateset
+	template<typename K, typename V> class S, // intermediate storage template
+	class M,  // mapper class
+	class R,  // reducer class
+	template<typename K> class P,  // partition template
+	class D>  // dateset
 class job
 {
 public:
@@ -261,9 +261,9 @@ public:
 		size_t len = _dataset.size() / ntask;
 		for (int i = 0; i < ntask - 1; ++i)
 			tasks[i] = new task<result_type, M, R, P, typename D::const_iterator>
-			(_result, _dataset.begin() + len * i, _dataset.begin() + len * (i + 1));
+				(_result, _dataset.begin() + len * i, _dataset.begin() + len * (i + 1));
 		tasks[ntask - 1] = new task<result_type, M, R, P, typename D::const_iterator>
-		(_result, _dataset.begin() + len * (ntask - 1), _dataset.end());
+			(_result, _dataset.begin() + len * (ntask - 1), _dataset.end());
 		for (int i = 0; i < ntask; ++i)
 			tasks[i]->start();
 		for (int i = 0; i < ntask; ++i)
@@ -273,7 +273,7 @@ public:
 
 private:
 	result_type &_result;
-	const D     &_dataset;
+	const D	    &_dataset;
 };
 
 // this implements an additive combiner
@@ -283,7 +283,7 @@ class typical_reducer : public reducer<V>
 public:
 	typical_reducer(V &val) : reducer<V>(val) { }
 
-	virtual     typical_reducer &
+	virtual	    typical_reducer &
 	operator+=(const V &other) {
 		// the value can customize the addition by overloading
 		// its += operator.
@@ -324,20 +324,20 @@ public:
 // a typical yet flexible job
 template<class M, class D>
 class typical_job :
-	public  job<chain_hash_store, M,
-	typical_reducer<typename M::value_type>,
-	typical_partition, D>
+		public	job<chain_hash_store, M,
+			    typical_reducer<typename M::value_type>,
+			    typical_partition, D>
 {
 public:
 	typedef job<chain_hash_store, M,
-		typical_reducer<typename M::value_type>,
-		typical_partition, D> job_type;
+		    typical_reducer<typename M::value_type>,
+		    typical_partition, D> job_type;
 
-	typedef typename job_type::mapper_type    mapper_type;
-	typedef typename job_type::reducer_type   reducer_type;
-	typedef typename job_type::dataset_type   dataset_type;
+	typedef typename job_type::mapper_type	  mapper_type;
+	typedef typename job_type::reducer_type	  reducer_type;
+	typedef typename job_type::dataset_type	  dataset_type;
 	typedef typename job_type::partition_type partition_type;
-	typedef typename job_type::result_type    result_type;
+	typedef typename job_type::result_type	  result_type;
 
 	typical_job(result_type &r, const D &d)
 		: job_type(r, d) { }
@@ -347,4 +347,4 @@ public:
 
 }  // namespace ulib
 
-#endif  // __ULIB_MAPREDUCE_H
+#endif	// __ULIB_MAPREDUCE_H

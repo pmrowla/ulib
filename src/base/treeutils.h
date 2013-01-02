@@ -33,22 +33,22 @@
 extern "C" {
 #endif
 
-	size_t tree_height(struct tree_root *root);
+size_t tree_height(struct tree_root *root);
 
-	/* consistency checks:
-	 * 1. left < parent < right;
-	 * 2. parent pointers are correct; */
-	int tree_verify(struct tree_root *root,
-			int (*compare) (const void *, const void *));
+/* consistency checks:
+ * 1. left < parent < right;
+ * 2. parent pointers are correct; */
+int tree_verify(struct tree_root *root,
+		int (*compare) (const void *, const void *));
 
-	/* recursively count the number of nodes */
-	size_t tree_count(struct tree_root *root);
+/* recursively count the number of nodes */
+size_t tree_count(struct tree_root *root);
 
-	/* print each path of the tree */
-	void tree_print(struct tree_root *root,
-			void (*callback) (struct tree_root *));
+/* print each path of the tree */
+void tree_print(struct tree_root *root,
+		void (*callback) (struct tree_root *));
 
 #ifdef __cplusplus
 }
 #endif
-#endif              /* __ULIB_TREEUTILS_H */
+#endif		    /* __ULIB_TREEUTILS_H */

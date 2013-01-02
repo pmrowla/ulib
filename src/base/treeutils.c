@@ -91,7 +91,7 @@ __tree_print(struct tree_root *root,
 			h += n;
 		}
 	}
-	bitpath <<= 1;      /* skip the tree marker bit */
+	bitpath <<= 1;	    /* skip the tree marker bit */
 	h = 63 - h;
 	while (h-- > 0) {
 		if (bitpath & 0x8000000000000000ULL)

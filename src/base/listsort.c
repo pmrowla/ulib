@@ -37,7 +37,7 @@
  */
 static struct list_head *merge(void *priv,
 			       int (*cmp) (void *priv, const void *,
-					       const void *), struct list_head *a,
+					   const void *), struct list_head *a,
 			       struct list_head *b) {
 	struct list_head head, *tail = &head;
 
@@ -64,11 +64,11 @@ static struct list_head *merge(void *priv,
  * throughout.
  */
 static void merge_and_restore_back_links(void *priv,
-		int (*cmp) (void *priv, const void *,
-			    const void *),
-		struct list_head *head,
-		struct list_head *a,
-		struct list_head *b)
+					 int (*cmp) (void *priv, const void *,
+						     const void *),
+					 struct list_head *head,
+					 struct list_head *a,
+					 struct list_head *b)
 {
 	struct list_head *tail = head;
 
@@ -108,8 +108,8 @@ void list_sort(void *priv, struct list_head *head,
 	       int (*cmp) (void *priv, const void *, const void *))
 {
 	struct list_head *part[MAX_LIST_LENGTH_BITS + 1];   /* sorted partial lists
-                                                           -- last slot is a sentinel */
-	int lev;        /* index into part[] */
+							       -- last slot is a sentinel */
+	int lev;	/* index into part[] */
 	int max_lev = 0;
 	struct list_head *list;
 
