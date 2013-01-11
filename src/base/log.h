@@ -35,14 +35,14 @@
 #define ULIB_DEBUG(fmt, ...)
 #else
 #define ULIB_DEBUG(fmt, ...)				\
-	ULIB_LOG(stdout, "DEBUG	 " fmt, ##__VA_ARGS__)
+	ULIB_LOG(stdout, "[D]  " fmt, ##__VA_ARGS__)
 #endif
 
 #define ULIB_NOTICE(fmt, ...)				\
-	ULIB_LOG(stdout, "NOTICE " fmt, ##__VA_ARGS__)
+	ULIB_LOG(stdout, "[I]  " fmt, ##__VA_ARGS__)
 #define ULIB_WARNING(fmt, ...)				\
-	ULIB_LOG(stderr, "WARN	 " fmt, ##__VA_ARGS__)
+	ULIB_LOG(stderr, "[W]  " fmt, ##__VA_ARGS__)
 #define ULIB_FATAL(fmt, ...)				\
-	ULIB_LOG(stderr, "FATAL	 " fmt, ##__VA_ARGS__)
+	ULIB_LOG(stderr, "[E]  " fmt, ##__VA_ARGS__)
 
 #endif

@@ -5,7 +5,7 @@ TARGET		= alignhash.test alignhash_bench.test fbsearch.test version.test tree.te
 		zipf_rng.test thread.test periodic.test hash.test bit.test rdtsc.test bn.test \
 		chainhash.test chainhash_bench.test chainhash_class.test chainhash_r_class.test \
 		chainhash_r_bench.test chainhash_class_bench.test indep_workloads.test \
-		share_workloads.test
+		share_workloads.test log.test
 
 INCPATH		= ../include
 LIBPATH		= ../lib
