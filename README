@@ -1,36 +1,18 @@
-0. About ulib
 -----------------------
-Ulib provides a number of efficient algorithm implementations in C and
+  About this project
+-----------------------
+ulib implements efficient data structures and algorithms in C and
 C++. Most of them are competitively efficient as compared to
-state-of-the-art implementations. Detailed performance comparisons can
-be found in the performance section.
-   Ulib is an aggregate work mostly derived from the code I wrote at
-college. The rest are based on other open source projects like Linux
-kernel. I have improved the performance and portability of
-them. Information about the original source is retained in the code
-also. 
+state-of-the-art.
 
-For more information, please refer to the project homepage:
-http://code.google.com/p/ulib
+ulib is an aggregate work based on several undergraduate projects of
+mine, as well as some popular open source projects like the Linux
+kernel.
 
+The project is hosted at: http://code.google.com/p/ulib
 
-1. How to build ulib?
 -----------------------
-Perform 'make' to build the library and then you will find the headers
-and libraries in include/ and lib/ respectively.
-
-
-2. How to use it?
+     Installation
 -----------------------
-After building the library, you will have both the headers and static
-libraries. Generally, each header focuses on a specific component, and
-you just need to include the corresponding header to use a specific
-component. You will also need to link the libulib.a for some
-components.
-
-
-3. Any examples?
------------------------
-The tests shall demonstrate the basic usage of the components. Note
-that all components have been carefully tested, not limited to those
-tests under test/.
+Perform 'make' under the project root directory. This should provide
+necessary headers and libraries under include/ and lib/.
