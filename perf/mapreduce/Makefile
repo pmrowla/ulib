@@ -1,16 +1,21 @@
+QUIET	?= @
 INCPATH = ../../include
 LIBPATH = ../../lib
 
-CXXFLAGS ?=-O2 -W -Wall -I$(INCPATH)
-LDFLAGS   =-L$(LIBPATH) -lulib -lpthread -lrt
+CXXFLAGS ?=-O2 -W -Wall -Werror -I$(INCPATH)
+#PROFILER  =-L../../../gperftools/lib -lprofiler 
+#TCMALLOC  =-L../../../gperftools/lib -ltcmalloc
+LDFLAGS   =-L$(LIBPATH) $(PROFILER) $(TCMALLOC) -lulib -lpthread -lrt
 
-.cpp.o:
-	$(CXX) -c $(CXXFLAGS) $< -o $@
+APP = $(addsuffix .test, $(basename $(wildcard *.cpp)))
 
-mr_bench: mr_bench.o
-	$(CXX) -o mr_bench mr_bench.o $(LDFLAGS)
+%.test: %.cpp
+	$(QUIET)echo -e "  GEN	"$@
+	$(QUIET)$(CXX) $(CXXFLAGS) -o $@ $< $(LDFLAGS)
+
+all: $(APP)
 
 clean:
-	rm -rf mr_bench mr_bench.o
+	$(QUIET)rm -rf $(APP) *~
 
-.PHONY: clean
+.PHONY: all clean

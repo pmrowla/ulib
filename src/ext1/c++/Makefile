@@ -1,10 +1,6 @@
-WORKROOT	= ../../..
-INCPATH		= $(WORKROOT)/include/ulib
+PREFIX	= ../../..
 
-.PHONY: all clean $(INCPATH)
+.PHONY: all
+all: install_headers
 
-all:
-	mkdir -p $(INCPATH)
-	cp *.h $(INCPATH)/
-
-clean:
+include $(PREFIX)/rules.mk

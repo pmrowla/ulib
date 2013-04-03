@@ -27,10 +27,10 @@
 #include <stdlib.h>
 #include <string.h>
 #include <getopt.h>
-#include <ulib/timer.h>
-#include <ulib/dataset.h>
-#include <ulib/mapreduce.h>
-#include <ulib/chainhash_r.h>
+#include <ulib/util_timer.h>
+#include <ulib/mr_dataset.h>
+#include <ulib/mr_engine.h>
+#include <ulib/hash_chain_r.h>
 
 static const char *usage =
 	"The Space-Sharing MapReduce Framework\n"

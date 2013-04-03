@@ -1,23 +1,18 @@
+QUIET	?= @
+
 TARGET	= libulib.a
 
 $(TARGET):
-	for lib in $(wildcard *.a); do \
-		ar x $${lib}; \
-	done;
-	ar csr $(TARGET) *.o
-	rm -rf *.o
-
-.PHONY: debug release clean
+	$(QUIET)for lib in $(wildcard *.a); do $(AR) x $${lib}; done;
+	$(QUIET)$(AR) csr $(TARGET) *.o
+	$(QUIET)rm -rf *.o
 
 debug: $(TARGET)
 
-release:
-	for lib in $(wildcard *.a); do \
-		ar x $${lib}; \
-	done;
-	ar csr $(TARGET) *.o
-	strip --strip-debug --strip-unneeded $(TARGET)
-	rm -rf *.o
+release: $(TARGET)
+	$(QUIET)strip --strip-debug --strip-unneeded -w -K \* $(TARGET)
 
 clean:
-	rm -rf *.a
+	$(QUIET)rm -rf *.a $(TARGET)
+
+.PHONY: debug release clean

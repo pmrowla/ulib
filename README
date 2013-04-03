@@ -1,27 +1,30 @@
 ------------------------
- About the ULIB project
+ About the ULIB Library
 ------------------------
-The ulib library was motivated by a need for high-performance data
+The ulib library strives to provide efficient implementations of
 structures and algorithms for C and C++. It particularly focuses on
 those frequently used items, such as hash tables, binary trees,
 sorting algorithms, search algorithms, bitmaps, cryptographic hash
 functions, and etc. It also offers some featured items such as the
-Bloom filters, random number generators, command-line interpreter,
-and a MapReduce framework that full harnesses the power of multicores.
+Bloom filters, random number generators, command-line interpreter, and
+a MapReduce framework that fully harnesses the power of multicores.
 
 The current implementation of the ulib exhibits several performance
 benefits over state-of-the-art. For example, the ulib's aligned hash
-map outstrips other popular ones in search, insertion as well as
-memory consumption. Another example was based on my original
+map outstrips a number of other popular ones in search, insertion as
+well as memory consumption. Another example was based on my original
 observation that the chained hash map with region locks supersedes
 many lock-free ones in performance. This is further explained on the
 wiki:http://code.google.com/p/ulib/wiki/LocksCanMakeSense.
+
+The ulib project is based on several research projects of mine as well
+as some other popular open source projects such as the Linux Kernel.
 
 The project website provides more information about this project:
 http://code.google.com/p/ulib.
 
 ---------------------------
- How to build this library
+ How to Build This Library
 ---------------------------
 Use 'make' to build the entire library. After that you will have the
 headers reside under the include/ and static libraries under the
@@ -56,3 +59,11 @@ debugging information.
 |       |-- reentrant        -- thread-safe items
 |       `-- thread           -- thread and scheduling primitives
 `-- test                     -- tests for everything
+
+----------------------
+  The Version Number
+----------------------
+A sample version number may look like "a.b.c", which consists of three
+parts. 'a' is the major version for the library, identifying the
+design or interface. b is the minor version that represents the
+change of features. And, c is used to denote the bug fixes.

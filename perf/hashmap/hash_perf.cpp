@@ -33,13 +33,13 @@
 #include <ext/hash_map>
 #include <hash_map.h>
 #include <EASTL/hash_map.h>
-#include <ulib/timer.h>
+#include <ulib/util_timer.h>
 
 // Random Number Generator
-#include <ulib/rand_tpl.h>
+#include <ulib/math_rand_prot.h>
 
 //#define AH_DOUBLE_HASHING
-#include <ulib/alignhash.h>
+#include <ulib/hash_align.h>
 
 using google::sparse_hash_map;
 using google::dense_hash_map;
@@ -162,7 +162,7 @@ public:
 int main(int argc, char *argv[])
 {
 	size_t mem;
-	size_t capacity = 50000;
+	size_t capacity = 200000;
 	size_t loop	= 10000;
 
 	sequential_key_generator skg;

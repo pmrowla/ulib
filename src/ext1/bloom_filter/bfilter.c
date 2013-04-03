@@ -26,12 +26,12 @@
 #include <stdlib.h>
 #include <math.h>
 #include <time.h>
-#include <hash.h>
+#include <hash_func.h>
 #include <bitmap.h>
-#include <rand_tpl.h>
+#include <math_rand_prot.h>
 #include "bfilter.h"
 
-#define OPTIMAL_NFUNC(nbits, nelem) ((int)ceilf(0.7*(nbits)/(nelem)))
+#define OPTIMAL_NFUNC(nbits, nelem) ((int)ceilf((9 * nbits)/(13.0 * nelem)))
 #define HASH_FUNCTION(buf,len,seed) hash_fast64(buf, len, seed)
 
 static inline void

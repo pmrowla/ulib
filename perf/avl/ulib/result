@@ -1,40 +1,5 @@
-1046624 per sec, 1046624 done
-743697 per sec, 1790321 done
-680199 per sec, 2470520 done
-642601 per sec, 3113121 done
-615817 per sec, 3728938 done
-593050 per sec, 4321988 done
-578019 per sec, 4900007 done
-557049 per sec, 5457056 done
-553317 per sec, 6010373 done
-542541 per sec, 6552914 done
-536470 per sec, 7089384 done
-527135 per sec, 7616519 done
-518640 per sec, 8135159 done
-514716 per sec, 8649875 done
-511510 per sec, 9161385 done
-504175 per sec, 9665560 done
-insertion done
-515919 per sec, 181479 done
-536920 per sec, 718399 done
-541996 per sec, 1260395 done
-540211 per sec, 1800606 done
-541750 per sec, 2342356 done
-539712 per sec, 2882068 done
-538115 per sec, 3420183 done
-539432 per sec, 3959615 done
-540663 per sec, 4500278 done
-539017 per sec, 5039295 done
-540812 per sec, 5580107 done
-534127 per sec, 6114234 done
-540389 per sec, 6654623 done
-539025 per sec, 7193648 done
-541398 per sec, 7735046 done
-538048 per sec, 8273094 done
-538305 per sec, 8811399 done
-538821 per sec, 9350220 done
-541416 per sec, 9891636 done
-108364 per sec, 10000000 done
-0 per sec, 10000000 done
-all done, 10000000 elements, 2.166126 sec
-passed
+Inserting 1M elems elapsed: 0.893157
+Height: 24
+Searching 10M elems elapsed: 1.004864
+Deleting 1M elems elapsed: 0.169711
+

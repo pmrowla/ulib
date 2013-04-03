@@ -23,8 +23,8 @@
    SOFTWARE.
 */
 
-#ifndef __BLOOM_FILTER_H
-#define __BLOOM_FILTER_H
+#ifndef _ULIB_BLOOM_FILTER_H
+#define _ULIB_BLOOM_FILTER_H
 
 #include <stdint.h>
 
@@ -40,19 +40,13 @@ struct bloom_filter {
 extern "C" {
 #endif
 
-int bfilter_create(struct bloom_filter *bf, unsigned long nbits, unsigned long nelem);
-
+int  bfilter_create(struct bloom_filter *bf, unsigned long nbits, unsigned long nelem);
 void bfilter_destroy(struct bloom_filter *bf);
-
 void bfilter_zero(struct bloom_filter *bf);
-
 void bfilter_set(struct bloom_filter *bf, const void *buf, unsigned long buflen);
-
-int bfilter_get(struct bloom_filter *bf, const void *buf, unsigned long buflen);
-
+int  bfilter_get(struct bloom_filter *bf, const void *buf, unsigned long buflen);
 void bfilter_set_hash(struct bloom_filter *bf, unsigned long hash);
-
-int bfilter_get_hash(struct bloom_filter *bf, unsigned long hash);
+int  bfilter_get_hash(struct bloom_filter *bf, unsigned long hash);
 
 #ifdef __cplusplus
 }

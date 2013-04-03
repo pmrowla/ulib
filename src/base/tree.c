@@ -25,17 +25,17 @@
 
 #include "tree.h"
 
-struct tree_root *
-tree_search(struct tree_root *entry,
-	    int (*compare) (const void *, const void *),
-	    struct tree_root *root) {
-	int retval;
-
-	while (root != NIL) {
-		retval = compare(entry, root);
-		if (retval == 0)
+struct tree_root_np *
+tree_search(struct tree_root_np *entry,
+	    int (*compare)(const void *, const void *),
+	    struct tree_root_np *root)
+{
+	int sgn;
+	while (root) {
+		sgn = compare(entry, root);
+		if (sgn == 0)
 			return root;
-		if (retval < 0)
+		if (sgn < 0)
 			root = root->left;
 		else
 			root = root->right;
@@ -43,210 +43,201 @@ tree_search(struct tree_root *entry,
 	return root;
 }
 
-struct tree_root *
-tree_min(struct tree_root *root) {
-	if (root != NIL) {
-		while (root->left != NIL)
+struct tree_root_np *
+tree_min(struct tree_root_np *root)
+{
+	if (root) {
+		while (root->left)
 			root = root->left;
 	}
 	return root;
 }
 
-struct tree_root *
-tree_max(struct tree_root *root) {
-	if (root != NIL) {
-		while (root->right != NIL)
+struct tree_root_np *
+tree_max(struct tree_root_np *root)
+{
+	if (root) {
+		while (root->right)
 			root = root->right;
 	}
 	return root;
 }
 
 struct tree_root *
-tree_successor(struct tree_root *root) {
-	struct tree_root *p = NIL;
+tree_successor(struct tree_root *entry)
+{
+	struct tree_root *succ = NULL;
 
-	if (root != NIL) {
-		if (root->right != NIL)
-			return tree_min(root->right);
-
-		p = root->parent;
-		while (p != NIL && root == p->right) {
-			root = p;
-			p = p->parent;
+	if (entry) {
+		if (entry->right)
+			return (struct tree_root *)TREE_MIN(entry->right);
+		succ = entry->parent;
+		while (succ && entry == succ->right) {
+			entry = succ;
+			succ = succ->parent;
 		}
 	}
-	return p;
+	return succ;
 }
 
 struct tree_root *
-tree_predecessor(struct tree_root *root) {
-	struct tree_root *p = NIL;
+tree_predecessor(struct tree_root *entry)
+{
+	struct tree_root *pred = NULL;
 
-	if (root != NIL) {
-		if (root->left != NIL)
-			return tree_max(root->left);
-
-		p = root->parent;
-		while (p != NIL && root == p->left) {
-			root = p;
-			p = p->parent;
+	if (entry) {
+		if (entry->left)
+			return (struct tree_root *)TREE_MAX(entry->left);
+		pred = entry->parent;
+		while (pred && entry == pred->left) {
+			entry = pred;
+			pred = pred->parent;
 		}
 	}
-	return p;
+	return pred;
 }
 
 static inline void
-__rotate_left(struct tree_root *entry,
-	      struct tree_root **root)
+__rotate_left(struct tree_root *entry, struct tree_root **root)
 {
-	struct tree_root *n;
+	struct tree_root *child;
 
-	n = entry->right;
-
-	entry->right = n->left;
-	if (n->left != NIL)
-		n->left->parent = entry;
-
-	n->parent = entry->parent;
-
-	if (entry->parent == NIL)
-		*root = n;
+	child = entry->right;
+	entry->right = child->left;
+	if (child->left)
+		child->left->parent = entry;
+	child->parent = entry->parent;
+	if (entry->parent == NULL)
+		*root = child;
 	else if (entry == entry->parent->left)
-		entry->parent->left = n;
+		entry->parent->left = child;
 	else
-		entry->parent->right = n;
-
-	n->left = entry;
-	entry->parent = n;
+		entry->parent->right = child;
+	child->left = entry;
+	entry->parent = child;
 }
 
 static inline void
 __rotate_right(struct tree_root *entry,
 	       struct tree_root **root)
 {
-	struct tree_root *n;
+	struct tree_root *child;
 
-	n = entry->left;
+	child = entry->left;
+	entry->left = child->right;
+	if (child->right)
+		child->right->parent = entry;
 
-	entry->left = n->right;
-	if (n->right != NIL)
-		n->right->parent = entry;
+	child->parent = entry->parent;
 
-	n->parent = entry->parent;
-
-	if (entry->parent == NIL)
-		*root = n;
+	if (entry->parent == NULL)
+		*root = child;
 	else if (entry == entry->parent->left)
-		entry->parent->left = n;
+		entry->parent->left = child;
 	else
-		entry->parent->right = n;
-
-	n->right = entry;
-	entry->parent = n;
+		entry->parent->right = child;
+	child->right = entry;
+	entry->parent = child;
 }
 
-void
-tree_add(struct tree_root *new,
-	 int (*compare) (const void *, const void *),
-	 struct tree_root **root)
+void tree_add(struct tree_root *new,
+	      int (*compare)(const void *, const void *),
+	      struct tree_root **root)
 {
-	int retval = 0;
-	struct tree_root *r = *root;
-	struct tree_root *n = NIL;
+	int sgn = 0;
+	struct tree_root *next = *root;
+	struct tree_root *cur  = NULL;
 
 	INIT_TREE_ROOT(new);
 
-	while (r != NIL) {
-		n = r;
-		retval = compare(new, r);
-		if (retval < 0)
-			r = r->left;
+	while (next) {
+		cur = next;
+		sgn = compare(new, next);
+		if (sgn < 0)
+			next = next->left;
 		else
-			r = r->right;
+			next = next->right;
 	}
 
-	new->parent = n;
-
-	if (n == NIL)
+	new->parent = cur;
+	if (cur == NULL)
 		*root = new;
-	else if (retval < 0)
-		n->left = new;
+	else if (sgn < 0)
+		cur->left = new;
 	else
-		n->right = new;
+		cur->right = new;
 }
 
 struct tree_root *
 tree_map(struct tree_root *new,
-	 int (*compare) (const void *, const void *),
-	 struct tree_root **root) {
-	int retval = 0;
-	struct tree_root *r = *root;
-	struct tree_root *n = NIL;
+	 int (*compare)(const void *, const void *),
+	 struct tree_root **root)
+{
+	int sgn = 0;
+	struct tree_root *next = *root;
+	struct tree_root *cur  = NULL;
 
 	INIT_TREE_ROOT(new);
 
-	while (r != NIL) {
-		n = r;
-		retval = compare(new, r);
-		if (retval == 0)
-			return r;
-		else if (retval < 0)
-			r = r->left;
+	while (next) {
+		cur = next;
+		sgn = compare(new, next);
+		if (sgn == 0)
+			return next;
+		else if (sgn < 0)
+			next = next->left;
 		else
-			r = r->right;
+			next = next->right;
 	}
 
-	new->parent = n;
-
-	if (n == NIL)
+	new->parent = cur;
+	if (cur == NULL)
 		*root = new;
-	else if (retval < 0)
-		n->left = new;
+	else if (sgn < 0)
+		cur->left = new;
 	else
-		n->right = new;
+		cur->right = new;
 	return new;
 }
 
 void
 tree_del(struct tree_root *entry, struct tree_root **root)
 {
-	struct tree_root *r;
-	struct tree_root *n;
+	struct tree_root *child;
+	struct tree_root *succ;
 
-	if (entry->left == NIL || entry->right == NIL)
-		n = entry;
+	if (entry->left == NULL || entry->right == NULL)
+		succ = entry;
 	else
-		n = tree_successor(entry);
-
-	if (n->left != NIL)
-		r = n->left;
+		succ = TREE_SUCCESSOR(entry);
+	if (succ->left)
+		child = succ->left;
 	else
-		r = n->right;
+		child = succ->right;
 
-	if (r != NIL)
-		r->parent = n->parent;
-
-	if (n->parent == NIL)
-		*root = r;
-	else if (n == n->parent->left)
-		n->parent->left = r;
+	if (child)
+		child->parent = succ->parent;
+	if (succ->parent == NULL)
+		*root = child;
+	else if (succ == succ->parent->left)
+		succ->parent->left = child;
 	else
-		n->parent->right = r;
+		succ->parent->right = child;
 
-	if (n != entry) {
-		n->left = entry->left;
-		if (entry->left != NIL)
-			entry->left->parent = n;
-		n->right = entry->right;
-		if (entry->right != NIL)
-			entry->right->parent = n;
-		n->parent = entry->parent;
-		if (entry->parent == NIL)
-			*root = n;
+	if (succ != entry) {
+		succ->left = entry->left;
+		if (entry->left)
+			entry->left->parent = succ;
+		succ->right = entry->right;
+		if (entry->right)
+			entry->right->parent = succ;
+		succ->parent = entry->parent;
+		if (entry->parent == NULL)
+			*root = succ;
 		else if (entry == entry->parent->left)
-			entry->parent->left = n;
+			entry->parent->left = succ;
 		else
-			entry->parent->right = n;
+			entry->parent->right = succ;
 	}
 }
 
@@ -261,7 +252,7 @@ tree_del(struct tree_root *entry, struct tree_root **root)
 
 #define SPLAY_ROTATE_LEFT(entry, tmp) do {			\
 		(entry)->right = (tmp)->left;			\
-		if ((tmp)->left) (tmp)->left->parent = (entry); \
+		if ((tmp)->left) (tmp)->left->parent = (entry);	\
 		(tmp)->left = (entry);				\
 		(tmp)->parent = (entry)->parent;		\
 		(entry)->parent = (tmp);			\
@@ -297,41 +288,42 @@ tree_del(struct tree_root *entry, struct tree_root **root)
 			(node)->left->parent = (head);		\
 	} while (0)
 
-#define SPLAY_ROTATE_RIGHT_NPARENT(entry, tmp) do {			\
-						   (entry)->left = (tmp)->right; \
-						   (tmp)->right = (entry); \
-						   (entry) = (tmp);	\
-						   } while (0)
+#define SPLAY_ROTATE_RIGHT_NP(entry, tmp) do {	\
+		(entry)->left = (tmp)->right;	\
+		(tmp)->right = (entry);		\
+		(entry) = (tmp);		\
+	} while (0)
 
-#define SPLAY_ROTATE_LEFT_NPARENT(entry, tmp) do {	\
-		(entry)->right = (tmp)->left;		\
-		(tmp)->left = (entry);			\
-		(entry) = (tmp);			\
-		} while (0)
+#define SPLAY_ROTATE_LEFT_NP(entry, tmp) do {	\
+		(entry)->right = (tmp)->left;	\
+		(tmp)->left = (entry);		\
+		(entry) = (tmp);		\
+	} while (0)
 
-#define SPLAY_LINK_RIGHT_NPARENT(entry, large) do {	\
-		(large)->left = (entry);		\
-		(large) = (entry);			\
-		(entry) = (entry)->left;		\
-		} while (0)
+#define SPLAY_LINK_RIGHT_NP(entry, large) do {	\
+		(large)->left = (entry);	\
+		(large) = (entry);		\
+		(entry) = (entry)->left;	\
+	} while (0)
 
-#define SPLAY_LINK_LEFT_NPARENT(entry, small) do {	\
-		(small)->right = (entry);		\
-		(small) = (entry);			\
-		(entry) = (entry)->right;		\
-		} while (0)
+#define SPLAY_LINK_LEFT_NP(entry, small) do {	\
+		(small)->right = (entry);	\
+		(small) = (entry);		\
+		(entry) = (entry)->right;	\
+	} while (0)
 
-#define SPLAY_ASSEMBLE_NPARENT(head, node, small, large) do {	\
+#define SPLAY_ASSEMBLE_NP(head, node, small, large) do {	\
 		(small)->right = (head)->left;			\
 		(large)->left = (head)->right;			\
 		(head)->left = (node)->right;			\
 		(head)->right = (node)->left;			\
-		} while (0)
+	} while (0)
 
 struct tree_root *
 splay_search(struct tree_root *entry,
-	     int (*compare) (const void *, const void *),
-	     struct tree_root **root) {
+	     int (*compare)(const void *, const void *),
+	     struct tree_root **root)
+{
 	int cmp;
 	TREE_ROOT(node);  /* node for assembly use */
 	struct tree_root *small, *large, *head, *tmp;
@@ -342,40 +334,41 @@ splay_search(struct tree_root *entry,
 	while ((cmp = compare(entry, head)) != 0) {
 		if (cmp < 0) {
 			tmp = head->left;
-			if (tmp == NIL)
+			if (tmp == NULL)
 				break;
 			if (compare(entry, tmp) < 0) {
 				SPLAY_ROTATE_RIGHT(head, tmp);
-				if (head->left == NIL)
+				if (head->left == NULL)
 					break;
 			}
 			SPLAY_LINK_RIGHT(head, large);
 		} else {
 			tmp = head->right;
-			if (tmp == NIL)
+			if (tmp == NULL)
 				break;
 			if (compare(entry, tmp) > 0) {
 				SPLAY_ROTATE_LEFT(head, tmp);
-				if (head->right == NIL)
+				if (head->right == NULL)
 					break;
 			}
 			SPLAY_LINK_LEFT(head, small);
 		}
 	}
-	head->parent = NIL;
+	head->parent = NULL;
 	SPLAY_ASSEMBLE(head, &node, small, large);
 	*root = head;
 
 	if (cmp != 0)
-		return NIL;
+		return NULL;
 
 	return head;
 }
 
 struct tree_root *
 splay_map(struct tree_root *new,
-	  int (*compare) (const void *, const void *),
-	  struct tree_root **root) {
+	  int (*compare)(const void *, const void *),
+	  struct tree_root **root)
+{
 	int cmp;
 	TREE_ROOT(node);  /* node for assembly use */
 	struct tree_root *small, *large, *head, *tmp;
@@ -387,7 +380,7 @@ splay_map(struct tree_root *new,
 	while (head && (cmp = compare(new, head)) != 0) {
 		if (cmp < 0) {
 			tmp = head->left;
-			if (tmp == NIL) {
+			if (tmp == NULL) {
 				/* zig */
 				SPLAY_LINK_RIGHT(head, large);
 				break;
@@ -408,7 +401,7 @@ splay_map(struct tree_root *new,
 			}
 		} else {
 			tmp = head->right;
-			if (tmp == NIL) {
+			if (tmp == NULL) {
 				/* zag */
 				SPLAY_LINK_LEFT(head, small);
 				break;
@@ -430,10 +423,10 @@ splay_map(struct tree_root *new,
 		}
 	}
 
-	if (head == NIL)
+	if (head == NULL)
 		head = new;
 
-	head->parent = NIL;
+	head->parent = NULL;
 
 	SPLAY_ASSEMBLE(head, &node, small, large);
 
@@ -442,13 +435,14 @@ splay_map(struct tree_root *new,
 	return head;
 }
 
-struct tree_root *
-splay_search_nparent(struct tree_root *entry,
-		     int (*compare) (const void *, const void *),
-		     struct tree_root **root) {
+struct tree_root_np *
+splay_search_np(struct tree_root_np *entry,
+		int (*compare)(const void *, const void *),
+		struct tree_root_np **root)
+{
 	int cmp;
-	TREE_ROOT(node);  /* node for assembly use */
-	struct tree_root *small, *large, *head, *tmp;
+	TREE_ROOT_NP(node);  /* node for assembly use */
+	struct tree_root_np *small, *large, *head, *tmp;
 
 	head = *root;
 	small = large = &node;
@@ -456,98 +450,99 @@ splay_search_nparent(struct tree_root *entry,
 	while ((cmp = compare(entry, head)) != 0) {
 		if (cmp < 0) {
 			tmp = head->left;
-			if (tmp == NIL)
+			if (tmp == NULL)
 				break;
 			if (compare(entry, tmp) < 0) {
-				SPLAY_ROTATE_RIGHT_NPARENT(head, tmp);
-				if (head->left == NIL)
+				SPLAY_ROTATE_RIGHT_NP(head, tmp);
+				if (head->left == NULL)
 					break;
 			}
-			SPLAY_LINK_RIGHT_NPARENT(head, large);
+			SPLAY_LINK_RIGHT_NP(head, large);
 		} else {
 			tmp = head->right;
-			if (tmp == NIL)
+			if (tmp == NULL)
 				break;
 			if (compare(entry, tmp) > 0) {
-				SPLAY_ROTATE_LEFT_NPARENT(head, tmp);
-				if (head->right == NIL)
+				SPLAY_ROTATE_LEFT_NP(head, tmp);
+				if (head->right == NULL)
 					break;
 			}
-			SPLAY_LINK_LEFT_NPARENT(head, small);
+			SPLAY_LINK_LEFT_NP(head, small);
 		}
 	}
 
-	SPLAY_ASSEMBLE_NPARENT(head, &node, small, large);
+	SPLAY_ASSEMBLE_NP(head, &node, small, large);
 	*root = head;
 
 	if (cmp != 0)
-		return NIL;
+		return NULL;
 
 	return head;
 }
 
-struct tree_root *
-splay_map_nparent(struct tree_root *new,
-		  int (*compare) (const void *, const void *),
-		  struct tree_root **root) {
+struct tree_root_np *
+splay_map_np(struct tree_root_np *new,
+	     int (*compare)(const void *, const void *),
+	     struct tree_root_np **root)
+{
 	int cmp;
-	TREE_ROOT(node);  /* node for assembly use */
-	struct tree_root *small, *large, *head, *tmp;
+	TREE_ROOT_NP(node);  /* node for assembly use */
+	struct tree_root_np *small, *large, *head, *tmp;
 
-	INIT_TREE_ROOT(new);
+	INIT_TREE_ROOT_NP(new);
 	small = large = &node;
 	head = *root;
 
 	while (head && (cmp = compare(new, head)) != 0) {
 		if (cmp < 0) {
 			tmp = head->left;
-			if (tmp == NIL) {
+			if (tmp == NULL) {
 				/* zig */
-				SPLAY_LINK_RIGHT_NPARENT(head, large);
+				SPLAY_LINK_RIGHT_NP(head, large);
 				break;
 			}
 			cmp = compare(new, tmp);
 			if (cmp < 0) {
 				/* zig-zig */
-				SPLAY_ROTATE_RIGHT_NPARENT(head, tmp);
-				SPLAY_LINK_RIGHT_NPARENT(head, large);
+				SPLAY_ROTATE_RIGHT_NP(head, tmp);
+				SPLAY_LINK_RIGHT_NP(head, large);
 			} else if (cmp > 0) {
 				/* zig-zag */
-				SPLAY_LINK_RIGHT_NPARENT(head, large);
-				SPLAY_LINK_LEFT_NPARENT(head, small);
+				SPLAY_LINK_RIGHT_NP(head, large);
+				SPLAY_LINK_LEFT_NP(head, small);
 			} else {
 				/* zig */
-				SPLAY_LINK_RIGHT_NPARENT(head, large);
+				SPLAY_LINK_RIGHT_NP(head, large);
 				break;
 			}
 		} else {
 			tmp = head->right;
-			if (tmp == NIL) {
+			if (tmp == NULL) {
 				/* zag */
-				SPLAY_LINK_LEFT_NPARENT(head, small);
+				SPLAY_LINK_LEFT_NP(head, small);
 				break;
 			}
 			cmp = compare(new, tmp);
 			if (cmp > 0) {
 				/* zag-zag */
-				SPLAY_ROTATE_LEFT_NPARENT(head, tmp);
-				SPLAY_LINK_LEFT_NPARENT(head, small);
+				SPLAY_ROTATE_LEFT_NP(head, tmp);
+				SPLAY_LINK_LEFT_NP(head, small);
 			} else if (cmp < 0) {
 				/* zag-zig */
-				SPLAY_LINK_LEFT_NPARENT(head, small);
-				SPLAY_LINK_RIGHT_NPARENT(head, large);
+				SPLAY_LINK_LEFT_NP(head, small);
+				SPLAY_LINK_RIGHT_NP(head, large);
 			} else {
 				/* zag */
-				SPLAY_LINK_LEFT_NPARENT(head, small);
+				SPLAY_LINK_LEFT_NP(head, small);
 				break;
 			}
 		}
 	}
 
-	if (head == NIL)
+	if (head == NULL)
 		head = new;
 
-	SPLAY_ASSEMBLE_NPARENT(head, &node, small, large);
+	SPLAY_ASSEMBLE_NP(head, &node, small, large);
 
 	*root = head;
 
@@ -558,10 +553,9 @@ static inline void
 __avl_balance(struct avl_root *new, struct avl_root **root)
 {
 	int balance = 0;
-	struct avl_root *n;
-	struct avl_root *r;
+	struct avl_root *child, *grandson;
 
-	while (new->parent != NIL && balance == 0) {
+	while (new->parent && balance == 0) {
 		balance = new->parent->balance;
 		if (new == new->parent->left)
 			new->parent->balance--;
@@ -571,101 +565,94 @@ __avl_balance(struct avl_root *new, struct avl_root **root)
 	}
 
 	if (new->balance == -2) {
-		n = new->left;
-		if (n->balance == -1) {
+		child = new->left;
+		if (child->balance == -1) {
 			__rotate_right((struct tree_root *)new,
 				       (struct tree_root **)root);
-			n->balance = 0;
+			child->balance = 0;
 			new->balance = 0;
 		} else {
-			r = n->right;
-			__rotate_left((struct tree_root *)n,
+			grandson = child->right;
+			__rotate_left((struct tree_root *)child,
 				      (struct tree_root **)root);
 			__rotate_right((struct tree_root *)new,
 				       (struct tree_root **)root);
-			if (r->balance == -1) {
-				n->balance = 0;
+			if (grandson->balance == -1) {
+				child->balance = 0;
 				new->balance = 1;
-			} else if (r->balance == 0) {
-				n->balance = 0;
+			} else if (grandson->balance == 0) {
+				child->balance = 0;
 				new->balance = 0;
 			} else {
-				n->balance = -1;
+				child->balance = -1;
 				new->balance = 0;
 			}
-			r->balance = 0;
+			grandson->balance = 0;
 		}
 	} else if (new->balance == 2) {
-		n = new->right;
-		if (n->balance == 1) {
+		child = new->right;
+		if (child->balance == 1) {
 			__rotate_left((struct tree_root *)new,
 				      (struct tree_root **)root);
-			n->balance = 0;
+			child->balance = 0;
 			new->balance = 0;
 		} else {
-			r = n->left;
-			__rotate_right((struct tree_root *)n,
+			grandson = child->left;
+			__rotate_right((struct tree_root *)child,
 				       (struct tree_root **)root);
 			__rotate_left((struct tree_root *)new,
 				      (struct tree_root **)root);
-			if (r->balance == -1) {
-				n->balance = 1;
+			if (grandson->balance == -1) {
+				child->balance = 1;
 				new->balance = 0;
-			} else if (r->balance == 0) {
-				n->balance = 0;
+			} else if (grandson->balance == 0) {
+				child->balance = 0;
 				new->balance = 0;
 			} else {
-				n->balance = 0;
+				child->balance = 0;
 				new->balance = -1;
 			}
-			r->balance = 0;
+			grandson->balance = 0;
 		}
 	}
 }
 
-void
-avl_add(struct avl_root *new,
-	int (*compare) (const void *, const void *),
-	struct avl_root **root)
+void avl_add(struct avl_root *new,
+	     int (*compare)(const void *, const void *),
+	     struct avl_root **root)
 {
 	new->balance = 0;
-	tree_add((struct tree_root *)new, compare, (struct tree_root **)root);
+	TREE_ADD(new, compare, root);
 	__avl_balance(new, root);
 }
 
 struct avl_root *
 avl_map(struct avl_root *new,
-	int (*compare) (const void *, const void *),
-	struct avl_root **root) {
-	struct avl_root *n;
+	int (*compare)(const void *, const void *),
+	struct avl_root **root)
+{
+	struct avl_root *node;
 
 	new->balance = 0;
-	n = (struct avl_root *)tree_map((struct tree_root *)new,
-					compare, (struct tree_root **)root);
-	if (n != new)
-		return n;
+	node = (struct avl_root *)TREE_MAP(new, compare, root);
+	if (node != new)
+		return node;
 	__avl_balance(new, root);
 
 	return new;
 }
 
-void
-avl_del(struct avl_root *entry, struct avl_root **root)
+void avl_del(struct avl_root *entry, struct avl_root **root)
 {
 	int dir = 0;
 	int dir_next = 0;
-	struct avl_root *new;
-	struct avl_root *n;
-	struct avl_root *r;
-	struct avl_root *p;
+	struct avl_root *unbalanced, *child, *succ, *parent;
 
-	if (entry->right == NIL) {
-		/*
-		 * Case 1: entry has no right child
-		 */
-		if (entry->left != NIL)
+	if (entry->right == NULL) {
+		/* Case 1: entry has no right child */
+		if (entry->left)
 			entry->left->parent = entry->parent;
-		if (entry->parent == NIL) {
+		if (entry->parent == NULL) {
 			*root = entry->left;
 			return;
 		} else if (entry == entry->parent->left) {
@@ -675,141 +662,124 @@ avl_del(struct avl_root *entry, struct avl_root **root)
 			entry->parent->right = entry->left;
 			dir = 1;
 		}
-		new = entry->parent;
-	} else if (entry->right->left == NIL) {
-		/*
-		 * Case 2: entry's right child has no left child
-		 */
+		unbalanced = entry->parent;
+	} else if (entry->right->left == NULL) {
+		/* Case 2: entry's right child has no left child */
 		entry->right->left = entry->left;
-		if (entry->left != NIL)
+		if (entry->left)
 			entry->left->parent = entry->right;
 		entry->right->parent = entry->parent;
-		if (entry->parent == NIL)
+		if (entry->parent == NULL)
 			*root = entry->right;
 		else if (entry == entry->parent->left)
 			entry->parent->left = entry->right;
 		else
 			entry->parent->right = entry->right;
 		entry->right->balance = entry->balance;
+		unbalanced = entry->right;
 		dir = 1;
-		new = entry->right;
 	} else {
-		/*
-		 * Case 3: entry's right child has a left child
-		 */
-
-		/* splices successor entry's child and parent */
-		r = (struct avl_root *)tree_successor((struct tree_root *)
-						      entry);
-		if (r->right != NIL)
-			r->right->parent = r->parent;
-		r->parent->left = r->right;
-
-		new = r->parent;
-
-		r->left = entry->left;
-		entry->left->parent = r;
-		r->right = entry->right;
-		entry->right->parent = r;
-		r->parent = entry->parent;
-		if (entry->parent == NIL)
-			*root = r;
+		/* Case 3: entry's right child has a left child */
+		succ = (struct avl_root *)TREE_SUCCESSOR(entry);
+		if (succ->right)
+			succ->right->parent = succ->parent;
+		succ->parent->left = succ->right;
+		unbalanced = succ->parent;
+		succ->left = entry->left;
+		entry->left->parent = succ;
+		succ->right = entry->right;
+		entry->right->parent = succ;
+		succ->parent = entry->parent;
+		if (entry->parent == NULL)
+			*root = succ;
 		else if (entry == entry->parent->left)
-			entry->parent->left = r;
+			entry->parent->left = succ;
 		else
-			entry->parent->right = r;
-		r->balance = entry->balance;
+			entry->parent->right = succ;
+		succ->balance = entry->balance;
 		dir = 0;
 	}
 
 	for (;;) {
-		p = new->parent;
-		if (p != NIL)
-			dir_next = (new == p->right);
-
+		parent = unbalanced->parent;
+		if (parent)
+			dir_next = (unbalanced == parent->right);
 		if (dir == 0) {
-			new->balance++;
-			if (new->balance == 1)
+			++unbalanced->balance;
+			if (unbalanced->balance == 1)
 				break;
-			if (new->balance == 2) {
-				n = new->right;
-				if (n->balance == -1) {
-					r = n->left;
-					__rotate_right((struct tree_root *)n,
-						       (struct tree_root **)
-						       root);
-					__rotate_left((struct tree_root *)new,
-						      (struct tree_root **)
-						      root);
-					if (r->balance == -1) {
-						n->balance = 1;
-						new->balance = 0;
-					} else if (r->balance == 0) {
-						n->balance = 0;
-						new->balance = 0;
+			if (unbalanced->balance == 2) {
+				child = unbalanced->right;
+				if (child->balance == -1) {
+					succ = child->left;
+					__rotate_right((struct tree_root *)child,
+						       (struct tree_root **)root);
+					__rotate_left((struct tree_root *)unbalanced,
+						      (struct tree_root **)root);
+					if (succ->balance == -1) {
+						child->balance = 1;
+						unbalanced->balance = 0;
+					} else if (succ->balance == 0) {
+						child->balance = 0;
+						unbalanced->balance = 0;
 					} else {
-						n->balance = 0;
-						new->balance = -1;
+						child->balance = 0;
+						unbalanced->balance = -1;
 					}
-					r->balance = 0;
+					succ->balance = 0;
 				} else {
-					__rotate_left((struct tree_root *)new,
-						      (struct tree_root **)
-						      root);
-					if (n->balance == 0) {
-						n->balance = -1;
-						new->balance = 1;
+					__rotate_left((struct tree_root *)unbalanced,
+						      (struct tree_root **)root);
+					if (child->balance == 0) {
+						child->balance = -1;
+						unbalanced->balance = 1;
 						break;
 					} else {
-						n->balance = 0;
-						new->balance = 0;
+						child->balance = 0;
+						unbalanced->balance = 0;
 					}
 				}
 			}
 		} else {
-			new->balance--;
-			if (new->balance == -1)
+			--unbalanced->balance;
+			if (unbalanced->balance == -1)
 				break;
-			if (new->balance == -2) {
-				n = new->left;
-				if (n->balance == 1) {
-					r = n->right;
-					__rotate_left((struct tree_root *)n,
-						      (struct tree_root **)
-						      root);
-					__rotate_right((struct tree_root *)new,
-						       (struct tree_root **)
-						       root);
-					if (r->balance == -1) {
-						n->balance = 0;
-						new->balance = 1;
-					} else if (r->balance == 0) {
-						n->balance = 0;
-						new->balance = 0;
+			if (unbalanced->balance == -2) {
+				child = unbalanced->left;
+				if (child->balance == 1) {
+					succ = child->right;
+					__rotate_left((struct tree_root *)child,
+						      (struct tree_root **)root);
+					__rotate_right((struct tree_root *)unbalanced,
+						       (struct tree_root **)root);
+					if (succ->balance == -1) {
+						child->balance = 0;
+						unbalanced->balance = 1;
+					} else if (succ->balance == 0) {
+						child->balance = 0;
+						unbalanced->balance = 0;
 					} else {
-						n->balance = -1;
-						new->balance = 0;
+						child->balance = -1;
+						unbalanced->balance = 0;
 					}
-					r->balance = 0;
+					succ->balance = 0;
 				} else {
-					__rotate_right((struct tree_root *)new,
-						       (struct tree_root **)
-						       root);
-					if (n->balance == 0) {
-						n->balance = 1;
-						new->balance = -1;
+					__rotate_right((struct tree_root *)unbalanced,
+						       (struct tree_root **)root);
+					if (child->balance == 0) {
+						child->balance = 1;
+						unbalanced->balance = -1;
 						break;
 					} else {
-						n->balance = 0;
-						new->balance = 0;
+						child->balance = 0;
+						unbalanced->balance = 0;
 					}
 				}
 			}
 		}
-
-		if (p == NIL)
+		if (parent == NULL)
 			break;
 		dir = dir_next;
-		new = p;
+		unbalanced = parent;
 	}
 }

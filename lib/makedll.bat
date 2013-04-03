@@ -1,7 +1,7 @@
-rem =======================================================
-rem     Make DLL from Static Library for WIN32
-rem Copyright (C) 2010-2011 Zilong Tan <eric.zltan@gmail.com>
-rem =======================================================
+rem ======================--------===========================
+rem                   Make Windows DLL
+rem Copyright (C) 2010-2013 Zilong Tan <eric.zltan@gmail.com>
+rem =========================================================
 
 @echo off
 
@@ -22,7 +22,7 @@ rem =======================================================
 goto done
 
 :dll_error
-@echo "DLLWRAP failure."
+@echo "dllwrap failed."
 @goto done
 
 :done
