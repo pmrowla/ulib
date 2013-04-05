@@ -4,7 +4,7 @@ INCPATH		?= $(PREFIX)/include/ulib
 LIBPATH		?= $(PREFIX)/lib
 LIBNAME		?= undef
 
-CFLAGS		?= -g3 -O2 -Wall -W -Werror -pipe -c -fPIC
+CFLAGS		?= -std=gnu99 -g3 -O2 -Wall -W -Werror -pipe -c -fPIC
 CXXFLAGS	?= -g3 -O2 -Wall -W -Werror -pipe -c -fPIC
 DEBUG		?=
 

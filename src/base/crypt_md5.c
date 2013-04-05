@@ -49,9 +49,6 @@
 
 #include "crypt_md5.h"
 
-/* forward declaration */
-static void md5_transform();
-
 static uint8_t padding_[64] = {
 	0x80, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
 	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
@@ -97,87 +94,6 @@ static uint8_t padding_[64] = {
 		(a) = ROTATE_LEFT ((a), (s));			\
 		(a) += (b);					\
 	}
-
-void md5_init(md5_ctx_t *ctx)
-{
-	ctx->i[0] = ctx->i[1] = (uint32_t) 0;
-
-	/* Load magic initialization constants.
-	 */
-	ctx->buf[0] = (uint32_t) 0x67452301;
-	ctx->buf[1] = (uint32_t) 0xefcdab89;
-	ctx->buf[2] = (uint32_t) 0x98badcfe;
-	ctx->buf[3] = (uint32_t) 0x10325476;
-}
-
-void md5_update(md5_ctx_t *ctx, const uint8_t *buf, size_t len)
-{
-	uint32_t in[16];
-	int mdi, i, j;
-
-	/* compute number of bytes mod 64 */
-	mdi = (int)((ctx->i[0] >> 3) & 0x3F);
-
-	/* update number of bits */
-	if ((ctx->i[0] + ((uint32_t) len << 3)) < ctx->i[0])
-		ctx->i[1]++;
-	ctx->i[0] += ((uint32_t) len << 3);
-	ctx->i[1] += ((uint32_t) len >> 29);
-
-	while (len--) {
-		/* add new character to buffer, increment mdi */
-		ctx->in[mdi++] = *buf++;
-
-		/* transform if necessary */
-		if (mdi == 0x40) {
-			for (i = 0, j = 0; i < 16; i++, j += 4)
-				in[i] =
-					(((uint32_t) ctx->in[j + 3]) << 24) |
-					(((uint32_t) ctx->in[j + 2]) << 16) |
-					(((uint32_t) ctx->in[j + 1]) << 8) |
-					((uint32_t) ctx->in[j]);
-			md5_transform(ctx->buf, in);
-			mdi = 0;
-		}
-	}
-}
-
-void md5_finalize(md5_ctx_t *ctx)
-{
-	uint32_t in[16];
-	int mdi, i, j, padlen;
-
-	/* save number of bits */
-	in[14] = ctx->i[0];
-	in[15] = ctx->i[1];
-
-	/* compute number of bytes mod 64 */
-	mdi = (int)((ctx->i[0] >> 3) & 0x3F);
-
-	/* pad out to 56 mod 64 */
-	padlen = (mdi < 56) ? (56 - mdi) : (120 - mdi);
-	md5_update(ctx, padding_, padlen);
-
-	/* append length in bits and transform */
-	for (i = 0, j = 0; i < 14; i++, j += 4)
-		in[i] = (((uint32_t) ctx->in[j + 3]) << 24) |
-			(((uint32_t) ctx->in[j + 2]) << 16) |
-			(((uint32_t) ctx->in[j + 1]) << 8) |
-			((uint32_t) ctx->in[j]);
-	md5_transform(ctx->buf, in);
-
-	/* store buffer in digest */
-	for (i = 0, j = 0; i < 4; i++, j += 4) {
-		ctx->digest[j] =
-			(uint8_t)(ctx->buf[i] & 0xFF);
-		ctx->digest[j + 1] =
-			(uint8_t)((ctx->buf[i] >> 8) & 0xFF);
-		ctx->digest[j + 2] =
-			(uint8_t)((ctx->buf[i] >> 16) & 0xFF);
-		ctx->digest[j + 3] =
-			(uint8_t)((ctx->buf[i] >> 24) & 0xFF);
-	}
-}
 
 /* Basic MD5 step. md5_transform buf based on in.
  */
@@ -277,4 +193,85 @@ static void md5_transform(uint32_t *buf, uint32_t *in)
 	buf[1] += b;
 	buf[2] += c;
 	buf[3] += d;
+}
+
+void md5_init(md5_ctx_t *ctx)
+{
+	ctx->i[0] = ctx->i[1] = (uint32_t) 0;
+
+	/* Load magic initialization constants.
+	 */
+	ctx->buf[0] = (uint32_t) 0x67452301;
+	ctx->buf[1] = (uint32_t) 0xefcdab89;
+	ctx->buf[2] = (uint32_t) 0x98badcfe;
+	ctx->buf[3] = (uint32_t) 0x10325476;
+}
+
+void md5_update(md5_ctx_t *ctx, const uint8_t *buf, size_t len)
+{
+	uint32_t in[16];
+	int mdi, i, j;
+
+	/* compute number of bytes mod 64 */
+	mdi = (int)((ctx->i[0] >> 3) & 0x3F);
+
+	/* update number of bits */
+	if ((ctx->i[0] + ((uint32_t) len << 3)) < ctx->i[0])
+		ctx->i[1]++;
+	ctx->i[0] += ((uint32_t) len << 3);
+	ctx->i[1] += ((uint32_t) len >> 29);
+
+	while (len--) {
+		/* add new character to buffer, increment mdi */
+		ctx->in[mdi++] = *buf++;
+
+		/* transform if necessary */
+		if (mdi == 0x40) {
+			for (i = 0, j = 0; i < 16; i++, j += 4)
+				in[i] =
+					(((uint32_t) ctx->in[j + 3]) << 24) |
+					(((uint32_t) ctx->in[j + 2]) << 16) |
+					(((uint32_t) ctx->in[j + 1]) << 8) |
+					((uint32_t) ctx->in[j]);
+			md5_transform(ctx->buf, in);
+			mdi = 0;
+		}
+	}
+}
+
+void md5_finalize(md5_ctx_t *ctx)
+{
+	uint32_t in[16];
+	int mdi, i, j, padlen;
+
+	/* save number of bits */
+	in[14] = ctx->i[0];
+	in[15] = ctx->i[1];
+
+	/* compute number of bytes mod 64 */
+	mdi = (int)((ctx->i[0] >> 3) & 0x3F);
+
+	/* pad out to 56 mod 64 */
+	padlen = (mdi < 56) ? (56 - mdi) : (120 - mdi);
+	md5_update(ctx, padding_, padlen);
+
+	/* append length in bits and transform */
+	for (i = 0, j = 0; i < 14; i++, j += 4)
+		in[i] = (((uint32_t) ctx->in[j + 3]) << 24) |
+			(((uint32_t) ctx->in[j + 2]) << 16) |
+			(((uint32_t) ctx->in[j + 1]) << 8) |
+			((uint32_t) ctx->in[j]);
+	md5_transform(ctx->buf, in);
+
+	/* store buffer in digest */
+	for (i = 0, j = 0; i < 4; i++, j += 4) {
+		ctx->digest[j] =
+			(uint8_t)(ctx->buf[i] & 0xFF);
+		ctx->digest[j + 1] =
+			(uint8_t)((ctx->buf[i] >> 8) & 0xFF);
+		ctx->digest[j + 2] =
+			(uint8_t)((ctx->buf[i] >> 16) & 0xFF);
+		ctx->digest[j + 3] =
+			(uint8_t)((ctx->buf[i] >> 24) & 0xFF);
+	}
 }
