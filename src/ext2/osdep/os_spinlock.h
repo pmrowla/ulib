@@ -299,7 +299,7 @@ static __always_inline int spin_trylock_k42(k42_lock_t *lock)
 
 static __always_inline void spin_lock_ticket(ticket_lock_t *lock)
 {
-	register union ticket_lock inc;
+	register union ticket_lock inc = { 0 };
 
 	inc.head_tail = 1 << TICKET_SHIFT;
 
@@ -356,7 +356,7 @@ static __always_inline void spin_unlock_ticket(ticket_lock_t *lock)
 
 static __always_inline void spin_wrlock_ticket(ticket_rwlock_t *lock)
 {
-	register union ticket_rwlock inc;
+	register union ticket_rwlock inc = { 0 };
 
 	inc.full = 1ul << RWTICKET_SHIFT;
 
@@ -376,7 +376,7 @@ static __always_inline void spin_wrlock_ticket(ticket_rwlock_t *lock)
 
 static __always_inline void spin_wrunlock_ticket(ticket_rwlock_t *lock)
 {
-	register union ticket_rwlock old;
+	register union ticket_rwlock old = { 0 };
 
 	old.full = ACCESS_ONCE(lock->full);
 
@@ -406,7 +406,7 @@ static __always_inline int spin_trywrlock_ticket(ticket_rwlock_t *lock)
 
 static __always_inline void spin_rdlock_ticket(ticket_rwlock_t *lock)
 {
-	register union ticket_rwlock inc;
+	register union ticket_rwlock inc = { 0 };
 
 	inc.full = 1ul << RWTICKET_SHIFT;
 
