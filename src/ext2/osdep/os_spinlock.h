@@ -299,7 +299,9 @@ static __always_inline int spin_trylock_k42(k42_lock_t *lock)
 
 static __always_inline void spin_lock_ticket(ticket_lock_t *lock)
 {
-	register union ticket_lock inc = { .head_tail = 1 << TICKET_SHIFT };
+	register union ticket_lock inc;
+
+	inc.head_tail = 1 << TICKET_SHIFT;
 
 #ifdef LARGE_CPUSET
 	inc.head_tail = atomic_fetchadd32(&lock->tickets, inc.head_tail);
@@ -354,7 +356,9 @@ static __always_inline void spin_unlock_ticket(ticket_lock_t *lock)
 
 static __always_inline void spin_wrlock_ticket(ticket_rwlock_t *lock)
 {
-	register union ticket_rwlock inc = { .full = 1ul << RWTICKET_SHIFT };
+	register union ticket_rwlock inc;
+
+	inc.full = 1ul << RWTICKET_SHIFT;
 
 #ifdef LARGE_CPUSET
 	inc.full = atomic_fetchadd64(&lock->full, inc.full);
@@ -372,7 +376,9 @@ static __always_inline void spin_wrlock_ticket(ticket_rwlock_t *lock)
 
 static __always_inline void spin_wrunlock_ticket(ticket_rwlock_t *lock)
 {
-	register union ticket_rwlock old = { .full = ACCESS_ONCE(lock->full) };
+	register union ticket_rwlock old;
+
+	old.full = ACCESS_ONCE(lock->full);
 
 	++old.tickets.write;
 	++old.tickets.read;
@@ -400,7 +406,9 @@ static __always_inline int spin_trywrlock_ticket(ticket_rwlock_t *lock)
 
 static __always_inline void spin_rdlock_ticket(ticket_rwlock_t *lock)
 {
-	register union ticket_rwlock inc = { .full = 1ul << RWTICKET_SHIFT };
+	register union ticket_rwlock inc;
+
+	inc.full = 1ul << RWTICKET_SHIFT;
 
 #ifdef LARGE_CPUSET
 	inc.full = atomic_fetchadd64(&lock->full, inc.full);

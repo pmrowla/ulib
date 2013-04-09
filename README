@@ -1,7 +1,7 @@
 ------------------------
  About the ULIB Library
 ------------------------
-The ulib library strives to provide efficient implementations of
+The ulib library strives to provide efficient implementations of data
 structures and algorithms for C and C++. It particularly focuses on
 those frequently used items, such as hash tables, binary trees,
 sorting algorithms, search algorithms, bitmaps, cryptographic hash
