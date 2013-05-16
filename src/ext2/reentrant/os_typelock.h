@@ -81,6 +81,21 @@ typemutex_init(ticket_lock_t *lock)
 	spin_init_ticket(lock);
 }
 
+// rwlocks can also be used as mutexes
+template<>
+__always_inline void
+typemutex_init(pthread_rwlock_t *lock)
+{
+	pthread_rwlock_init(lock, NULL);
+}
+
+template<>
+__always_inline void
+typemutex_init(ticket_rwlock_t *lock)
+{
+	spin_init_rwticket(lock);
+}
+
 //---------------------------------------------------------------------
 //		       Various Mutex Destructors
 //=====================================================================
@@ -102,6 +117,34 @@ typemutex_destroy(pthread_spinlock_t *lock)
 {
 	pthread_spin_destroy(lock);
 }
+
+template<>
+__always_inline void
+typemutex_destroy(xchg_lock_t *) { }
+
+template<>
+__always_inline void
+typemutex_destroy(mcs_lock_t *) { }
+
+template<>
+__always_inline void
+typemutex_destroy(k42_lock_t *) { }
+
+template<>
+__always_inline void
+typemutex_destroy(ticket_lock_t *) { }
+
+// likewise, it is OK to use rwlocks as mutexes
+template<>
+__always_inline void
+typemutex_destroy(pthread_rwlock_t *lock)
+{
+	pthread_rwlock_destroy(lock);
+}
+
+template<>
+__always_inline void
+typemutex_destroy(ticket_rwlock_t *) { }
 
 //---------------------------------------------------------------------
 //		   Various Mutex Locking Functions
@@ -278,6 +321,10 @@ typerwlock_destroy(pthread_rwlock_t *lock)
 {
 	pthread_rwlock_destroy(lock);
 }
+
+template<>
+__always_inline void
+typerwlock_destroy(ticket_rwlock_t *) { }
 
 //---------------------------------------------------------------------
 //		   Various RWLock RDLocking Functions

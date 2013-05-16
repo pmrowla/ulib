@@ -1,2 +1,5 @@
+05/16/2013
+	1. Fixed a bug in os_regionlock.h potentially affecting all
+	concurrent items, e.g., hash_chain_r.
 04/09/2013 - 2.0.1 beta:
-	   1. Fixed a compiling problem for old G++ versions.
+	1. Fixed a compiling problem for old G++ versions.
