@@ -101,7 +101,7 @@ public:
 		{
 			if (_cur != alignhash_end(_hashing))
 				++_cur;
-			while (!alignhash_exist(_hashing, _cur) && _cur != alignhash_end(_hashing))
+			while (_cur != alignhash_end(_hashing) && !alignhash_exist(_hashing, _cur))
 				++_cur;
 			return *this;
 		}
@@ -163,7 +163,7 @@ public:
 		{
 			if (_cur != alignhash_end(_hashing))
 				++_cur;
-			while (!alignhash_exist(_hashing, _cur) && _cur != alignhash_end(_hashing))
+			while (_cur != alignhash_end(_hashing) && !alignhash_exist(_hashing, _cur))
 				++_cur;
 			return *this;
 		}
@@ -364,7 +364,7 @@ public:
 		{
 			if (_cur != alignhash_end(_hashing))
 				++_cur;
-			while (!alignhash_exist(_hashing, _cur) && _cur != alignhash_end(_hashing))
+			while (_cur != alignhash_end(_hashing) && !alignhash_exist(_hashing, _cur))
 				++_cur;
 			return *this;
 		}
@@ -420,7 +420,7 @@ public:
 		{
 			if (_cur != alignhash_end(_hashing))
 				++_cur;
-			while (!alignhash_exist(_hashing, _cur) && _cur != alignhash_end(_hashing))
+			while (_cur != alignhash_end(_hashing) && !alignhash_exist(_hashing, _cur))
 				++_cur;
 			return *this;
 		}

@@ -1,3 +1,6 @@
+05/17/2013
+	1. Fixed a bug in the iterator of align_hash_map/set: operator++()
+	might read a byte beyond the flag array.
 05/16/2013
 	1. Fixed a bug in os_regionlock.h potentially affecting all
 	concurrent items, e.g., hash_chain_r.
