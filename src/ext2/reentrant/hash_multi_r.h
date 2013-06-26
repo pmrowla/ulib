@@ -23,13 +23,13 @@
    SOFTWARE.
 */
 
-/* Although multihash is slower than alignhash as a whole, it preserves
- * several properties alignhash lacks. Notably, it has an inherented
+/* Although multihash is slower than openhash as a whole, it preserves
+ * several properties openhash lacks. Notably, it has an inherented
  * support for concurrent access. A fine-grained locking strategy is
  * readily available for multihash.
  *
  * Please note that only the combine() method is thread-safe, this is
- * because writing to the aligned hashmap may be accompanied with
+ * because writing to the open hashmap may be accompanied with
  * resizing of the map, rendering any references or iterators to
  * the previous map invalid.
  */
@@ -40,7 +40,7 @@
 
 #include <assert.h>
 #include <ulib/util_class.h>
-#include <ulib/hash_align.h>
+#include <ulib/hash_open.h>
 #include "os_regionlock.h"
 
 namespace ulib {
@@ -53,7 +53,7 @@ template<
 class multi_hash_map : public _RegionMutex
 {
 public:
-	typedef align_hash_map<_Key, _Val, _Except>	hash_map_type;
+	typedef open_hash_map<_Key, _Val, _Except>	hash_map_type;
 	typedef typename hash_map_type::key_type	key_type;
 	typedef typename hash_map_type::value_type	value_type;
 	typedef typename hash_map_type::size_type	size_type;

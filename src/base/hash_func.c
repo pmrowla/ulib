@@ -70,14 +70,13 @@ uint64_t hash_fast64(const void *buf, size_t len, uint64_t seed)
 
 uint32_t hash_fast32(const void *buf, size_t len, uint32_t seed)
 {
-	// the following trick converts the 64-bit hashcode to Fermat
-	// residue, which shall retain information from both the higher
-	// and lower parts of hashcode.
 	uint64_t h = hash_fast64(buf, len, seed);
+	/* The following trick converts the 64-bit hashcode to a
+	 * residue over a Fermat Number, in which information from
+	 * both the higher and lower parts of hashcode shall be
+	 * retained. */
 	return h - (h >> 32);
 }
-
-#ifdef __x86_64__
 
 uint64_t hash_ferm64(const void *buf, size_t len, uint64_t seed)
 {
@@ -116,10 +115,11 @@ uint64_t hash_ferm64(const void *buf, size_t len, uint64_t seed)
 
 uint32_t hash_ferm32(const void *buf, size_t len, uint32_t seed)
 {
-	// the following trick converts the 64-bit hashcode to Fermat
-	// residue, which shall retain information from both the higher
-	// and lower parts of hashcode.
 	uint64_t h = hash_ferm64(buf, len, seed);
+	/* The following trick converts the 64-bit hashcode to a
+	 * residue over a Fermat Number, in which information from
+	 * both the higher and lower parts of hashcode shall be
+	 * retained. */
 	return h - (h >> 32);
 }
 
@@ -593,5 +593,3 @@ void hash_jenkins2(const void *key, size_t length, uint32_t *pc, uint32_t *pb)
 	final(a,b,c);
 	*pc=c; *pb=b;
 }
-
-#endif  /* __x86_64__ */

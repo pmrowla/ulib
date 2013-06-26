@@ -4,7 +4,7 @@
 #include <stdlib.h>
 #include <signal.h>
 #include <unistd.h>
-#include <ulib/hash_align_prot.h>
+#include <ulib/hash_open_prot.h>
 #include <ulib/math_rand_prot.h>
 
 uint64_t u, v, w;
@@ -15,7 +15,7 @@ const char *usage =
 
 volatile long counter = 0;
 
-DEFINE_ALIGNHASH(myhash, uint64_t, uint64_t, 1, alignhash_hashfn, alignhash_equalfn)
+DEFINE_OPENHASH(myhash, uint64_t, uint64_t, 1, openhash_hashfn, openhash_equalfn)
 
 static void sig_alarm_handler(int)
 {
@@ -42,7 +42,7 @@ void constant_insert(long ins, long get)
 	long t;
 	int ret;
 
-	alignhash_t(myhash) *my = alignhash_init(myhash);
+	openhash_t(myhash) *my = openhash_init(myhash);
 
 	if (my == NULL) {
 		fprintf(stderr, "alloc failed\n");
@@ -50,20 +50,20 @@ void constant_insert(long ins, long get)
 	}
 
 	for (t = 0; t < ins; t++) {
-		ah_iter_t itr = alignhash_set(myhash, my, myrand(), &ret);
-		if (alignhash_end(my) != itr)
-			alignhash_value(my, itr) = t;
+		oh_iter_t itr = openhash_set(myhash, my, myrand(), &ret);
+		if (openhash_end(my) != itr)
+			openhash_value(my, itr) = t;
 		counter++;
 	}
 
 	printf("insertion done\n");
 
 	for (t = 0; t < get; t++) {
-		alignhash_get(myhash, my, myrand());
+		openhash_get(myhash, my, myrand());
 		counter++;
 	}
 
-	alignhash_destroy(myhash, my);
+	openhash_destroy(myhash, my);
 
 	printf("all done\n");
 }

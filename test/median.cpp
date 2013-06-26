@@ -25,11 +25,11 @@ int main()
 			data[i] = rand();
 
 		median_test(data, data + k, data + ne);
-		m  = data[k];
+		m = data[k];
 
 		// verification
 		std::sort(data, data + ne);
-		assert(m  == data[k]);
+		assert(m == data[k]);
 		delete [] data;
 	}
 

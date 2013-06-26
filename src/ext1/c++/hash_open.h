@@ -24,53 +24,50 @@
 */
 
 /*
-  This file provides proxy classes for alignhash. The origial
-  implementation is in C, which is located in alignhash_tpl.h. A few
+  This file provides proxy classes for openhash. The origial
+  implementation is in C, which is located in openhash_tpl.h. A few
   points should be noted before using these classes:
 
   (1) Several implicit operators are used for key, namely '==', '<',
   and the unsigned long operator. These operators must be implemented
   on the part of the key class.
 
-  (2) Alignhash iterator does not have 'first' and 'second' members,
+  (2) Openhash iterator does not have 'first' and 'second' members,
   key() and value() are respectively responsible for accessing the key
   and value associated with the iterator instead.
-
-  (3) Optional flags can be specified preceding alignhash.h, such as
-  AH_DOUBLE_HASHING.
 */
 
-#ifndef _ULIB_HASH_ALIGN_H
-#define _ULIB_HASH_ALIGN_H
+#ifndef _ULIB_HASH_OPEN_H
+#define _ULIB_HASH_OPEN_H
 
 #include <ulib/util_class.h>
-#include <ulib/hash_align_prot.h>
+#include <ulib/hash_open_prot.h>
 
 namespace ulib {
 
 template<class _Key, class _Val, class _Except = ulib_except>
-class align_hash_map
+class open_hash_map
 {
 public:
-	DEFINE_ALIGNHASH(inclass, _Key, _Val, 1, alignhash_hashfn, alignhash_equalfn);
+	DEFINE_OPENHASH(inclass, _Key, _Val, 1, openhash_hashfn, openhash_equalfn);
 
 	typedef _Key	    key_type;
 	typedef _Val	    value_type;
-	typedef ah_iter_t   size_type;
+	typedef oh_iter_t   size_type;
 	typedef _Val *	    pointer;
 	typedef const _Val* const_pointer;
 	typedef _Val &	    reference;
 	typedef const _Val& const_reference;
-	typedef ah_iter_t   hashing_iterator;
-	typedef alignhash_t(inclass) * hashing;
+	typedef oh_iter_t   hashing_iterator;
+	typedef openhash_t(inclass) * hashing;
 
 	struct iterator
 	{
-		typedef ah_iter_t size_type;
+		typedef oh_iter_t size_type;
 		typedef _Val& reference;
 		typedef _Val* pointer;
-		typedef alignhash_t(inclass) * hashing;
-		typedef ah_iter_t hashing_iterator;
+		typedef openhash_t(inclass) * hashing;
+		typedef oh_iter_t hashing_iterator;
 
 		hashing		 _hashing;
 		hashing_iterator _cur;
@@ -82,11 +79,11 @@ public:
 
 		_Key &
 		key() const
-		{ return alignhash_key(_hashing, _cur); }
+		{ return openhash_key(_hashing, _cur); }
 
 		reference
 		value() const
-		{ return alignhash_value(_hashing, _cur); }
+		{ return openhash_value(_hashing, _cur); }
 
 		reference
 		operator*() const
@@ -99,9 +96,9 @@ public:
 		iterator&
 		operator++()
 		{
-			if (_cur != alignhash_end(_hashing))
+			if (_cur != openhash_end(_hashing))
 				++_cur;
-			while (_cur != alignhash_end(_hashing) && !alignhash_exist(_hashing, _cur))
+			while (_cur != openhash_end(_hashing) && !openhash_exist(_hashing, _cur))
 				++_cur;
 			return *this;
 		}
@@ -125,11 +122,11 @@ public:
 
 	struct const_iterator
 	{
-		typedef ah_iter_t size_type;
+		typedef oh_iter_t size_type;
 		typedef const _Val& reference;
 		typedef const _Val* pointer;
-		typedef const alignhash_t(inclass) * hashing;
-		typedef ah_iter_t hashing_iterator;
+		typedef const openhash_t(inclass) * hashing;
+		typedef oh_iter_t hashing_iterator;
 
 		hashing		 _hashing;
 		hashing_iterator _cur;
@@ -144,11 +141,11 @@ public:
 
 		const _Key &
 		key() const
-		{ return alignhash_key(_hashing, _cur); }
+		{ return openhash_key(_hashing, _cur); }
 
 		reference
 		value() const
-		{ return alignhash_value(_hashing, _cur); }
+		{ return openhash_value(_hashing, _cur); }
 
 		reference
 		operator*() const
@@ -161,9 +158,9 @@ public:
 		const_iterator&
 		operator++()
 		{
-			if (_cur != alignhash_end(_hashing))
+			if (_cur != openhash_end(_hashing))
 				++_cur;
-			while (_cur != alignhash_end(_hashing) && !alignhash_exist(_hashing, _cur))
+			while (_cur != openhash_end(_hashing) && !openhash_exist(_hashing, _cur))
 				++_cur;
 			return *this;
 		}
@@ -185,24 +182,24 @@ public:
 		{ return _cur != other._cur; }
 	};
 
-	align_hash_map()
+	open_hash_map()
 	{
-		_hashing = alignhash_init(inclass);
+		_hashing = openhash_init(inclass);
 		if (_hashing == 0)
 			throw _Except();
 	}
 
-	align_hash_map(const align_hash_map &other)
+	open_hash_map(const open_hash_map &other)
 	{
-		_hashing = alignhash_init(inclass);
+		_hashing = openhash_init(inclass);
 		if (_hashing == 0)
 			throw _Except();
 		for (const_iterator it = other.begin(); it != other.end(); ++it)
 			insert(it.key(), it.value());
 	}
 
-	align_hash_map &
-	operator= (const align_hash_map &other)
+	open_hash_map &
+	operator= (const open_hash_map &other)
 	{
 		if (&other != this) {
 			clear();
@@ -213,12 +210,12 @@ public:
 	}
 
 	virtual
-	~align_hash_map()
-	{ alignhash_destroy(inclass, _hashing); }
+	~open_hash_map()
+	{ openhash_destroy(inclass, _hashing); }
 
 	size_type
 	size() const
-	{ return alignhash_size(_hashing); }
+	{ return openhash_size(_hashing); }
 
 	bool
 	empty() const
@@ -227,60 +224,60 @@ public:
 	iterator
 	begin()
 	{
-		for (size_type itr = alignhash_begin(_hashing);
-		     itr != alignhash_end(_hashing); ++itr)
-			if (alignhash_exist(_hashing, itr))
+		for (size_type itr = openhash_begin(_hashing);
+		     itr != openhash_end(_hashing); ++itr)
+			if (openhash_exist(_hashing, itr))
 				return iterator(_hashing, itr);
 		return end();
 	}
 
 	iterator
 	end()
-	{ return iterator(_hashing, alignhash_end(_hashing)); }
+	{ return iterator(_hashing, openhash_end(_hashing)); }
 
 	const_iterator
 	begin() const
 	{
-		for (size_type itr = alignhash_begin(_hashing);
-		     itr != alignhash_end(_hashing); ++itr)
-			if (alignhash_exist(_hashing, itr))
+		for (size_type itr = openhash_begin(_hashing);
+		     itr != openhash_end(_hashing); ++itr)
+			if (openhash_exist(_hashing, itr))
 				return iterator(_hashing, itr);
 		return end();
 	}
 
 	const_iterator
 	end() const
-	{ return iterator(_hashing, alignhash_end(_hashing)); }
+	{ return iterator(_hashing, openhash_end(_hashing)); }
 
 	size_type
 	bucket_count() const
-	{ return alignhash_nbucket(_hashing); }
+	{ return openhash_nbucket(_hashing); }
 
 	bool
 	contain(const _Key &key) const
-	{ return alignhash_get(inclass, _hashing, key) != alignhash_end(_hashing); }
+	{ return openhash_get(inclass, _hashing, key) != openhash_end(_hashing); }
 
 	iterator
 	insert(const _Key &key, const _Val &val, bool replace = false)
 	{
-		int ret = AH_INS_ERR;
-		hashing_iterator itr = alignhash_set(inclass, _hashing, key, &ret);
-		if (itr == alignhash_end(_hashing))
+		int ret = OH_INS_ERR;
+		hashing_iterator itr = openhash_set(inclass, _hashing, key, &ret);
+		if (itr == openhash_end(_hashing))
 			throw _Except();
-		if (ret != AH_INS_ERR || replace)
-			alignhash_value(_hashing, itr) = val;
+		if (ret != OH_INS_ERR || replace)
+			openhash_value(_hashing, itr) = val;
 		return iterator(_hashing, itr);
 	}
 
 	iterator
 	find_or_insert(const _Key &key, const _Val &val)
 	{
-		int ret = AH_INS_ERR;
-		hashing_iterator itr = alignhash_set(inclass, _hashing, key, &ret);
-		if (itr == alignhash_end(_hashing))
+		int ret = OH_INS_ERR;
+		hashing_iterator itr = openhash_set(inclass, _hashing, key, &ret);
+		if (itr == openhash_end(_hashing))
 			throw _Except();
-		if (ret != AH_INS_ERR)
-			alignhash_value(_hashing, itr) = val;
+		if (ret != OH_INS_ERR)
+			openhash_value(_hashing, itr) = val;
 		return iterator(_hashing, itr);
 	}
 
@@ -290,23 +287,23 @@ public:
 
 	iterator
 	find(const _Key &key)
-	{ return iterator(_hashing, alignhash_get(inclass, _hashing, key)); }
+	{ return iterator(_hashing, openhash_get(inclass, _hashing, key)); }
 
 	const_iterator
 	find(const _Key &key) const
-	{ return const_iterator(_hashing, alignhash_get(inclass, _hashing, key)); }
+	{ return const_iterator(_hashing, openhash_get(inclass, _hashing, key)); }
 
 	void
 	erase(const _Key &key)
-	{ alignhash_del(inclass, _hashing, alignhash_get(inclass, _hashing, key)); }
+	{ openhash_del(inclass, _hashing, openhash_get(inclass, _hashing, key)); }
 
 	void
 	erase(const iterator &it)
-	{ alignhash_del(inclass, _hashing, it._cur); }
+	{ openhash_del(inclass, _hashing, it._cur); }
 
 	void
 	clear()
-	{ alignhash_clear(inclass, _hashing); }
+	{ openhash_clear(inclass, _hashing); }
 
 	int
 	resize(size_t n)
@@ -315,7 +312,7 @@ public:
 			// reject any value that is not the power of two
 			return -1;
 		}
-		return alignhash_resize(inclass, _hashing, n);
+		return openhash_resize(inclass, _hashing, n);
 	}
 
 private:
@@ -323,21 +320,21 @@ private:
 };
 
 template<class _Key, class _Except = ulib_except>
-class align_hash_set
+class open_hash_set
 {
 public:
-	DEFINE_ALIGNHASH(inclass, _Key, int, 0, alignhash_hashfn, alignhash_equalfn);
+	DEFINE_OPENHASH(inclass, _Key, int, 0, openhash_hashfn, openhash_equalfn);
 
 	typedef _Key	  key_type;
-	typedef ah_iter_t size_type;
-	typedef ah_iter_t hashing_iterator;
-	typedef alignhash_t(inclass) * hashing;
+	typedef oh_iter_t size_type;
+	typedef oh_iter_t hashing_iterator;
+	typedef openhash_t(inclass) * hashing;
 
 	struct iterator
 	{
-		typedef ah_iter_t size_type;
-		typedef alignhash_t(inclass) * hashing;
-		typedef ah_iter_t hashing_iterator;
+		typedef oh_iter_t size_type;
+		typedef openhash_t(inclass) * hashing;
+		typedef oh_iter_t hashing_iterator;
 
 		hashing		 _hashing;
 		hashing_iterator _cur;
@@ -349,11 +346,11 @@ public:
 
 		_Key &
 		key() const
-		{ return alignhash_key(_hashing, _cur); }
+		{ return openhash_key(_hashing, _cur); }
 
 		bool
 		value() const
-		{  return _cur != alignhash_end(_hashing); }
+		{  return _cur != openhash_end(_hashing); }
 
 		bool
 		operator*() const
@@ -362,9 +359,9 @@ public:
 		iterator&
 		operator++()
 		{
-			if (_cur != alignhash_end(_hashing))
+			if (_cur != openhash_end(_hashing))
 				++_cur;
-			while (_cur != alignhash_end(_hashing) && !alignhash_exist(_hashing, _cur))
+			while (_cur != openhash_end(_hashing) && !openhash_exist(_hashing, _cur))
 				++_cur;
 			return *this;
 		}
@@ -388,9 +385,9 @@ public:
 
 	struct const_iterator
 	{
-		typedef ah_iter_t size_type;
-		typedef const alignhash_t(inclass) * hashing;
-		typedef ah_iter_t hashing_iterator;
+		typedef oh_iter_t size_type;
+		typedef const openhash_t(inclass) * hashing;
+		typedef oh_iter_t hashing_iterator;
 
 		hashing		 _hashing;
 		hashing_iterator _cur;
@@ -405,11 +402,11 @@ public:
 
 		const _Key &
 		key() const
-		{ return alignhash_key(_hashing, _cur); }
+		{ return openhash_key(_hashing, _cur); }
 
 		bool
 		value() const
-		{  return _cur != alignhash_end(_hashing); }
+		{  return _cur != openhash_end(_hashing); }
 
 		bool
 		operator*() const
@@ -418,9 +415,9 @@ public:
 		const_iterator&
 		operator++()
 		{
-			if (_cur != alignhash_end(_hashing))
+			if (_cur != openhash_end(_hashing))
 				++_cur;
-			while (_cur != alignhash_end(_hashing) && !alignhash_exist(_hashing, _cur))
+			while (_cur != openhash_end(_hashing) && !openhash_exist(_hashing, _cur))
 				++_cur;
 			return *this;
 		}
@@ -442,24 +439,24 @@ public:
 		{ return _cur != other._cur; }
 	};
 
-	align_hash_set()
+	open_hash_set()
 	{
-		_hashing = alignhash_init(inclass);
+		_hashing = openhash_init(inclass);
 		if (_hashing == 0)
 			throw _Except();
 	}
 
-	align_hash_set(const align_hash_set &other)
+	open_hash_set(const open_hash_set &other)
 	{
-		_hashing = alignhash_init(inclass);
+		_hashing = openhash_init(inclass);
 		if (_hashing == 0)
 			throw _Except();
 		for (const_iterator it = other.begin(); it != other.end(); ++it)
 			insert(it.key());
 	}
 
-	align_hash_set &
-	operator= (const align_hash_set &other)
+	open_hash_set &
+	operator= (const open_hash_set &other)
 	{
 		if (&other != this) {
 			clear();
@@ -470,12 +467,12 @@ public:
 	}
 
 	virtual
-	~align_hash_set()
-	{ alignhash_destroy(inclass, _hashing); }
+	~open_hash_set()
+	{ openhash_destroy(inclass, _hashing); }
 
 	size_type
 	size() const
-	{ return alignhash_size(_hashing); }
+	{ return openhash_size(_hashing); }
 
 	bool
 	empty() const
@@ -484,45 +481,45 @@ public:
 	iterator
 	begin()
 	{
-		for (size_type itr = alignhash_begin(_hashing);
-		     itr != alignhash_end(_hashing); ++itr)
-			if (alignhash_exist(_hashing, itr))
+		for (size_type itr = openhash_begin(_hashing);
+		     itr != openhash_end(_hashing); ++itr)
+			if (openhash_exist(_hashing, itr))
 				return iterator(_hashing, itr);
 		return end();
 	}
 
 	iterator
 	end()
-	{ return iterator(_hashing, alignhash_end(_hashing)); }
+	{ return iterator(_hashing, openhash_end(_hashing)); }
 
 	const_iterator
 	begin() const
 	{
-		for (size_type itr = alignhash_begin(_hashing);
-		     itr != alignhash_end(_hashing); ++itr)
-			if (alignhash_exist(_hashing, itr))
+		for (size_type itr = openhash_begin(_hashing);
+		     itr != openhash_end(_hashing); ++itr)
+			if (openhash_exist(_hashing, itr))
 				return iterator(_hashing, itr);
 		return end();
 	}
 
 	const_iterator
 	end() const
-	{ return iterator(_hashing, alignhash_end(_hashing)); }
+	{ return iterator(_hashing, openhash_end(_hashing)); }
 
 	size_type
 	bucket_count() const
-	{ return alignhash_nbucket(_hashing); }
+	{ return openhash_nbucket(_hashing); }
 
 	bool
 	contain(const _Key &key) const
-	{ return alignhash_get(inclass, _hashing, key) != alignhash_end(_hashing); }
+	{ return openhash_get(inclass, _hashing, key) != openhash_end(_hashing); }
 
 	iterator
 	insert(const _Key &key)
 	{
 		int ret;
-		hashing_iterator itr = alignhash_set(inclass, _hashing, key, &ret);
-		if (itr == alignhash_end(_hashing))
+		hashing_iterator itr = openhash_set(inclass, _hashing, key, &ret);
+		if (itr == openhash_end(_hashing))
 			throw _Except();
 		return iterator(_hashing, itr);
 	}
@@ -533,23 +530,23 @@ public:
 
 	iterator
 	find(const _Key &key)
-	{ return iterator(_hashing, alignhash_get(inclass, _hashing, key)); }
+	{ return iterator(_hashing, openhash_get(inclass, _hashing, key)); }
 
 	const_iterator
 	find(const _Key &key) const
-	{ return const_iterator(_hashing, alignhash_get(inclass, _hashing, key)); }
+	{ return const_iterator(_hashing, openhash_get(inclass, _hashing, key)); }
 
 	void
 	erase(const _Key &key)
-	{ alignhash_del(inclass, _hashing, alignhash_get(inclass, _hashing, key)); }
+	{ openhash_del(inclass, _hashing, openhash_get(inclass, _hashing, key)); }
 
 	void
 	erase(const iterator &it)
-	{ alignhash_del(inclass, _hashing, it._cur); }
+	{ openhash_del(inclass, _hashing, it._cur); }
 
 	void
 	clear()
-	{ alignhash_clear(inclass, _hashing); }
+	{ openhash_clear(inclass, _hashing); }
 
 	int
 	resize(size_t n)
@@ -558,7 +555,7 @@ public:
 			// reject any value that is not the power of two
 			return -1;
 		}
-		return alignhash_resize(inclass, _hashing, n);
+		return openhash_resize(inclass, _hashing, n);
 	}
 
 private:
@@ -567,4 +564,4 @@ private:
 
 }  // namespace ulib
 
-#endif	/* _ULIB_HASH_ALIGN_H */
+#endif	/* _ULIB_HASH_OPEN_H */

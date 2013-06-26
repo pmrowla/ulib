@@ -23,9 +23,9 @@
    SOFTWARE.
 */
 
-/* This file implements the binary search over text files. Users must
- * specify a compare function by which the lines of the input file is
- * sorted in ascending order. */
+/* This file implements the binary search of text lines. The input
+ * text file must be sorted in ascending order according to the
+ * compare function provided by the user. */
 
 #ifndef _ULIB_SEARCH_LINE_H
 #define _ULIB_SEARCH_LINE_H

@@ -108,9 +108,13 @@ int main()
 	assert(size == 5);
 	assert(wc.size() == 5);
 
-	multi_hash_map<uint64_t, uint32_t, ulib_except, combiner> wc1(1);
+	multi_hash_map<uint64_t, uint32_t, ulib_except, combiner> wc1(4);
 	wc1.insert(1, 1);
 	assert(wc1.size() == 1);
+
+	wc1.clear();
+	assert(wc1.size() == 0);
+	assert(wc1[1] == 0);
 
 	printf("passed\n");
 

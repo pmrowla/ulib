@@ -3,7 +3,7 @@
 #include <assert.h>
 #include <string.h>
 #include <ulib/hash_func.h>
-#include <ulib/hash_align.h>
+#include <ulib/hash_open.h>
 #include <ulib/math_rand_prot.h>
 
 using namespace ulib;
@@ -23,7 +23,7 @@ struct str {
 
 int main()
 {
-	align_hash_map<str, int> months;
+	open_hash_map<str, int> months;
 
 	months["january"] = 31;
 	months["february"] = 28;
@@ -43,18 +43,18 @@ int main()
 	assert(months["february"] == 28);
 	assert(months["december"] == 31);
 
-	align_hash_map<uint64_t, int> map;
+	open_hash_map<uint64_t, int> map;
 
 	map[1] = 2;
 	map[2] = 1;
 	map[3] = 3;
 
-	align_hash_map<uint64_t, int> copy1(map);
+	open_hash_map<uint64_t, int> copy1(map);
 	assert(copy1[1] == 2);
 	assert(copy1[2] == 1);
 	assert(copy1[3] == 3);
 
-	align_hash_map<uint64_t, int> copy2 = map;
+	open_hash_map<uint64_t, int> copy2 = map;
 	assert(copy2[1] == 2);
 	assert(copy2[2] == 1);
 	assert(copy2[3] == 3);
