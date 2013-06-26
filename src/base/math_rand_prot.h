@@ -118,16 +118,16 @@
 			(h) *= 2147483649UL; })
 
 /* The following hash functions are my work, they are simple and
-   possibly more random than above ones, depending on the
+   possibly more random than the above ones, depending on the
    circumstances. RAND_INT3_MIX64 is meant to be a quick integer
-   hash function, thus it should work well on any integer. */
+   hash function with reasonable randomness. */
 #define RAND_INT3_MIX64(h) ({				\
 			(h) ^= (h) >> 23;		\
 			(h) *= 0x2127599bf4325c37ULL;	\
 			(h) ^= (h) >> 47; })
 
-/* RAND_INT4_MIX64 produces more robust output than INT3, but is
-   slightly slower. */
+/* RAND_INT4_MIX64 serves to generate more random hash values than
+ * RAND_INT3_MIX64 does, at the expense of two added rounds. */
 #define RAND_INT4_MIX64(h) ({				\
 			(h) ^= (h) >> 29;		\
 			(h) *= 0xd36463187cc70d7bULL;	\
@@ -135,7 +135,14 @@
 			(h) *= 0xb597d0ceca3f6e07ULL;	\
 			(h) ^= (h) >> 40; })
 
-/* Inverse of RAND_INT4_MIX64 */
+/* The inverse of RAND_INT3_MIX64 */
+#define RAND_INT3_MIX64_INV(h) ({			\
+			(h) ^= (h) >> 47;		\
+			(h) *= 0xa1bcefb14d101987ULL;	\
+			(h) ^= (h) >> 23;		\
+			(h) ^= (h) >> 46; })
+
+/* The inverse of RAND_INT4_MIX64 */
 #define RAND_INT4_MIX64_INV(h) ({				\
 			(h) ^= (h) >> 40;			\
 			(h) *= 0xfbcdd61d299e9fb7ULL;		\
@@ -143,7 +150,7 @@
 			(h) *= 0x0ce066597af4c9b3ULL;		\
 			(h) ^= ((h) >> 29) ^ ((h) >> 58); })
 
-/* Mix function based on Fermat numbers */
+/* Mix function based on Fermat Numbers */
 #define FER_MIX64(h) ({						\
 			register uint64_t __t;			\
 			MULQ(h, 0x880355f21e6d1965ULL, h, __t);	\

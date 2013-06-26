@@ -4,7 +4,7 @@
 #include <stdlib.h>
 #include <assert.h>
 #include <ulib/hash_func.h>
-#include <ulib/hash_align.h>
+#include <ulib/hash_open.h>
 
 #define SIZE (100 * 1024 * 1024 + 3)
 
@@ -13,7 +13,7 @@ using namespace ulib;
 int main()
 {
 	char buf[4096] = { 0 };
-	align_hash_set<uint64_t> hashes;
+	open_hash_set<uint64_t> hashes;
 
 	for (unsigned s = 0; s < 1000; ++s) {
 		for (unsigned i = 0; i < sizeof(buf); ++i) {

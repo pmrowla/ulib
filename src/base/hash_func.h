@@ -35,15 +35,26 @@ extern "C" {
 
 uint64_t hash_fast64(const void *buf, size_t len, uint64_t seed);
 
-/* based on hash_fast64, thus may be slow on 32-bit platforms */
+/* The implementation is based on hash_fast64.
+ * It should only be used when 1) 32-bit hash value is required, and
+ * 2) hash value distribution needs serious attention. Thus, use
+ * hash_fast64() instead unless under the above conditions. */
 uint32_t hash_fast32(const void *buf, size_t len, uint32_t seed);
 
-/* hash function based on fermat numbers */
+/* This hash function combines the values of compression function with
+ * Fermat Transformation, T(x) = (M * x mod 2^n) mod (2^n + 1)  */
 uint64_t hash_ferm64(const void *buf, size_t len, uint64_t seed);
+/* Refer to the notes on hash_fast32 */
 uint32_t hash_ferm32(const void *buf, size_t len, uint32_t seed);
 
+/* Bob Jenkins's 32-bit hash function, which is slower than
+ * hash_fast32; yet it might still be preferable if multiplication is
+ * undesired. This hash function does not use multiplication. */
 uint32_t hash_jenkins(const void *buf, size_t len, uint32_t seed);
 
+/* Bob Jenkins's 64-bit hash function, which is slower than
+ * hash_fast64. Use this one instead of hash_fast64 if multiplication
+ * isn't desired. */
 /* @pc and @pb must be non-NULL and initialized with seeds.
  * Hash value will be stored in @pc and @pb also. */
 void hash_jenkins2(const void *buf, size_t len, uint32_t * pc, uint32_t * pb);

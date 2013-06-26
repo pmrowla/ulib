@@ -28,7 +28,7 @@
 #include <string.h>
 #include <unistd.h>
 #include <hash_func.h>
-#include <hash_align_prot.h>
+#include <hash_open_prot.h>
 #include "util_argv.h"
 
 #define DEF_PROMPT "ULIB CMD> "
@@ -45,10 +45,10 @@ __hash_fast32_str(const char *s)
 
 typedef int (*console_fcn_t) (int argc, const char *argv[]);
 
-DEFINE_ALIGNHASH(cmdoht, const char *, console_fcn_t, 1, STRHASH, STRCMP);
+DEFINE_OPENHASH(cmdoht, const char *, console_fcn_t, 1, STRHASH, STRCMP);
 
 typedef struct {
-	alignhash_t(cmdoht) * idx;
+	openhash_t(cmdoht) * idx;
 	char * pmpt;
 	char * rbuf;
 	int    rfd;
@@ -67,7 +67,7 @@ int console_init(console_t *ctx)
 		free(ctx->rbuf);
 		return -1;
 	}
-	ctx->idx = alignhash_init(cmdoht);
+	ctx->idx = openhash_init(cmdoht);
 	if (ctx->idx == NULL) {
 		free(ctx->rbuf);
 		free(ctx->pmpt);
@@ -94,12 +94,12 @@ int console_bind(console_t *ctx, const char *cmdlet, console_fcn_t f)
 	str = strdup(cmdlet);
 	if (str == NULL)
 		return -1;
-	val = alignhash_set(cmdoht, ctx->idx, str, &ret);
-	if (val == alignhash_end(ctx->idx) || ret == 0) {
+	val = openhash_set(cmdoht, ctx->idx, str, &ret);
+	if (val == openhash_end(ctx->idx) || ret == 0) {
 		free(str);
 		return -1;
 	}
-	alignhash_value(ctx->idx, val) = f;
+	openhash_value(ctx->idx, val) = f;
 	return 0;
 }
 
@@ -114,10 +114,10 @@ int console_exec(console_t *ctx, const char *cmd)
 	if (argv == NULL)
 		return -1;
 	if (argc > 0) {
-		val = alignhash_get(cmdoht, ctx->idx, argv[0]);
-		if (val == alignhash_end(ctx->idx))
+		val = openhash_get(cmdoht, ctx->idx, argv[0]);
+		if (val == openhash_end(ctx->idx))
 			goto done;
-		fcn = alignhash_value(ctx->idx, val);
+		fcn = openhash_value(ctx->idx, val);
 		ret = fcn(argc, (const char **)argv);
 	} else
 		ret = 0;
@@ -173,9 +173,9 @@ int console_loop(console_t *ctx, int count, const char *term)
 				argv_free(argv);
 				return 0;
 			}
-			val = alignhash_get(cmdoht, ctx->idx, argv[0]);
-			if (val != alignhash_end(ctx->idx)) {
-				fcn = alignhash_value(ctx->idx, val);
+			val = openhash_get(cmdoht, ctx->idx, argv[0]);
+			if (val != openhash_end(ctx->idx)) {
+				fcn = openhash_value(ctx->idx, val);
 				fcn(argc, (const char **)argv);
 			} else
 				printf("%s command not found\n", argv[0]);
@@ -193,9 +193,9 @@ void console_destroy(console_t *ctx)
 	uint32_t i;
 	free(ctx->rbuf);
 	free(ctx->pmpt);
-	for (i = alignhash_begin(ctx->idx); i != alignhash_end(ctx->idx); i++) {
-		if (alignhash_exist(ctx->idx, i))
-			free((char *)alignhash_key(ctx->idx, i));
+	for (i = openhash_begin(ctx->idx); i != openhash_end(ctx->idx); i++) {
+		if (openhash_exist(ctx->idx, i))
+			free((char *)openhash_key(ctx->idx, i));
 	}
-	alignhash_destroy(cmdoht, ctx->idx);
+	openhash_destroy(cmdoht, ctx->idx);
 }

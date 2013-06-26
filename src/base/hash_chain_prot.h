@@ -23,25 +23,25 @@
    SOFTWARE.
 */
 
-/* This file implements a basic hash table with chained collision
- * resolution. The primary motivation is to address the concurent
- * write issues, in which multiple concurrent threads try to modify
- * the hash table.
+/* This file implements the hash table which uses list for collision
+ * resolution. Concurrency control, which is based on region locks, is
+ * also supported and thus it is thread-safe, enabling concurrent
+ * execution of any combination of the operations provided on the hash
+ * table.
  *
- * Several primitives are implemented to help solve this dilemma. In
- * particular, each 'chain' can synchronize the writes on the chain,
- * which is independent from other chains. For example, a mutex can be
- * used to seralize modifications to the chain.
+ * The theoretical bounds, which are perfectly practical, for the
+ * insertion/search costs are: the lower bound O(1/T + 1/L - 1/(TL)),
+ * and the upper bound O(1/T + 1/L), given that the costs for
+ * insertion/search are constants in single-threaded scenario. T is
+ * the number of concurrent operations(threads) at any instant and L
+ * is the number of chains specified initializing the hash table.
  *
- * The chained hash table implementation does not resize
- * automatically as in many cases the chain length is guaranteed to be
- * short. These involve knowing the size of the hash table in the
- * first place, using dynamic sampling to determine the total number
- * of elements, allocating a hash table as big as possible according
- * to the available memory, and so forth. Nevertheless, if resizing is
- * on earth a consideration, more advanced techniques can be applied
- * to address this problem based on the implementation.
- */
+ * Referring to the cost bounds, the cost that posed by region locks
+ * would become trivial in practice as long as sufficient chains are
+ * used initializing the hash table. The suggested value for the
+ * number of chains are 64 or 128; however, it is largely processor
+ * specific. Having more threads and processors could increase the
+ * number of chains accordingly, with the help of the cost bounds. */
 
 #ifndef _ULIB_HASH_CHAIN_PROT_H
 #define _ULIB_HASH_CHAIN_PROT_H
@@ -54,7 +54,7 @@
 #define MAX_CH_SIZE_BITS 64
 
 /* Note that equalfn only tests if two keys are equal while cmpfn
- * compares the keys which is usuaully slower than equalfn. The
+ * compares the keys, which is usually slower than equalfn. The
  * isolation of the two functions might serve to improve the
  * performance. */
 #define DEFINE_CHAINHASH(name, keytype, valtype, ismap, hashfn, equalfn, cmpfn) \
@@ -367,14 +367,14 @@
 /*------------------------- Human Interface -------------------------*/
 
 /* Identity hash function, converting a key to an integer. This coerce
- * the key to be of integer type or integer interpretable. */
+ * the key to be of an integer type or integer interpretable. */
 #define chainhash_hashfn(key) (size_t)(key)
 
 /* Boolean function that tests whether two keys are equal. This
  * function is generally much more efficient than cmpfn. */
 #define chainhash_equalfn(a, b) ((a) == (b))
 
-/* function that compares two keys, returns negative, zero, and
+/* Function that compares two keys, returns negative, zero, and
  * positive values for less than, equal, and greater than
  * respectively. */
 #define chainhash_cmpfn(a, b) (((a) > (b)) - ((a) < (b)))
@@ -407,8 +407,8 @@
 #define chainhash_end(x) ((x).entry == NULL)
 
 /* Take a snapshot of the current chainhash, causing the iteration
- * order to change accordingly. Newly added elements after the
- * snapshot will remain "hidden" during the iteration till another
+ * order to update accordingly. New added elements after the
+ * snapshot will remain invisible during the iteration until another
  * snapshot is taken. */
 #define chainhash_snap(name, h) chainhash_snap_##name(h)
 
