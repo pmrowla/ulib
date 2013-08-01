@@ -28,6 +28,14 @@ release' to build the library as well as strip the debug information.
 It is recommended to perform a 'make test' once you have compiled the
 library. This will start various self-tests.
 
+It is known that certain GCCs generate buggy code, incurring
+segmentation faults in hash_chain. If you have any of the hash_chain
+tests failed because of segmentation fault. Please apply the
+gcc_hash_chain.patch patch, which is located under patch/:
+
+  cd ulib_src_path/
+  patch -p0 -i patch/gcc_hash_chain.patch
+
 -------------
  Source Tree
 -------------

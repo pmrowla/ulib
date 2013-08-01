@@ -1,0 +1,23 @@
+Index: src/base/hash_chain_prot.h
+===================================================================
+--- src/base/hash_chain_prot.h	(revision 261)
++++ src/base/hash_chain_prot.h	(working copy)
+@@ -288,8 +288,7 @@
+ 	__chainhash_merge_##name(chainhash_set_entry_##name##_t *a,	\
+ 				 chainhash_set_entry_##name##_t *b)	\
+ 	{								\
+-		chainhash_set_entry_##name##_t *head, *tail;		\
+-		tail = (chainhash_set_entry_##name##_t *)&head;		\
++		chainhash_set_entry_##name##_t head, *tail = &head;	\
+ 		while (a && b) {					\
+ 			/* if equal, take 'a' -- important for sort stability */ \
+ 			if (cmpfn(a->key, b->key) <= 0) {		\
+@@ -302,7 +301,7 @@
+ 			tail = tail->snap;				\
+ 		}							\
+ 		tail->snap = a?:b;					\
+-		return head;						\
++		return head.snap;					\
+ 	}								\
+ 									\
+ 	static inline void						\
