@@ -12,7 +12,7 @@ LIBPATH		= ../lib
 
 CXX		?= g++
 CXXFLAGS	?= -g3 -O2 -W -Wall -fPIC
-LDFLAGS		?= -lulib -lrt -lm
+LDFLAGS		?= -lulib -lrt -lm -lpthread
 DEBUG		?=
 
 %.test: test_%.cpp
